@@ -18,5 +18,9 @@ Route::get('/', function () {
 });
 
 Route::get('/admin', function () {
-    return view('dashboard');
-});
+    return view('auth.login');
+})->name('login');
+
+Route::get('/forgot-password', function () {
+    return view('auth.forgot_password');
+})->name('forgot-password');
