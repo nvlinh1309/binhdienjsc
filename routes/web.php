@@ -1,5 +1,6 @@
 <?php
-
+use App\Http\Controllers\User\Auth\LoginController;
+use App\Http\Controllers\User\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,14 +14,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Route::get('/admin', function () {
-    return view('auth.login');
-})->name('login');
+// Route::get('/admin', function () {
+//     return view('auth.login');
+// })->name('login');
 
-Route::get('/forgot-password', function () {
+// Route::get('/forgot-password', function () {
+//     return view('auth.forgot_password');
+// })->name('forgot-password');
+
+Route::match(['get', 'post'], '/login', [LoginController::class, 'login'])->name('login');
+Route::match(['get', 'post'], '/forgot-password', function(){
     return view('auth.forgot_password');
 })->name('forgot-password');
+Route::middleware('auth')->group(function (){
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+});

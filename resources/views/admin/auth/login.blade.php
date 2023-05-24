@@ -26,9 +26,10 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Đăng nhập để bắt đầu phiên làm việc</p>
 
-      <form action="#" method="post">
+      <form method="POST" action="{{ route('admin.login') }}">
+      @csrf
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Nhập địa chỉ email...">
+          <input type="email" name="email" class="form-control" placeholder="Nhập địa chỉ email...">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -36,7 +37,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Nhập mật khẩu...">
+          <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu...">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
