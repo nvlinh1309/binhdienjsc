@@ -25,7 +25,11 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Đăng nhập để bắt đầu phiên làm việc</p>
-
+      @if (session('status'))
+         <ul>
+             <li class="text-danger"> {{ session('status') }}</li>
+         </ul>
+     @endif
       <form action="#" method="post">
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Nhập địa chỉ email...">
