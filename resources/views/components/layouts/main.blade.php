@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/template/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/template/admin/dist/css/adminlte.min.css">
+  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
     <x-layouts.header/>
@@ -25,6 +26,7 @@
         </div>
         </div>
     </div>
-
+    <x-layouts.footer/>
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>

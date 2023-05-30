@@ -26,7 +26,8 @@ use Illuminate\Support\Facades\Route;
 //     return view('auth.forgot_password');
 // })->name('forgot-password');
 
-Route::match(['get', 'post'], '/login', [LoginController::class, 'login'])->name('login');
+Route::resource('login', LoginController::class);
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::match(['get', 'post'], '/forgot-password', function(){
     return view('auth.forgot_password');
 })->name('forgot-password');

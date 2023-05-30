@@ -25,8 +25,12 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Đăng nhập để bắt đầu phiên làm việc</p>
-
-      <form method="POST" action="{{ route('login') }}">
+      @if (session('status'))
+      <p>
+        <u class="text-danger"> {{ session('status') }}</u>
+      </p>
+      @endif
+      <form method="POST" action="{{ route('login.store') }}">
       @csrf
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Nhập địa chỉ email...">

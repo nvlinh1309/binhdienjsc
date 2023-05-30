@@ -30,7 +30,7 @@
              <li class="text-danger"> {{ session('status') }}</li>
          </ul>
      @endif
-      <form action="#" method="post">
+      <form action="{{ route('login.store') }}" method="post">
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Nhập địa chỉ email...">
           <div class="input-group-append">
