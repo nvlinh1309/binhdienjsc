@@ -14,7 +14,7 @@ class LoginController extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return redirect('/');
+            return redirect('/dashboard');
         }
         return view('user.auth.login');
     }
@@ -24,7 +24,7 @@ class LoginController extends Controller
         $credentials = $request->only(['email', 'password']);
         
         if (Auth::attempt($credentials)) {
-            return redirect('/');
+            return redirect('/dashboard');
         } else {
             return redirect()->back()->with('status', 'Email hoặc Password không chính xác');
         }
@@ -38,7 +38,7 @@ class LoginController extends Controller
     
         $request->session()->regenerateToken();
     
-        return redirect('/');
+        return redirect('/login');
     }
 }
 

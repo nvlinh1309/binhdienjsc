@@ -1,6 +1,6 @@
 <?php
 use App\Http\Controllers\User\Auth\LoginController;
-use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,11 +26,14 @@ use Illuminate\Support\Facades\Route;
 //     return view('auth.forgot_password');
 // })->name('forgot-password');
 
+Route::get('/', function() {
+    return redirect()->route('login.index');
+});
 Route::resource('login', LoginController::class);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::match(['get', 'post'], '/forgot-password', function(){
     return view('auth.forgot_password');
 })->name('forgot-password');
 Route::middleware('auth')->group(function (){
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
