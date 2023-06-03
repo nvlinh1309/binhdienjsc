@@ -18,7 +18,7 @@
 <div class="login-box">
   <div class="login-logo">
     <a href="#">
-        <img src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c51f.png" alt="" width="150px">
+        <img src="{{ asset('images/logo-full.png') }}" alt="" width="100px">
     </a>
   </div>
   <!-- /.login-logo -->

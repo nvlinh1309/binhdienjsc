@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-      <img src="/template/admin/dist/img/AdminLTELogo.png" alt="Binh Dien JSC" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">Binh Dien JSC</span>
+      <img src="{{ asset('images/logo.png') }}" alt="Binh Dien JSC" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">BD JSC</span>
     </a>
 
     <!-- Sidebar -->
@@ -10,11 +10,11 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="/template/admin/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="{{ asset('images/avatar-default.png')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
-          <a class="d-block"><span class="fa fa-sign-out"></span></a>
+          <a href="{{ route('user.index') }}" class="d-block">{{ Auth::user()->name }}</a>
+          {{-- <a class="d-block" href="">Cập nhật</a> --}}
         </div>
       </div>
 
@@ -36,7 +36,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link {{ request()->is('/dashboard/*') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Thống kê
@@ -44,10 +44,50 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+            <a href="{{ route('order.index') }}" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-file-alt"></i>
               <p>
-                Thống kê
+                Đơn hàng
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('product.index') }}" class="nav-link {{ request()->is('product*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-archive"></i>
+              <p>
+                Sản phẩm
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->is('supplier*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-briefcase"></i>
+              <p>
+                Nhà cung cấp
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('customer.index') }}" class="nav-link">
+              <i class="nav-icon fas fa-handshake {{ request()->is('customer*') ? 'active' : '' }}"></i>
+              <p>
+                Khách hàng
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('storage.index') }}" class="nav-link">
+              <i class="nav-icon fa fa-warehouse {{ request()->is('storage*') ? 'active' : '' }}"></i>
+              <p>
+                Kho
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('users.index') }}" class="nav-link">
+              <i class="nav-icon fa fa-users {{ request()->is('user*') ? 'active' : '' }}"></i>
+              <p>
+                Người dùng
               </p>
             </a>
           </li>

@@ -1,7 +1,14 @@
 <?php
 use App\Http\Controllers\User\Auth\LoginController;
+use App\Http\Controllers\User\Auth\UserController;
 use App\Http\Controllers\User\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\Order\OrderController;
+use App\Http\Controllers\User\Product\ProductController;
+use App\Http\Controllers\User\Supplier\SupplierController;
+use App\Http\Controllers\User\Customer\CustomerController;
+use App\Http\Controllers\User\Storage\StorageController;
+use App\Http\Controllers\User\Users\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,4 +43,11 @@ Route::match(['get', 'post'], '/forgot-password', function(){
 })->name('forgot-password');
 Route::middleware('auth')->group(function (){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('order', OrderController::class);
+    Route::resource('product', ProductController::class);
+    Route::resource('supplier', SupplierController::class);
+    Route::resource('customer', CustomerController::class);
+    Route::resource('storage', StorageController::class);
+    Route::resource('users', UsersController::class);
+    Route::resource('user', UserController::class);
 });
