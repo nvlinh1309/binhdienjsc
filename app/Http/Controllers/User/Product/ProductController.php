@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User\Product;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\User\Product\StoreProductRequest;
 
 class ProductController extends Controller
 {
@@ -22,7 +23,7 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(StoreProductRequest $request)
     {
         //
     }
