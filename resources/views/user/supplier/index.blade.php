@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('product.create') }}">
+                    <a href="{{ route('supplier.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
@@ -33,10 +33,9 @@
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>Barcode</th>
-                            <th>Tên SP</th>
-                            <th>Thương hiệu</th>
-                            <th>Quy cách</th>
+                            <th>Tên công ty</th>
+                            <th>Địa chỉ</th>
+                            <th>Mã số thuế</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
                     </thead>
@@ -44,15 +43,14 @@
                         @foreach ($data as $value)
                             <tr>
                                 <td>{{ $value->id }}</td>
-                                <td>{{ $value->barcode }}</td>
                                 <td>{{ $value->name }}</td>
-                                <td>{{ $value->brand_name }}</td>
-                                <td>{{ $value->specification }} (kg)</td>
+                                <td>{{ $value->address }}</td>
+                                <td>{{ $value->tax_code }}</td>
                                 <td>
-                                    <form method="POST" action="{{ route('product.destroy', $value->id) }}">
+                                    <form method="POST" action="{{ route('supplier.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('product.edit', $value->id) }}"
+                                        <a href="{{ route('supplier.edit', $value->id) }}"
                                             class="btn btn-xs btn-warning">Sửa</a>
                                         <span class="btn btn-xs btn-danger delete"
                                             data-id="{{ $value->name }}">Xoá</span>
@@ -73,7 +71,7 @@
             $('.delete').on('click', function(e) {
                 var name = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá sản phẩm '+name+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá nhà cung cấp '+name+'?')) {
                     $(e.target).closest('form').submit()
                 }
             });
