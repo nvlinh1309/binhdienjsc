@@ -68,8 +68,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('customer.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-handshake {{ request()->is('customer*') ? 'active' : '' }}"></i>
+            <a href="{{ route('customer.index') }}" class="nav-link {{ request()->is('customer*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-handshake"></i>
               <p>
                 Khách hàng
               </p>

@@ -1,0 +1,76 @@
+<x-layouts.main>
+    <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Thêm khách hàng mới</h3>
+            </div>
+
+            <form id="quickForm" action="{{ route('customer.store') }}" method="POST">
+                @csrf
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="code">Mã khách hàng</label>
+                                <input type="text" name="code" class="form-control" id="code"
+                                    placeholder="Nhập mã khách hàng...">
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="name">Tên khách hàng</label>
+                                <input type="text" name="name" class="form-control" id="name"
+                                    placeholder="Nhập tên khách hàng...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="tax_code">Mã số thuế</label>
+                                <input type="text" name="tax_code" class="form-control" id="tax_code"
+                                    placeholder="Nhập mã số thuế...">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="natax_codeme">Thuế suất</label>
+                                <input type="number" min="0" max="100" name="tax_code" class="form-control"
+                                    id="tax_code" placeholder="Nhập thuế suất...">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="address">Địa chỉ</label>
+                                <input type="text" name="address" class="form-control" id="address"
+                                    placeholder="Nhập địa chỉ...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="text" name="contact[email]" class="form-control" id="email"
+                                    placeholder="Nhập email...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="phone">Điện thoại</label>
+                                <input type="text" name="contact[phone]" class="form-control" id="phone"
+                                    placeholder="Nhập số điện thoại...">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.card -->
+    </div>
+
+</x-layouts.main>

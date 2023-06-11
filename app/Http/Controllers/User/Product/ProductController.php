@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\User\Product\StoreProductRequest;
+use App\Models\User\Product;
 
 class ProductController extends Controller
 {
@@ -13,9 +14,21 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.product.index');
+        $data = Product::orderBy('id', 'DESC');
+        if (isset($request->search)) {
+            $search = $request->search;
+            $columns = ['name', 'barcode', 'brand_name', 'specification'];
+            $data->where(function ($subQuery) use ($columns, $search){
+                foreach ($columns as $column) {
+                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                }
+                return $subQuery;
+              });
+        }
+        $data = $data->paginate(5);
+        return view('user.product.index', compact('data'));
     }
 
     /**
@@ -23,9 +36,9 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(StoreProductRequest $request)
+    public function create()
     {
-        //
+        return view('user.product.create');
     }
 
     /**
@@ -36,7 +49,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Product::create($request->all());
+        return redirect()->route('product.index');
     }
 
     /**
@@ -58,7 +72,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Product::find($id);
+        return view('user.product.edit', compact('data'));
     }
 
     /**
@@ -70,7 +85,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Product::find($id);
+        $data->update($request->all());
+        $name = $data->name;
+        return redirect()->back()->with(['success' => 'Thông tin sản phẩm '.$name.' đã được cập nhật!!!']);
+
     }
 
     /**
@@ -81,6 +100,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Product::find($id);
+        $name = $data->name;
+        $data->delete();
+        return redirect()->back()->with(['success' => 'Đã xoá sản phẩm '.$name]);
     }
 }

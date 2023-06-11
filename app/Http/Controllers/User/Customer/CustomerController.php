@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User\Customer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User\Customer;
 
 class CustomerController extends Controller
 {
@@ -12,9 +13,23 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.customer.index');
+
+        $customers = Customer::orderBy('id', 'DESC');
+
+        if (isset($request->search)) {
+            $search = $request->search;
+            $columns = ['name', 'code', 'tax_code', 'address', 'contact', 'tax'];
+            $customers->where(function ($subQuery) use ($columns, $search){
+                foreach ($columns as $column) {
+                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                }
+                return $subQuery;
+              });
+        }
+        $customers = $customers->paginate(5);
+        return view('user.customer.index', compact('customers'));
     }
 
     /**
@@ -24,7 +39,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.customer.create');
     }
 
     /**
@@ -35,7 +50,8 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Customer::create($request->all());
+        return redirect()->route('customer.index');
     }
 
     /**
@@ -57,7 +73,8 @@ class CustomerController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Customer::find($id);
+        return view('user.customer.edit', compact('data'));
     }
 
     /**
@@ -69,7 +86,10 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $customer = Customer::find($id);
+        $customer->update($request->all());
+        $name = $customer->name;
+        return redirect()->back()->with(['success' => 'Thông tin khách hàng '.$name.' đã được cập nhật!!!']);
     }
 
     /**
@@ -80,6 +100,9 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Customer::find($id);
+        $name = $data->name;
+        $data->delete();
+        return redirect()->back()->with(['success' => 'Đã xoá khách hàng '.$name]);
     }
 }

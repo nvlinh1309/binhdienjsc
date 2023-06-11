@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="/template/admin/dist/css/adminlte.min.css">
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
+
+    <script src="/template/admin/plugins/jquery/jquery.min.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -48,7 +50,6 @@
         <x-layouts.footer />
     </div>
 
-    <script src="/template/admin/plugins/jquery/jquery.min.js"></script>
     <script src="/template/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/template/admin/dist/js/adminlte.js"></script>
     <script src="/template/admin/plugins/chart.js/Chart.min.js"></script>
