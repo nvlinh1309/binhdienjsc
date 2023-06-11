@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User\Order;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User\Order;
+use App\Models\User\Customer;
 
 class OrderController extends Controller
 {
@@ -12,9 +14,21 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.order.index');
+        $data = Order::orderBy('id', 'DESC');
+        if (isset($request->search)) {
+            $search = $request->search;
+            $columns = ['order_code', 'payment_method'];
+            $data->where(function ($subQuery) use ($columns, $search){
+                foreach ($columns as $column) {
+                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                }
+                return $subQuery;
+              });
+        }
+        $data = $data->paginate(5);
+        return view('user.order.index', compact('data'));
     }
 
     /**
@@ -24,7 +38,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $customers = Customer::get();
+        return view('user.order.create', compact('customers'));
     }
 
     /**

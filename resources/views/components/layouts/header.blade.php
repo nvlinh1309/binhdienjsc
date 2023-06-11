@@ -19,7 +19,7 @@
             <a class="nav-link" data-widget="navbar-search" href="#" role="button">
                 <i class="fas fa-search"></i>
             </a>
-            <div class="navbar-search-block {{ request()->get('search') ?? 'navbar-search-open' }}" style="display:flex">
+            <div class="navbar-search-block {{ request()->get('search') != null ? 'navbar-search-open':'' }}" style="{{ request()->get('search') != null ? 'display:flex':'' }}">
                 <form class="form-inline" action="{{ url()->current() }}" method="GET">
                     <div class="input-group input-group-sm">
                         <input class="form-control form-control-navbar" name="search"
@@ -38,7 +38,7 @@
             </div>
         </li>
 
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-bell"></i>
                 <span class="badge badge-danger navbar-badge">15</span>
@@ -63,7 +63,7 @@
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item dropdown-footer">Tất cả thông báo</a>
             </div>
-        </li>
+        </li> --}}
         <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
