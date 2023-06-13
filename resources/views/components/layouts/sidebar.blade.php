@@ -68,6 +68,14 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{ route('brand.index') }}" class="nav-link {{ request()->is('brand*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                Thương hiệu
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="{{ route('customer.index') }}" class="nav-link {{ request()->is('customer*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-handshake"></i>
               <p>

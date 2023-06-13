@@ -9,6 +9,7 @@ use App\Http\Controllers\User\Supplier\SupplierController;
 use App\Http\Controllers\User\Customer\CustomerController;
 use App\Http\Controllers\User\Storage\StorageController;
 use App\Http\Controllers\User\Users\UsersController;
+use App\Http\Controllers\User\Brand\BrandController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +51,5 @@ Route::middleware('auth')->group(function (){
     Route::resource('storage', StorageController::class);
     Route::resource('users', UsersController::class);
     Route::resource('user', UserController::class);
+    Route::resource('brand', BrandController::class);
 });
