@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User\Storage;
 
 use App\Http\Controllers\Controller;
+use App\Models\User\Storage;
 use Illuminate\Http\Request;
 
 class StorageController extends Controller
@@ -12,9 +13,21 @@ class StorageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.storage.index');
+        $data = Storage::orderBy('id', 'DESC');
+        if (isset($request->search)) {
+            $search = $request->search;
+            $columns = ['name', 'address','code'];
+            $data->where(function ($subQuery) use ($columns, $search){
+                foreach ($columns as $column) {
+                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                }
+                return $subQuery;
+              });
+        }
+        $data = $data->paginate(5);
+        return view('user.storage.index', compact('data'));
     }
 
     /**
@@ -24,7 +37,7 @@ class StorageController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.storage.create');
     }
 
     /**
@@ -35,7 +48,8 @@ class StorageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Storage::create($request->all());
+        return redirect()->route('store.index');
     }
 
     /**
@@ -46,7 +60,8 @@ class StorageController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Storage::find($id);
+        return view('user.storage.show', compact('data'));
     }
 
     /**
