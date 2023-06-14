@@ -84,20 +84,35 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('storage.index') }}" class="nav-link">
-              <i class="nav-icon fa fa-warehouse {{ request()->is('storage*') ? 'active' : '' }}"></i>
+            <a href="{{ route('store.index') }}" class="nav-link">
+              <i class="nav-icon fa fa-warehouse {{ request()->is('store*') ? 'active' : '' }}"></i>
               <p>
                 Kho
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{ route('users.index') }}" class="nav-link">
-              <i class="nav-icon fa fa-users {{ request()->is('user*') ? 'active' : '' }}"></i>
+          <li class="nav-item {{ request()->is('user*') ? 'menu-open' : '' }}">
+            <a href="#" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-users-cog"></i>
               <p>
-                Người dùng
+                Quản trị
+                <i class="fas fa-angle-left right"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('users.index') }}" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Người dùng</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link ">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Vai trò và quyền</p>
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>
