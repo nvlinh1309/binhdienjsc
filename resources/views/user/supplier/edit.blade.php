@@ -21,11 +21,17 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="supplier_code">Mã nhà cung cấp</label>
+                                <input type="text" name="supplier_code"  value="{{ $data->supplier_code }}" required class="form-control" id="supplier_code"
+                                    placeholder="Nhập mã nhà cung cấp...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label for="name">Tên công ty</label>
-                                <input type="text" name="name" value="{{ $data->name }}" class="form-control"
+                                <input type="text" name="name" value="{{ $data->name }}" required class="form-control"
                                     id="name" placeholder="Nhập công ty...">
                             </div>
-
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -37,7 +43,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="tax_code">Mã số thuế</label>
-                                <input type="text" name="tax_code" value="{{ $data->tax_code }}" class="form-control"
+                                <input type="text" name="tax_code" value="{{ $data->tax_code }}" required class="form-control"
                                     id="tax_code" placeholder="Nhập mã số thuế">
                             </div>
                         </div>

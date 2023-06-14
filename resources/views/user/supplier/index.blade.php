@@ -33,6 +33,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
+                            <th>Mã NCC</th>
                             <th>Tên công ty</th>
                             <th>Địa chỉ</th>
                             <th>Mã số thuế</th>
@@ -43,6 +44,7 @@
                         @foreach ($data as $value)
                             <tr>
                                 <td>{{ $value->id }}</td>
+                                <td>{{ $value->supplier_code }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->address }}</td>
                                 <td>{{ $value->tax_code }}</td>

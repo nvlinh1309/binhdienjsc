@@ -12,6 +12,13 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="supplier_code">Mã nhà cung cấp</label>
+                                <input type="text" name="supplier_code" required class="form-control" id="supplier_code"
+                                    placeholder="Nhập mã nhà cung cấp...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label for="name">Tên công ty</label>
                                 <input type="text" name="name" class="form-control" id="name"
                                     placeholder="Nhập tên công ty...">

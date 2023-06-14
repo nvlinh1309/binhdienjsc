@@ -14,6 +14,6 @@ class Supplier extends Model
     protected $table = 'suppliers';
 
     protected $fillable = [
-        'name', 'address', 'tax_code'
+        'supplier_code','name', 'address', 'tax_code'
     ];
 }

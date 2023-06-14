@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Supplier;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User\Supplier;
+use ViKon\Diff\Diff;
 
 class SupplierController extends Controller
 {
@@ -15,6 +16,8 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
+        $diff = Diff::compare("hello", "hello");
+        return $diff->toHTML();
         $data = Supplier::orderBy('id', 'DESC');
         if (isset($request->search)) {
             $search = $request->search;
