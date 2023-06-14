@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User\Supplier;
 use ViKon\Diff\Diff;
+use App\Models\User\SupplierHistory;
 
 class SupplierController extends Controller
 {
@@ -16,8 +17,8 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        $diff = Diff::compare("hello", "hello");
-        return $diff->toHTML();
+        // $diff = Diff::compare("hello", "hello");
+        // return $diff->toHTML();
         $data = Supplier::orderBy('id', 'DESC');
         if (isset($request->search)) {
             $search = $request->search;
@@ -52,6 +53,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         Supplier::create($request->all());
+        
         return redirect()->route('supplier.index');
     }
 
