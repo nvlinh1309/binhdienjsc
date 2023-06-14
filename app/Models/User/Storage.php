@@ -14,7 +14,7 @@ class Storage extends Model
     protected $table = 'storages';
 
     protected $fillable = [
-        'name', 'address'
+        'name', 'address', 'code'
     ];
 
 }

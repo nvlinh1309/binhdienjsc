@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\User\Storage;
 use Illuminate\Http\Request;
+use PDF;
 
 class StorageController extends Controller
 {
@@ -96,5 +97,16 @@ class StorageController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function exportPDF()
+    {
+        // return "sdsd";
+        $data = Storage::get()->toArray();
+
+        $pdf = PDF::loadView('user.storage.exportPDF', compact('data'));
+        return $pdf->download('store'.date('YYYYmmdd').'.pdf');
+
+
     }
 }

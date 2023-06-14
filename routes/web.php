@@ -52,4 +52,5 @@ Route::middleware('auth')->group(function (){
     Route::resource('users', UsersController::class);
     Route::resource('user', UserController::class);
     Route::resource('brand', BrandController::class);
+    Route::get('store-export', [StorageController::class, 'exportPDF'])->name('store.export');
 });

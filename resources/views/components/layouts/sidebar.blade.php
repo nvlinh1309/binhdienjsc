@@ -106,14 +106,14 @@
               </li>
             </ul>
           </li>
-          {{-- <li class="nav-item">
-            <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
-              <i class="nav-icon fa fa-warehouse"></i>
-              <p>
-                Kho
-              </p>
-            </a>
-          </li> --}}
+            {{-- <li class="nav-item">
+                <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
+                <i class="nav-icon fa fa-warehouse"></i>
+                <p>
+                    Kho
+                </p>
+                </a>
+            </li> --}}
           <li class="nav-item {{ request()->is('user*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users-cog"></i>
