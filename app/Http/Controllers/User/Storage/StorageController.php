@@ -102,10 +102,27 @@ class StorageController extends Controller
     public function exportPDF()
     {
         // return "sdsd";
-        $data = Storage::get()->toArray();
+        $storages = Storage::get();
+        $rows = [];
+        foreach ($storages as $key => $value) {
+            $rows[] = [
+                $key+1,
+                $value->code,
+                $value->name,
+                $value->address
+            ];
+        }
+        
+        $data=[
+            'title'             =>  'DANH SÁCH KHO',
+            'count_record'      =>  'Tổng số kho: '.count($rows),
+            'columns'            =>  ['#', 'Mã kho', 'Tên kho', 'Địa chỉ'],
+            'rows'  => $rows
 
-        $pdf = PDF::loadView('user.storage.exportPDF', compact('data'));
-        return $pdf->download('store'.date('YYYYmmdd').'.pdf');
+        ];
+        
+        $pdf = PDF::loadView('components.layouts.exportPDF', compact('data'));
+        return $pdf->download('store'.date('YmdHms').'.pdf');
 
 
     }
