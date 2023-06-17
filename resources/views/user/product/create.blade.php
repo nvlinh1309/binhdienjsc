@@ -30,14 +30,6 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="barcode">Barcode</label>
-                                <input type="text" name="barcode" class="form-control" id="barcode"
-                                    placeholder="Nhập barcode...">
-                            </div>
-
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
                                 <label for="name">Tên sản phẩm</label>
                                 <input type="text" name="name" class="form-control" id="name"
                                     placeholder="Nhập tên sản phẩm...">
@@ -45,18 +37,31 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="brand_name">Thương hiệu</label>
-                                <input type="text" name="brand_name" class="form-control" id="brand_name"
-                                    placeholder="Nhập thương hiệu...">
+                                <label for="barcode">Barcode</label>
+                                <input type="text" name="barcode" class="form-control" id="barcode"
+                                    placeholder="Nhập barcode...">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="specification">Quy cách</label>
                                 <input type="text" name="specification" class="form-control" id="specification"
-                                    placeholder="Nhập địa chỉ...">
+                                    placeholder="Nhập quy cách...">
                             </div>
                         </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="brand_id">Chọn thương hiệu</label>
+                                <select class="form-control select2" name="brand_id"
+                                    data-placeholder="Chọn thương hiệu" id="brand_id" style="width: 100%;" >
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+
                     </div>
 
                 </div>

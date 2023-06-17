@@ -53,17 +53,20 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="brand_name">Thương hiệu</label>
-                                <input type="text" name="brand_name" value="{{ $data->brand_name }}" class="form-control"
-                                    id="brand_name" placeholder="Nhập thương hiệu...">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
                                 <label for="specification">Quy cách</label>
                                 <input type="text" value="{{ $data->specification }}"
                                     name="specification" class="form-control" id="specification" placeholder="Nhập quy cách...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="brand_id">Chọn thương hiệu</label>
+                                <select class="form-control select2" name="brand_id"
+                                    data-placeholder="Chọn thương hiệu" id="brand_id" style="width: 100%;" >
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}" {{ $brand->id == $data->brand_id?"selected":"" }}>{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -71,7 +74,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <a href="{{ route('product.index') }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ url()->previous() }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu lại</button>
                 </div>
             </form>

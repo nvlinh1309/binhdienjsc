@@ -96,7 +96,10 @@ class StorageController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Storage::find($id);
+        $name = $data->name;
+        $data->delete();
+        return redirect()->back()->with(['success' => 'Đã xoá thành công kho '.$name]);
     }
 
     public function exportPDF()
@@ -112,7 +115,7 @@ class StorageController extends Controller
                 $value->address
             ];
         }
-        
+
         $data=[
             'title'             =>  'DANH SÁCH KHO',
             'count_record'      =>  'Tổng số kho: '.count($rows),
@@ -120,7 +123,7 @@ class StorageController extends Controller
             'rows'  => $rows
 
         ];
-        
+
         $pdf = PDF::loadView('components.layouts.exportPDF', compact('data'));
         return $pdf->download('store'.date('YmdHms').'.pdf');
 

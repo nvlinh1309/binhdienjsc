@@ -59,9 +59,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->code }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->address }}</td>

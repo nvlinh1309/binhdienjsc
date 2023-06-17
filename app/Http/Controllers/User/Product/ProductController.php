@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\User\Product\StoreProductRequest;
 use App\Models\User\Product;
+use App\Models\User\Brand;
 
 class ProductController extends Controller
 {
@@ -38,7 +39,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('user.product.create');
+        $brands = Brand::get();
+        return view('user.product.create', compact('brands'));
     }
 
     /**
@@ -61,7 +63,8 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return view('user.storage.show');
+        $data = Product::find($id);
+        return view('user.product.show', compact('data'));
     }
 
     /**
@@ -72,8 +75,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
+        $brands = Brand::get();
         $data = Product::find($id);
-        return view('user.product.edit', compact('data'));
+        return view('user.product.edit', compact('data', 'brands'));
     }
 
     /**

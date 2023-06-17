@@ -58,19 +58,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->barcode }}</td>
                                 <td>{{ $value->name }}</td>
-                                <td>{{ $value->brand_name }}</td>
+                                <td>{{ $value->brand->name }}</td>
                                 <td>{{ $value->specification }} </td>
                                 <td>
                                     <form method="POST" action="{{ route('product.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('product.edit', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
+                                        <a href="{{ route('product.show', $value->id) }}"
+                                            class="btn btn-xs btn-warning">Xem</a>
                                         <span class="btn btn-xs btn-danger delete"
                                             data-id="{{ $value->name }}">Xoá</span>
                                     </form>
