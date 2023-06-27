@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UsersController extends Controller
 {
@@ -24,7 +26,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -35,7 +37,7 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -81,5 +83,26 @@ class UsersController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function indexRaP()
+    {
+        // $role = Role::create(['name' => 'Quản trị']);
+        // $permissions = ['access', 'create', 'update', 'delete'];
+        // foreach ($permissions as $key => $value) {
+        //     $permission = Permission::create(
+        //         ['name' => $value]);
+        //     $permission->assignRole($role);
+        // }
+        
+        
+        $data = Role::with('permissions')->paginate(10);
+
+        return view('user.user.roleandpermission.index', compact('data'));
+    }
+
+    public function storeRaP(Request $request)
+    {
+        
     }
 }
