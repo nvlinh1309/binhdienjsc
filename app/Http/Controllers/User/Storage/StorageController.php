@@ -61,7 +61,10 @@ class StorageController extends Controller
      */
     public function show($id)
     {
-        $data = Storage::find($id);
+        $data = Storage::with('products')->find($id);
+        if (!$data) {
+            abort(404);
+        }
         return view('user.storage.show', compact('data'));
     }
 
@@ -73,7 +76,8 @@ class StorageController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Storage::find($id);
+        return view('user.storage.edit', compact('data'));
     }
 
     /**
@@ -85,7 +89,10 @@ class StorageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Storage::find($id);
+        $data->update($request->all());
+        $name = $data->name;
+        return redirect()->route('store.show',$id)->with(['success' => 'Thông tin kho '.$name.' đã được cập nhật!!!']);
     }
 
     /**
@@ -102,6 +109,16 @@ class StorageController extends Controller
         return redirect()->back()->with(['success' => 'Đã xoá thành công kho '.$name]);
     }
 
+    public function warehouseReceipt() {
+        // Nhap kho
+
+    }
+
+    public function warehouseExport() {
+        // Xuat kho
+
+    }
+
     public function exportPDF()
     {
         // return "sdsd";
@@ -112,19 +129,21 @@ class StorageController extends Controller
                 $key+1,
                 $value->code,
                 $value->name,
-                $value->address
+                $value->address,
+                $value->products->count(),
+                '<a href="'.route('store.show', $value->id).'">Xem</a>'
             ];
         }
 
         $data=[
             'title'             =>  'DANH SÁCH KHO',
             'count_record'      =>  'Tổng số kho: '.count($rows),
-            'columns'            =>  ['#', 'Mã kho', 'Tên kho', 'Địa chỉ'],
+            'columns'            =>  ['#', 'Mã kho', 'Tên kho', 'Địa chỉ', 'Tổng sản phẩm', 'Chi tiết'],
             'rows'  => $rows
 
         ];
 
-        $pdf = PDF::loadView('components.layouts.exportPDF', compact('data'));
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
         return $pdf->download('store'.date('YmdHms').'.pdf');
 
 

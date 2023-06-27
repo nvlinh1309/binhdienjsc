@@ -54,8 +54,15 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="specification">Quy cách</label>
-                                <input type="text" value="{{ $data->specification }}"
+                                <input type="number" value="{{ $data->specification }}"
                                     name="specification" class="form-control" id="specification" placeholder="Nhập quy cách...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="unit">Đơn vị tính</label>
+                                <input type="text" value="{{ $data->unit }}"
+                                    name="unit" class="form-control" id="unit" placeholder="Nhập đơn vị tính...">
                             </div>
                         </div>
                         <div class="col-sm-6">

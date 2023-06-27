@@ -8,7 +8,7 @@
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('supplier.index') }}">Nhà cung cấp</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('supplier.index') }}">Danh sách</a></li>
                             <li class="breadcrumb-item active">{{ $data->name }}</li>
                         </ol>
                     </div><!-- /.col -->
@@ -70,7 +70,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <a href="{{ route('supplier.index') }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('supplier.show', $data->id) }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu lại</button>
                 </div>
             </form>

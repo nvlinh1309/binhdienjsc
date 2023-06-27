@@ -8,7 +8,7 @@
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('supplier.index') }}">Nhà cung cấp</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('supplier.index') }}">Danh sách</a></li>
                             <li class="breadcrumb-item active">Thêm nhà cung cấp</li>
                         </ol>
                     </div><!-- /.col -->

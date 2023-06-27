@@ -38,7 +38,7 @@
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
                     <a href="{{ route('store.export') }}">
-                    <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    <button class=" btn btn-sm btn-success" title="Xuất file PDF"><i class="fas fa-download"></i></button>
                     </a>
                 </h3>
 

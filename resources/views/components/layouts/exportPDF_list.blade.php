@@ -49,7 +49,7 @@
             @foreach ($data['rows'] as $key => $value)
                 <tr>
                     @foreach ($value as $key => $value)
-                        <td>{{ $value }}</td>
+                        <td>{!! $value !!}</td>
                     @endforeach
                 </tr>
             @endforeach

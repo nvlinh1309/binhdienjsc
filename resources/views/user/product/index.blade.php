@@ -53,7 +53,8 @@
                             <th>Barcode</th>
                             <th>Tên SP</th>
                             <th>Thương hiệu</th>
-                            <th>Quy cách</th>
+                            <th>Quy cách đóng gói</th>
+                            <th>Đơn vị tính</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
                     </thead>
@@ -65,6 +66,7 @@
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->brand->name }}</td>
                                 <td>{{ $value->specification }} </td>
+                                <td>{{ $value->unit }} </td>
                                 <td>
                                     <form method="POST" action="{{ route('product.destroy', $value->id) }}">
                                         {{ csrf_field() }}

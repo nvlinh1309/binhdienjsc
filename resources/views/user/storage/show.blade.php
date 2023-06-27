@@ -17,12 +17,21 @@
         </div>
     @stop()
     <div class="col-md-12">
+        @if (\Session::has('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {!! \Session::get('success') !!}
+            </div>
+        @endif
+    </div>
+    <div class="col-md-12">
         <div class="callout callout-info">
             <h5><i class="fas fa-info"></i> Thông tin</h5>
             <div><b>Mã:</b> {{ $data->code }}</div>
             <div><b>Tên kho:</b> {{ $data->name }}</div>
             <div><b>Địa chỉ:</b> {{ $data->address }}</div>
             <div><b>Ngày tạo:</b> {{ $data->created_at }}</div>
+            <div><b>Ngày cập nhật cuối cùng:</b> {{ $data->updated_at ?? $data->created_at }}</div>
             <br>
             {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
             <button class="btn btn-warning" onclick="window.location='{{ route('store.edit', $data->id) }}'">Chỉnh
@@ -55,17 +64,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach ($data->products as $key=>$value)
                         <tr>
-                            <td>2</td>
-                            <td>K003</td>
-                            <td>Kho001</td>
-                            <td>Quang Sang</td>
-                            <td>Phạm Ngũ Lão - Quận 1 - Hồ Chí Minh</td>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $value->barcode }}</td>
+                            <td>{{ $value->name }}</td>
+                            <td>{{ $value->brand->name }}</td>
+                            <td>{{ $value->quantity }}</td>
                             <td>
                                 <a href="http://127.0.0.1:8000/store/1" class="btn btn-xs btn-warning">Chi tiêt</a>
                             </td>
                         </tr>
-
+                        @endforeach
                     </tbody>
                 </table>
             </div>

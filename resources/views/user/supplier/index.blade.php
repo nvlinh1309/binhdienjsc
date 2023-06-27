@@ -9,7 +9,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             {{-- <li class="breadcrumb-item"><a href="{{ route('supplier.index') }}">Nhà cung cấp</a></li> --}}
-                            <li class="breadcrumb-item active">Nhà cung cấp</li>
+                            <li class="breadcrumb-item active">Danh sách</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -58,9 +58,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->supplier_code }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->address }}</td>
@@ -69,8 +69,8 @@
                                     <form method="POST" action="{{ route('supplier.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('supplier.edit', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
+                                        <a href="{{ route('supplier.show', $value->id) }}"
+                                            class="btn btn-xs btn-warning">Xem</a>
                                         <span class="btn btn-xs btn-danger delete"
                                             data-id="{{ $value->name }}">Xoá</span>
                                     </form>

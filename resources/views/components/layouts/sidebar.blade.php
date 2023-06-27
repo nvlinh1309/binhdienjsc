@@ -43,14 +43,31 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{ route('order.index') }}" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-file-alt"></i>
+
+          <li class="nav-item {{ request()->is('order*') ? 'menu-open' : '' }}">
+            <a href="#" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-alt"></i>
               <p>
                 Đơn hàng
+                <i class="fas fa-angle-left right"></i>
               </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('order.index') }}" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Đơn bán (Xuất kho)</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link ">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Đơn mua (Nhập kho)</p>
+                </a>
+              </li>
+            </ul>
           </li>
+
           <li class="nav-item">
             <a href="{{ route('product.index') }}" class="nav-link {{ request()->is('product*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-archive"></i>
@@ -83,37 +100,14 @@
               </p>
             </a>
           </li>
-          <li class="nav-item {{ request()->is('store*') ? 'menu-open' : '' }}">
-            <a href="#" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-warehouse"></i>
+          <li class="nav-item">
+            <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-warehouse"></i>
               <p>
                 Kho
-                <i class="fas fa-angle-left right"></i>
               </p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Danh sách</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link ">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Nhập/Xuất kho</p>
-                </a>
-              </li>
-            </ul>
           </li>
-            {{-- <li class="nav-item">
-                <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
-                <i class="nav-icon fa fa-warehouse"></i>
-                <p>
-                    Kho
-                </p>
-                </a>
-            </li> --}}
           <li class="nav-item {{ request()->is('user*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users-cog"></i>

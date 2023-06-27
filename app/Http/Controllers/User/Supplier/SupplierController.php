@@ -53,7 +53,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         Supplier::create($request->all());
-        
+
         return redirect()->route('supplier.index');
     }
 
@@ -65,7 +65,11 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Supplier::find($id);
+        if (!$data) {
+            abort(404);
+        }
+        return view('user.supplier.show', compact('data'));
     }
 
     /**
@@ -92,7 +96,7 @@ class SupplierController extends Controller
         $data = Supplier::find($id);
         $data->update($request->all());
         $name = $data->name;
-        return redirect()->back()->with(['success' => 'Thông tin nhà cung cấp '.$name.' đã được cập nhật!!!']);
+        return redirect()->route('supplier.show',$id)->with(['success' => 'Thông tin nhà cung cấp '.$name.' đã được cập nhật!!!']);
 
     }
 

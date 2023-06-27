@@ -45,8 +45,15 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="specification">Quy cách</label>
-                                <input type="text" name="specification" class="form-control" id="specification"
+                                <input type="number" name="specification" class="form-control" id="specification"
                                     placeholder="Nhập quy cách...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="unit">Đơn vị tính</label>
+                                <input type="text" name="unit" class="form-control" id="unit"
+                                    placeholder="Nhập đơn vị tính...">
                             </div>
                         </div>
                         <div class="col-sm-6">
