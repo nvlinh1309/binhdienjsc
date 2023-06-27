@@ -96,7 +96,7 @@ class UsersController extends Controller
         // }
         
         
-        $data = Role::with('permissions')->get();
+        $data = Role::with('permissions')->paginate(10);
 
         return view('user.user.roleandpermission.index', compact('data'));
     }

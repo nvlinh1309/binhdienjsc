@@ -37,29 +37,18 @@
             <div class="card-body p-0">
                 <table class="table table-bordered">
                     <thead>
-                        <tr style="text-align: center;">
-                            <th rowspan="2" style="width: 10px;  vertical-align: middle;">#</th>
-                            <th rowspan="2" style=" vertical-align: middle;">Vai trò</th>
-                            <th colspan="4">Quyền</th>
-                        </tr>
-                        <tr style="text-align: center">
-                            <th>Truy cập</th>
-                            <th>Tạo mới</th>
-                            <th>Cập nhật</th>
-                            <th>Xóa</th>
+                        <tr class="text-center">
+                            <th style="width:60px">#</th>
+                            <th>Vai trò</th>
+                            <th>Chi tiết</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->display_name }}</td>
-                                <td style="text-align: center">
-                                    <input type="checkbox" name="my-checkbox" checked data-bootstrap-switch data-off-color="danger" data-on-color="success">
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><a href="#">Xem</a></td>
                             </tr>
                         @endforeach
 
@@ -67,22 +56,8 @@
                 </table>
             </div>
             <!-- /.card-body -->
-            <div class="card-footer clearfix">
-                <div class="float-right">
-                    <button class="btn btn-primary">Save</button>
-                </div>
-              </div>
+           
         </div>
     </div>
-
-    @section('script')
-    <script>
-        $(function(s) {
-            $("input[data-bootstrap-switch]").each(function(){
-                $(this).bootstrapSwitch('state', $(this).prop('checked'));
-            })
-        })
-    </script>
-    @stop()
 </x-layouts.main>
     
