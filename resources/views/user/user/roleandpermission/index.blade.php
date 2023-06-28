@@ -48,7 +48,7 @@
                             <tr>
                                 <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->display_name }}</td>
-                                <td><a href="#">Xem</a></td>
+                                <td class="text-center"><a href="{{ route('users.showRaP', $value->id) }}">Xem</a></td>
                             </tr>
                         @endforeach
 

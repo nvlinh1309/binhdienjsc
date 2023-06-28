@@ -58,4 +58,5 @@ Route::middleware('auth')->group(function (){
 
     Route::resource('users', UsersController::class);
     Route::get('role-and-permission', [UsersController::class, 'indexRaP'])->name('users.indexRaP');
+    Route::get('role-and-permission/view/{id}', [UsersController::class, 'showRaP'])->name('users.showRaP');
 });

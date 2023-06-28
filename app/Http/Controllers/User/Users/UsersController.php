@@ -101,6 +101,15 @@ class UsersController extends Controller
         return view('user.user.roleandpermission.index', compact('data'));
     }
 
+    public function showRaP($id) 
+    {
+        $data = Role::with('permissions')->find($id);
+        if (!$data) {
+            abort(404);
+        }
+        return view('user.user.roleandpermission.show', compact('data'));
+    }
+
     public function storeRaP(Request $request)
     {
         
