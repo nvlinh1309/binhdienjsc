@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User\Supplier;
 use ViKon\Diff\Diff;
 use App\Models\User\SupplierHistory;
+use PDF;
 
 class SupplierController extends Controller
 {
@@ -112,6 +113,36 @@ class SupplierController extends Controller
         $name = $data->name;
         $data->delete();
         return redirect()->back()->with(['success' => 'Đã xoá nhà cung cấp '.$name]);
+
+    }
+
+    public function exportPDF()
+    {
+        // return "sdsd";
+        $suppliers = Supplier::get();
+        $rows = [];
+        foreach ($suppliers as $key => $value) {
+            $rows[] = [
+                $key+1,
+                $value->supplier_code,
+                $value->name,
+                $value->address,
+                $value->tax_code,
+                '<a href="'.route('supplier.show', $value->id).'">Xem</a>'
+            ];
+        }
+
+        $data=[
+            'title'             =>  'DANH SÁCH NHÀ CUNG CẤP',
+            'count_record'      =>  'Tổng số nhà cung cấp: '.count($rows),
+            'columns'            =>  ['#', 'Mã NCC', 'Tên công ty', 'Địa chỉ', 'Mã số thuế', 'Chi tiết'],
+            'rows'  => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
+        return $pdf->download('suppliers'.date('YmdHms').'.pdf');
+
 
     }
 }

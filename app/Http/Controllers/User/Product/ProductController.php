@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\User\Product\StoreProductRequest;
 use App\Models\User\Product;
 use App\Models\User\Brand;
+use PDF;
 
 class ProductController extends Controller
 {
@@ -108,5 +109,37 @@ class ProductController extends Controller
         $name = $data->name;
         $data->delete();
         return redirect()->back()->with(['success' => 'Đã xoá sản phẩm '.$name]);
+    }
+
+    public function exportPDF()
+    {
+        // return "sdsd";
+        $products = Product::with('brand')->get();
+        $rows = [];
+        ['name', 'barcode', 'brand_name', 'specification'];
+        foreach ($products as $key => $value) {
+            $rows[] = [
+                $key+1,
+                $value->barcode,
+                $value->name,
+                $value->brand->name,
+                $value->specification,
+                $value->unit,
+                '<a href="'.route('product.show', $value->id).'">Xem</a>'
+            ];
+        }
+
+        $data=[
+            'title'             =>  'DANH SÁCH SẢN PHẨM',
+            'count_record'      =>  'Tổng số sản phẩm: '.count($rows),
+            'columns'            =>  ['#', 'Barcode', 'Tên sản phẩm', 'Thương hiệu', 'Quy cách đóng gói', 'ĐVT', 'Chi tiết'],
+            'rows'  => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
+        return $pdf->download('products'.date('YmdHms').'.pdf');
+
+
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User\Brand;
 use App\Models\User\Supplier;
 use Illuminate\Http\Request;
+use PDF;
 
 class BrandController extends Controller
 {
@@ -64,9 +65,13 @@ class BrandController extends Controller
      * @param  \App\Models\User\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function show(Brand $brand)
+    public function show($id)
     {
-        //
+        $data = Brand::with('suppliers')->find($id);
+        if (!$data) {
+            abort(404);
+        }
+        return view('user.brand.show', compact('data'));
     }
 
     /**
@@ -97,7 +102,7 @@ class BrandController extends Controller
         $data->update($request->all());
         $data->suppliers()->sync($supplier_ids);
         $name = $data->name;
-        return redirect()->back()->with(['success' => 'Thông tin sản phẩm '.$name.' đã được cập nhật!!!']);
+        return redirect()->route('brand.show', $id)->with(['success' => 'Thông tin thương hiệu '.$name.' đã được cập nhật!!!']);
     }
 
     /**
@@ -112,5 +117,37 @@ class BrandController extends Controller
         $name = $data->name;
         $data->delete();
         return redirect()->back()->with(['success' => 'Đã xoá thương hiệu '.$name]);
+    }
+
+    public function exportPDF()
+    {
+        // return "sdsd";
+        $brans = Brand::with('suppliers')->get();
+        $rows = [];
+        foreach ($brans as $key => $value) {
+            $suppliers = null;
+            foreach ($value->suppliers as $supplier) {
+                $suppliers = $suppliers."<a href='".route('supplier.show', $supplier->id)."'>- ".$supplier->name."</a><br>";
+            }
+            $rows[] = [
+                $key+1,
+                $value->name,
+                $suppliers,
+                '<a href="'.route('brand.show', $value->id).'">Xem</a>'
+            ];
+        }
+
+        $data=[
+            'title'             =>  'DANH SÁCH THƯƠNG HIỆU',
+            'count_record'      =>  'Tổng số thương hiệu: '.count($rows),
+            'columns'            =>  ['#', 'Tên thương hiệu', 'Nhà cung cấp', 'Chi tiết'],
+            'rows'  => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
+        return $pdf->download('brands'.date('YmdHms').'.pdf');
+
+
     }
 }

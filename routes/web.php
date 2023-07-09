@@ -45,13 +45,21 @@ Route::match(['get', 'post'], '/forgot-password', function(){
 Route::middleware('auth')->group(function (){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
+
     Route::resource('product', ProductController::class);
+    Route::get('product-export', [ProductController::class, 'exportPDF'])->name('product.export');
+
     Route::resource('supplier', SupplierController::class);
+    Route::get('supplier-export', [SupplierController::class, 'exportPDF'])->name('supplier.export');
+
     Route::resource('customer', CustomerController::class);
-    
-    
+    Route::get('customer-export', [CustomerController::class, 'exportPDF'])->name('customer.export');
+
     Route::resource('user', UserController::class);
+
     Route::resource('brand', BrandController::class);
+    Route::get('brand-export', [BrandController::class, 'exportPDF'])->name('brand.export');
+
 
     Route::resource('store', StorageController::class);
     Route::get('store-export', [StorageController::class, 'exportPDF'])->name('store.export');

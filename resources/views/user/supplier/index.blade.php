@@ -37,7 +37,9 @@
                     <a href="{{ route('supplier.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
+                    <a href="{{ route('supplier.export') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    </a>
                 </h3>
 
                 <div class="card-tools">

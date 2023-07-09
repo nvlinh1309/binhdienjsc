@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Customer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User\Customer;
+use PDF;
 
 class CustomerController extends Controller
 {
@@ -104,5 +105,36 @@ class CustomerController extends Controller
         $name = $data->name;
         $data->delete();
         return redirect()->back()->with(['success' => 'Đã xoá khách hàng '.$name]);
+    }
+
+    public function exportPDF()
+    {
+        // return "sdsd";
+        $customers = Customer::get();
+        $rows = [];
+        foreach ($customers as $key => $value) {
+            $rows[] = [
+                $key+1,
+                $value->code,
+                $value->name,
+                $value->address,
+                $value->tax,
+                $value->contact['email']."</br>".$value->contact['phone'],
+                '<a href="'.route('supplier.show', $value->id).'">Xem</a>'
+            ];
+        }
+
+        $data=[
+            'title'             =>  'DANH SÁCH NHÀ CUNG CẤP',
+            'count_record'      =>  'Tổng số nhà cung cấp: '.count($rows),
+            'columns'            =>  ['#', 'Mã KH', 'Tên', 'Địa chỉ', 'Mã số thuế', 'Liên hệ', 'Chi tiết'],
+            'rows'  => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'))->setPaper('a4', 'landscape');
+        return $pdf->download('customers'.date('YmdHms').'.pdf');
+
+
     }
 }

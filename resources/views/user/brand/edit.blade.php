@@ -61,7 +61,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <a href="{{ route('brand.index') }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('brand.show', $data->id) }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu lại</button>
                 </div>
             </form>

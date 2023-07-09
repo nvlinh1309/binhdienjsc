@@ -32,7 +32,9 @@
                     <a href="{{ route('brand.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
+                    <a href="{{ route('brand.export') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    </a>
                 </h3>
 
                 <div class="card-tools">
@@ -51,9 +53,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>
                                     @foreach ($value->suppliers as $supplier)
@@ -65,8 +67,8 @@
                                     <form method="POST" action="{{ route('brand.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('brand.edit', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
+                                        <a href="{{ route('brand.show', $value->id) }}"
+                                            class="btn btn-xs btn-warning">Xem</a>
                                         <span class="btn btn-xs btn-danger delete"
                                             data-id="{{ $value->name }}">Xoá</span>
                                     </form>

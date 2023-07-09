@@ -33,7 +33,9 @@
                     <a href="{{ route('customer.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
+                    <a href="{{ route('customer.export') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    </a>
                 </h3>
 
                 <div class="card-tools">
@@ -57,9 +59,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($customers as $customer)
+                        @foreach ($customers as $key=>$customer)
                             <tr>
-                                <td>{{ $customer->id }}</td>
+                                <td>{{ ($customers->currentpage()-1) * $customers->perpage() + $key + 1 }}</td>
                                 <td>{{ $customer->code }}</td>
                                 <td>{{ $customer->name }}</td>
                                 <td>{{ $customer->tax_code }}</td>
