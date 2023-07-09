@@ -21,8 +21,9 @@ class ProductSeeder extends Seeder
              Product::insert([
                 'name' => $fake->word,
                 'barcode' => $fake->ean8,
-                'brand_name' => $fake->company,
-                'specification' => "10 (kg)"
+                'brand_id' => $fake->company,
+                'specification' => "10",
+                'unit'  => "kg"
              ]);
         }
     }
