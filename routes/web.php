@@ -65,6 +65,8 @@ Route::middleware('auth')->group(function (){
     Route::get('store-export', [StorageController::class, 'exportPDF'])->name('store.export');
 
     Route::resource('users', UsersController::class);
+    Route::get('users-export', [UsersController::class, 'exportPDF'])->name('users.export');
+
     Route::get('role-and-permission', [UsersController::class, 'indexRaP'])->name('users.indexRaP');
     Route::get('role-and-permission/view/{id}', [UsersController::class, 'showRaP'])->name('users.showRaP');
 });

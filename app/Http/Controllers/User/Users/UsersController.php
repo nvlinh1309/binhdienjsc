@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\User\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+
 
 class UsersController extends Controller
 {
@@ -14,9 +16,21 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.user.index');
+        $data = User::with('roles')->orderBy('id', 'DESC');
+        if (isset($request->search)) {
+            $search = $request->search;
+            $columns = ['name', 'email'];
+            $data->where(function ($subQuery) use ($columns, $search){
+                foreach ($columns as $column) {
+                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                }
+                return $subQuery;
+              });
+        }
+        $data = $data->paginate(5);
+        return view('user.user.index', compact('data'));
     }
 
     /**
@@ -26,7 +40,8 @@ class UsersController extends Controller
      */
     public function create()
     {
-
+        $roles = Role::get();
+        return view('user.user.create', compact('roles'));
     }
 
     /**
@@ -48,7 +63,11 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = User::with('roles')->find($id);
+        if (!$data) {
+            abort(404);
+        }
+        return view('user.user.show', compact('data'));
     }
 
     /**
@@ -59,7 +78,12 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $roles = Role::get();
+        $data = User::find($id);
+        if (!$data) {
+            abort(404);
+        }
+        return view('user.user.edit', compact('data', 'roles'));
     }
 
     /**
@@ -71,7 +95,13 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = User::find($id);
+        if (!$data) {
+            abort(404);
+        }
+        $data->assignRole($request->role);
+        $data->update($request->all());
+        return redirect()->route('users.show',$id)->with(['success' => 'Thông tin người dùng '.$data->name.' đã được cập nhật!!!']);
     }
 
     /**
@@ -122,5 +152,11 @@ class UsersController extends Controller
     public function storeRaP(Request $request)
     {
 
+    }
+
+
+    public function exportPDF()
+    {
+        return "Tính năng đang phát triển";
     }
 }
