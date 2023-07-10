@@ -5,9 +5,13 @@ namespace App\Http\Controllers\User\Users;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-
+use Illuminate\Support\Str;
+use Mail;
+use App\Mail\CreateAccount;
+use Illuminate\Support\Facades\Mail as FacadesMail;
 
 class UsersController extends Controller
 {
@@ -52,6 +56,18 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
+        $password = Str::random(10);
+        $request['password'] = Hash::make($password);
+
+        $data = [
+            'name'  =>  $request->name,
+            'email' =>  $request->email,
+            'password'  =>  $password
+        ];
+        Mail::to($request->email)->send(new CreateAccount($data));
+
+        User::create($request->all())->assignRole($request->role);
+        return redirect()->route('users.index');
 
     }
 

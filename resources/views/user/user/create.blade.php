@@ -31,22 +31,21 @@
                 <h3 class="card-title">Thêm người dùng mới</h3>
             </div>
 
-            <form id="update" action="{{ route('users.update', $data->id) }}" method="POST">
+            <form id="quickForm" action="{{ route('users.store') }}" method="POST">
                 @csrf
-                @method('PATCH')
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="name">Họ tên</label>
-                                <input type="text" required name="name"  value="{{ $data->name }}" required class="form-control" id="name"
+                                <input type="text" required name="name"  value="" required class="form-control" id="name"
                                     placeholder="Nhập họ tên...">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="text" readonly name="email" value="{{ $data->email }}" required class="form-control"
+                                <input type="email" required name="email" value="" required class="form-control"
                                     id="email" placeholder="Nhập email...">
                             </div>
                         </div>
@@ -57,7 +56,7 @@
                                     data-placeholder="Chọn vai trò" id="role" style="width: 100%;" >
                                     <option value=""></option>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}" {{ $role->name == ($data->getRoleNames()[0]??"")?"selected":"" }}>{{ $role->display_name }}</option>
+                                        <option value="{{ $role->name }}">{{ $role->display_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -68,7 +67,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <a href="{{ route('users.show', $data->id) }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('users.index') }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu lại</button>
                 </div>
             </form>
