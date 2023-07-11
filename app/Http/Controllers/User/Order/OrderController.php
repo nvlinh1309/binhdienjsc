@@ -97,4 +97,20 @@ class OrderController extends Controller
     {
         //
     }
+
+
+    public function stockInIndex(Request $request)
+    {
+        return view('user.order.stock-in.index');
+    }
+
+    public function stockInCreate()
+    {
+        return view('user.order.stock-in.create');
+    }
+
+    public function stockInStore(Request $request)
+    {
+        dd($request->all());
+    }
 }

@@ -44,7 +44,7 @@
             </a>
           </li>
 
-          <li class="nav-item {{ request()->is('order*') ? 'menu-open' : '' }}">
+          <li class="nav-item {{ request()->is('order*') || request()->is('stock-in*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file-alt"></i>
               <p>
@@ -60,7 +60,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link ">
+                <a href="{{ route('stock-in.index') }}" class="nav-link {{ request()->is('stock-in*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Đơn mua (Nhập kho)</p>
                 </a>
