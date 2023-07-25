@@ -67,6 +67,13 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="unit">Giá sản phẩm</label>
+                                <input type="text" value="{{ $data->price }}"
+                                    name="price" class="form-control" id="price" placeholder="Nhập giá sản phẩm...">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label class="brand_id">Chọn thương hiệu</label>
                                 <select class="form-control select2" name="brand_id"
                                     data-placeholder="Chọn thương hiệu" id="brand_id" style="width: 100%;" >

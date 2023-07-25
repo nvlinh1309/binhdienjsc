@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/template/admin/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="/template/admin/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/template/admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
 
     <script src="/template/admin/plugins/jquery/jquery.min.js"></script>
@@ -41,12 +43,15 @@
     <script src="/template/admin/dist/js/adminlte.js"></script>
     <script src="/template/admin/plugins/chart.js/Chart.min.js"></script>
     <script src="/template/admin//plugins/select2/js/select2.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
     {{-- <script src="/template/admin/dist/js/demo.js"></script> --}}
     <script src="/template/admin/dist/js/pages/dashboard3.js"></script>
+    <!-- bootstrap datepicker -->
     {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
     <script>
-        $(function () {
-        //Initialize Select2 Elements
+        $(function() {
+            //Initialize Select2 Elements
             $('.select2').select2({
                 theme: 'bootstrap4'
             })

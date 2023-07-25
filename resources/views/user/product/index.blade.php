@@ -56,6 +56,7 @@
                             <th>Tên SP</th>
                             <th>Thương hiệu</th>
                             <th>Quy cách đóng gói</th>
+                            <th>Giá sản phẩm</th>
                             <th>Đơn vị tính</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
@@ -68,6 +69,7 @@
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->brand->name }}</td>
                                 <td>{{ $value->specification }} </td>
+                                <td>{{ number_format($value->price) }} </td>
                                 <td>{{ $value->unit }} </td>
                                 <td>
                                     <form method="POST" action="{{ route('product.destroy', $value->id) }}">

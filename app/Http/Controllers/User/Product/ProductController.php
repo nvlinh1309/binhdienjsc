@@ -124,6 +124,7 @@ class ProductController extends Controller
                 $value->name,
                 $value->brand->name,
                 $value->specification,
+                number_format($value->price),
                 $value->unit,
                 '<a href="'.route('product.show', $value->id).'">Xem</a>'
             ];
@@ -132,7 +133,7 @@ class ProductController extends Controller
         $data=[
             'title'             =>  'DANH SÁCH SẢN PHẨM',
             'count_record'      =>  'Tổng số sản phẩm: '.count($rows),
-            'columns'            =>  ['#', 'Barcode', 'Tên sản phẩm', 'Thương hiệu', 'Quy cách đóng gói', 'ĐVT', 'Chi tiết'],
+            'columns'            =>  ['#', 'Barcode', 'Tên sản phẩm', 'Thương hiệu', 'Quy cách đóng gói', 'Giá sản phẩm', 'ĐVT', 'Chi tiết'],
             'rows'  => $rows
 
         ];

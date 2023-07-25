@@ -41,46 +41,51 @@
                 </h3>
 
                 <div class="card-tools">
-                    {{-- {{ $data->links('vendor.pagination.default') }} --}}
+                    {{ $data->links('vendor.pagination.default') }}
                 </div>
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
-                {{-- <table class="table">
+                <table class="table">
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>Mã đơn hàng</th>
-                            <th>Khách hàng</th>
+                            <th>Mã Nhập kho</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Kho hàng</th>
                             <th>Ngày tạo đơn</th>
-                            <th>Hình thức thanh toán</th>
                             <th>Trạng thái</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        <?php $num = 1;?>
+                        @foreach ($data as $key=>$value)
                             <tr>
-                                <td>{{ $value->order_code }}</td>
-                                <td>{{ $value->customer_id }}</td>
-                                <td>{{ $value->created_at }}</td>
-                                <td>{{ $value->payment_method }}</td>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
+                                <td>{{ $value->goods_receipt_code  }}</td>
+                                <td>{{ $value->supplier->name }}</td>
+                                <td>{{ $value->storage->name }}</td>
+                                <td>{{ $value->receipt_date }}</td>
                                 <td>{{ $value->status }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('order.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('order.edit', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
                                         <span class="btn btn-xs btn-danger delete"
                                             data-id="{{ $value->order_code }}">Xoá</span>
                                     </form>
+                                    <a href="{{ route('stock-in.price', $value->id) }}"
+                                            class="btn btn-xs btn-success">Chi tiết</a>
+                                    {{-- <a href="{{ route('instock.export', $value->id) }}"
+                                            class="btn btn-xs btn-success">Phiếu nhập kho</a> --}}
                                 </td>
                             </tr>
+                            <?php $num++;?>
                         @endforeach
 
                     </tbody>
-                </table> --}}
+                </table> 
             </div>
             <!-- /.card-body -->
         </div>

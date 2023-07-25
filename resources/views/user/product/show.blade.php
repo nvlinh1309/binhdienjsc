@@ -23,6 +23,7 @@
             <div><b>Barcode:</b> {{ $data->barcode }}</div>
             <div><b>Thương hiệu:</b> {{ $data->brand->name }}</div>
             <div><b>Quy cách đóng gói:</b> {{ $data->specification }} ({{$data->unit}})</div>
+            <div><b>Giá sản phẩm:</b> {{ number_format($data->price) }}</div>
             <div><b>Ngày tạo:</b> {{ $data->created_at }}</div>
             <hr>
             <div><b>Tồn kho:</b> 0</div>

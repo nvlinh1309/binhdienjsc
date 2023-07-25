@@ -15,7 +15,7 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'name', 'brand_id', 'barcode', 'specification', 'unit'
+        'name', 'brand_id', 'barcode', 'specification', 'unit', 'price'
     ];
 
     public function brand()

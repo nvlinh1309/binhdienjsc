@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function (){
     Route::resource('order', OrderController::class);
 
     Route::name('stock-in.')->prefix('stock-in')->group(function() {
+        Route::get('/show/{id}', [OrderController::class, 'showInstock'])->name('price');
+        Route::post('/set-price', [OrderController::class, 'setPriceStore'])->name('price.store');
         Route::get('/', [OrderController::class, 'stockInIndex'])->name('index');
         Route::get('/create', [OrderController::class, 'stockInCreate'])->name('create');
         Route::post('/', [OrderController::class, 'stockInStore'])->name('store');
@@ -56,6 +58,7 @@ Route::middleware('auth')->group(function (){
         Route::delete('/{id}', [OrderController::class, 'stockInDelete'])->name('destroy');
     });
 
+    Route::get('instock-export/{id}', [OrderController::class, 'exportStockPDF'])->name('instock.export');
 
     Route::resource('product', ProductController::class);
     Route::get('product-export', [ProductController::class, 'exportPDF'])->name('product.export');
