@@ -69,11 +69,11 @@
                                 <td>{{ $value->receipt_date }}</td>
                                 <td>{{ $value->status }}</td>
                                 <td>
-                                    <form method="POST" action="{{ route('order.destroy', $value->id) }}">
+                                    <form method="POST" action="{{ route('stock-in.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
                                         <span class="btn btn-xs btn-danger delete"
-                                            data-id="{{ $value->order_code }}">Xoá</span>
+                                            data-id="{{ $value->goods_receipt_code }}">Xoá</span>
                                     </form>
                                     <a href="{{ route('stock-in.price', $value->id) }}"
                                             class="btn btn-xs btn-success">Chi tiết</a>
@@ -96,7 +96,7 @@
             $('.delete').on('click', function(e) {
                 var order_code = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng '+namorder_codee+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng '+order_code+'?')) {
                     $(e.target).closest('form').submit()
                 }
             });

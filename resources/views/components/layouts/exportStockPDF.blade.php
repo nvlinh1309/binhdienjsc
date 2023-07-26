@@ -219,7 +219,7 @@
                     <td class="center-text font-15">Số: {{ $goodReceiptManagement->goods_receipt_code }}</td>
                 </tr>
                 <tr>
-                    <td class="center-text font-12">Ngày: {{$goodReceiptManagement->receipt_date->format('d')}} tháng {{$goodReceiptManagement->receipt_date->format('m')}} năm {{$goodReceiptManagement->receipt_date->format('yy')}} </td>
+                    <td class="center-text font-12">Ngày: {{$goodReceiptManagement->receipt_date->format('d')}} tháng {{$goodReceiptManagement->receipt_date->format('m')}} năm {{$goodReceiptManagement->receipt_date->format('Y')}} </td>
                 </tr>
             </table>
         </div>

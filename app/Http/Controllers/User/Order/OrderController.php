@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User\Order;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Instock\StoreInstockRequest;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
 use App\Models\User\Customer;
@@ -118,7 +119,7 @@ class OrderController extends Controller
                 $price = PriceCustomerProdManagement::firstOrNew(array('product_goods_id' => $productGoodId, 'customer_id' => $customerId));
                 $price->product_goods_id = $productGoodId;
                 $price->customer_id = $customerId;
-                $price->price =  $value;
+                $price->price = $value;
                 $price->save();
             }
             return redirect()->back()->with(['success' => 'Giá của sản phẩm đối với khách hàng đã được cập nhật!!!']);
@@ -147,6 +148,96 @@ class OrderController extends Controller
         return view('user.order.stock-in.index', compact('data'));
     }
 
+    public function stockInEdit($id)
+    {
+        // Get list supplier:
+        $suppliers = Supplier::get();
+        // Get list ware house:
+        $wareHouses = Storage::get();
+        // Get list product:
+        $products = Product::get();
+        // Get info warehouse receipt:
+        $goodReceiptManagement = GoodsReceiptManagement::find($id);
+        // Get product of warehouse receipt:
+        $productsGoodReceipt = ProductGoodsReceiptManagement::with('product')->where('goods_receipt_id', '=', $goodReceiptManagement->id)->get();
+        // Return
+        return view('user.order.stock-in.edit', compact('goodReceiptManagement', 'suppliers', 'wareHouses', 'products', 'productsGoodReceipt'));
+    }
+
+    public function stockInUpdate($id, Request $request)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $param = $request->all();
+            // dd($param);
+            // Check and update info warehouse receipt:
+            $goodReceiptManagement = GoodsReceiptManagement::firstOrNew(array('id' => $id));
+            $goodReceiptManagement->goods_receipt_code = $param['order_code'];
+            $goodReceiptManagement->supplier_id = $param['order_supplier'];
+            $goodReceiptManagement->document = $param['order_contract_no'];
+            $goodReceiptManagement->storage_id = $param['order_wh'];
+            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('Y-m-d');
+            $goodReceiptManagement->save();
+
+            // Handel with list product
+            $arrayProductUpdate = array();
+            foreach ($param as $name => $value) {
+                if (strpos($name, 'order_product_') !== false) {
+                    $array = explode('_', $name);
+                    array_push($arrayProductUpdate, $param['order_product_' . $array[2]]);
+                    $insertProduct = ProductGoodsReceiptManagement::firstOrNew(array('goods_receipt_id' => $id, 'product_id' => $param['order_product_' . $array[2]]));
+                    if ($insertProduct->exists) {
+                        //Exist
+                        $insertProduct->goods_receipt_id = $id;
+                        $insertProduct->product_id = $param['order_product_' . $array[2]];
+                        $insertProduct->quantity = $param['order_quantity_' . $array[2]];
+                        $insertProduct->date_of_manufacture = $param['order_date_manufacture_' . $array[2]];
+                        $insertProduct->expiry_date = $param['input_expDate_' . $array[2]];
+                        $insertProduct->save();
+                    } else {
+                        $insertProduct = new ProductGoodsReceiptManagement();
+                        $insertProduct->goods_receipt_id = $id;
+                        $insertProduct->product_id = $param['order_product_' . $array[2]];
+                        $insertProduct->quantity = $param['order_quantity_' . $array[2]];
+                        $insertProduct->date_of_manufacture = $param['order_date_manufacture_' . $array[2]];
+                        $insertProduct->expiry_date = $param['input_expDate_' . $array[2]];
+                        $insertProduct->save();
+                        $proId = $insertProduct->id;
+                        // Insert table price
+                        $product = Product::find($param['order_product_' . $array[2]]);
+                        $customers = Customer::get();
+                        foreach ($customers as $customer) {
+                            $pri = new PriceCustomerProdManagement();
+                            $pri->product_goods_id = $proId;
+                            $pri->customer_id = $customer->id;
+                            $pri->price = $product->price;
+                            $pri->save();
+                        }
+                    }
+                }
+            }
+            // Delete product:
+            $prodOlds = ProductGoodsReceiptManagement::where('goods_receipt_id', '=', $id)->get();
+            foreach ($prodOlds as $prodOld) {
+                if (!in_array($prodOld->product_id, $arrayProductUpdate)) {
+                    // remove table product_goods_receipt_management
+                    $prodOld->delete();
+                    // Remove table price_customer_prod_management
+                    PriceCustomerProdManagement::where(array('product_goods_id' => $prodOld->id))->delete();
+                }
+            }
+            // Commit
+            \DB::commit();
+            return redirect()->back()->with(['success' => 'Thông tin đơn mua (nhập kho) đã được cập nhật.!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message]);
+            // return back()->withErrors(['msg' => $message])->withInput();
+        }
+    }
+
+
     public function stockInCreate()
     {
         // Get list supplier:
@@ -168,12 +259,29 @@ class OrderController extends Controller
             $pdf = PDF::loadView('components.layouts.exportStockPDF', compact('goodReceiptManagement'));
             return $pdf->download('warehouse_receipt' . date('YmdHms') . '.pdf');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()->back()->with(['error' => $message]);
         }
     }
 
-    public function stockInStore(Request $request)
+    public function stockInDelete($idGoodReceipt)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            GoodsReceiptManagement::where(array('id' => $idGoodReceipt))->delete();
+            $prodList = ProductGoodsReceiptManagement::where(array('goods_receipt_id' => $idGoodReceipt))->get();
+            foreach($prodList as $detailProd) { 
+                $detailProd->delete();
+                PriceCustomerProdManagement::where(array('product_goods_id' => $detailProd->id))->delete();
+            }
+            \DB::commit();
+            return redirect()->back()->with(['success' => 'Thông tin đơn mua (nhập kho) đã được xóa.!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
+    public function stockInStore(StoreInstockRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -207,7 +315,7 @@ class OrderController extends Controller
                         $pri = new PriceCustomerProdManagement();
                         $pri->product_goods_id = $proId;
                         $pri->customer_id = $customer->id;
-                        $pri->price =  $product->price;
+                        $pri->price = $product->price;
                         $pri->save();
                     }
                 }
@@ -216,7 +324,6 @@ class OrderController extends Controller
             \DB::commit();
             return redirect()->route('stock-in.index');
         } catch (\Exception $e) {
-            dd($e);
             \DB::rollback();
             return back()->withErrors(['msg' => $message])->withInput();
         }

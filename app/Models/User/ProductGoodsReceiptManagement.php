@@ -16,6 +16,11 @@ class ProductGoodsReceiptManagement extends Model
         'goods_receipt_id', 'product_id', 'quantity', 'date_of_manufacture', 'expiry_date'
     ];
 
+    protected $casts = [
+        'date_of_manufacture' => 'datetime',
+        'expiry_date' => 'datetime'
+      ];
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');

@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/', [OrderController::class, 'stockInStore'])->name('store');
         Route::get('/{id}', [OrderController::class, 'stockInShow'])->name('show');
         Route::get('/{id}/edit', [OrderController::class, 'stockInEdit'])->name('edit');
-        Route::post('/{id}', [OrderController::class, 'stockInEdit'])->name('update');
+        Route::post('/{id}', [OrderController::class, 'stockInUpdate'])->name('update');
         Route::delete('/{id}', [OrderController::class, 'stockInDelete'])->name('destroy');
     });
 
