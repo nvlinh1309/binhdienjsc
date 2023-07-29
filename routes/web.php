@@ -52,10 +52,12 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [OrderController::class, 'stockInIndex'])->name('index');
         Route::get('/create', [OrderController::class, 'stockInCreate'])->name('create');
         Route::post('/', [OrderController::class, 'stockInStore'])->name('store');
-        Route::get('/{id}', [OrderController::class, 'stockInShow'])->name('show');
+        // Route::get('/{id}', [OrderController::class, 'stockInShow'])->name('show');
         Route::get('/{id}/edit', [OrderController::class, 'stockInEdit'])->name('edit');
         Route::post('/{id}', [OrderController::class, 'stockInUpdate'])->name('update');
         Route::delete('/{id}', [OrderController::class, 'stockInDelete'])->name('destroy');
+        Route::get('stock-list-export', [OrderController::class, 'exportListStockPDF'])->name('list.export');
+
     });
 
     Route::get('instock-export/{id}', [OrderController::class, 'exportStockPDF'])->name('instock.export');

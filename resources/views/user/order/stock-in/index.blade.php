@@ -37,7 +37,9 @@
                     <a href="{{ route('stock-in.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
-                    <button class=" btn btn-sm btn-success disabled" title="Xuất file"><i class="fas fa-download"></i></button>
+                    <a href="{{ route('stock-in.list.export') }}">
+                    <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    </a>
                 </h3>
 
                 <div class="card-tools">

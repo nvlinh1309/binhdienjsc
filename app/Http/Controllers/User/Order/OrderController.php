@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Instock\StoreInstockRequest;
+use App\Http\Requests\User\Instock\UpdateInstockRequest;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
 use App\Models\User\Customer;
@@ -164,7 +165,36 @@ class OrderController extends Controller
         return view('user.order.stock-in.edit', compact('goodReceiptManagement', 'suppliers', 'wareHouses', 'products', 'productsGoodReceipt'));
     }
 
-    public function stockInUpdate($id, Request $request)
+    public function exportListStockPDF()
+    {
+        // return "sdsd";
+        $data = GoodsReceiptManagement::with('supplier', 'storage')->orderBy('id', 'DESC')->get();
+
+        $rows = [];
+        foreach ($data as $key => $value) {
+            $rows[] = [
+                $key + 1,
+                $value->goods_receipt_code,
+                $value->supplier->name,
+                $value->storage->name,
+                $value->receipt_date,
+                $value->status,
+                '<a href="' . route('stock-in.price', $value->id) . '">Xem</a>'
+            ];
+        }
+
+        $data = [
+            'title' => 'DANH SÁCH ĐƠN MUA (NHẬP KHO)',
+            'count_record' => 'Tổng số đơn mua: ' . count($rows),
+            'columns' => ['#', 'Mã Nhập kho', 'Nhà cung cấp	', 'Kho hàng', 'Ngày tạo đơn', 'Trạng thái', 'Chi tiết'],
+            'rows' => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
+        return $pdf->download('warehouse_receipt' . date('YmdHms') . '.pdf');
+    }
+    public function stockInUpdate($id, UpdateInstockRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -182,9 +212,21 @@ class OrderController extends Controller
 
             // Handel with list product
             $arrayProductUpdate = array();
+            // Handel with list product:
+            $arrayProduct = array();
             foreach ($param as $name => $value) {
                 if (strpos($name, 'order_product_') !== false) {
                     $array = explode('_', $name);
+                    if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
+                        $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
+                        throw new \Exception($message);
+                    }
+                    if ($param['order_quantity_' . $array[2]] == '') {
+                        $message = 'Số lượng của sản phẩm là bắt buộc.';
+                        throw new \Exception($message);
+                    }
+                    array_push($arrayProduct, $param['order_product_' . $array[2]]);
+
                     array_push($arrayProductUpdate, $param['order_product_' . $array[2]]);
                     $insertProduct = ProductGoodsReceiptManagement::firstOrNew(array('goods_receipt_id' => $id, 'product_id' => $param['order_product_' . $array[2]]));
                     if ($insertProduct->exists) {
@@ -270,7 +312,7 @@ class OrderController extends Controller
         try {
             GoodsReceiptManagement::where(array('id' => $idGoodReceipt))->delete();
             $prodList = ProductGoodsReceiptManagement::where(array('goods_receipt_id' => $idGoodReceipt))->get();
-            foreach($prodList as $detailProd) { 
+            foreach ($prodList as $detailProd) {
                 $detailProd->delete();
                 PriceCustomerProdManagement::where(array('product_goods_id' => $detailProd->id))->delete();
             }
@@ -296,9 +338,21 @@ class OrderController extends Controller
             $goodReceiptManagement->save();
             $idGoodReceipt = $goodReceiptManagement->id;
             // Handel with list product:
+            $arrayProduct = array();
             foreach ($param as $name => $value) {
                 if (strpos($name, 'order_product_') !== false) {
                     $array = explode('_', $name);
+                    if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
+                        $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
+                        throw new \Exception($message);
+                    }
+
+                    if ($param['order_quantity_' . $array[2]] == '') {
+                        $message = 'Số lượng của sản phẩm là bắt buộc.';
+                        throw new \Exception($message);
+                    }
+                    array_push($arrayProduct, $param['order_product_' . $array[2]]);
+
                     // Insert table 
                     $insertProduct = new ProductGoodsReceiptManagement();
                     $insertProduct->goods_receipt_id = $idGoodReceipt;
@@ -325,7 +379,8 @@ class OrderController extends Controller
             return redirect()->route('stock-in.index');
         } catch (\Exception $e) {
             \DB::rollback();
-            return back()->withErrors(['msg' => $message])->withInput();
+            // return back()->withErrors(['msg' => $message])->withInput();
+            return redirect()->back()->with(['error' => $message])->withInput();
         }
     }
 }

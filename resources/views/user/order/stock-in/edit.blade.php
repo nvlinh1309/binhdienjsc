@@ -35,7 +35,8 @@
         <!-- jquery validation -->
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Cập nhật đơn mua (nhập kho) với mã nhập kho: {{$goodReceiptManagement->goods_receipt_code}}</h3>
+                <h3 class="card-title">Cập nhật đơn mua (nhập kho) với mã nhập kho:
+                    {{ $goodReceiptManagement->goods_receipt_code }}</h3>
             </div>
 
             <form id="quickForm" action="{{ route('stock-in.update', $goodReceiptManagement->id) }}" method="POST">
@@ -45,8 +46,12 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="order_code">Mã Nhập kho</label>
-                                <input type="text" name="order_code" class="form-control" value="{{ $goodReceiptManagement->goods_receipt_code }}" id="order_code" required
-                                    placeholder="Nhập mã đơn hàng...">
+                                <input type="text" name="order_code" class="form-control"
+                                    value="{{ old('order_code') ?? (old('order_code') ?? $goodReceiptManagement->goods_receipt_code) }}"
+                                    id="order_code" placeholder="Nhập mã đơn hàng...">
+                                @if ($errors->has('order_code'))
+                                    <div class="error text-danger">{{ $errors->first('order_code') }}</div>
+                                @endif
                             </div>
 
                         </div>
@@ -57,7 +62,15 @@
                                 <select class="form-control select2" name="order_supplier" id="order_supplier"
                                     style="width: 100%;">
                                     @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}" {{ $supplier->id == $goodReceiptManagement->supplier_id ?"selected":"" }}>{{ $supplier->name }}</option>
+                                        @if (old('order_supplier'))
+                                            <option value="{{ $supplier->id }}"
+                                                {{ $supplier->id == old('order_supplier') ? 'selected' : '' }}>
+                                                {{ $supplier->name }}</option>
+                                        @else
+                                            <option value="{{ $supplier->id }}"
+                                                {{ $supplier->id == $goodReceiptManagement->supplier_id ? 'selected' : '' }}>
+                                                {{ $supplier->name }}</option>
+                                        @endif
                                     @endforeach
 
                                 </select>
@@ -67,7 +80,9 @@
                             <div class="form-group">
                                 <label for="order_contract_no">Chứng từ (Mã hợp đồng,v.v...)</label>
                                 <input type="text" name="order_contract_no" class="form-control"
-                                    id="order_contract_no" value="{{ $goodReceiptManagement->document }}" placeholder="Nhập mã đơn hàng...">
+                                    id="order_contract_no"
+                                    value="{{ old('order_contract_no') ?? (old('order_contract_no') ?? $goodReceiptManagement->document) }}"
+                                    placeholder="Nhập mã đơn hàng...">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -75,15 +90,24 @@
                                 <label for="order_wh">Chọn kho</label>
                                 <select class="form-control select2" name="order_wh" style="width: 100%;">
                                     @foreach ($wareHouses as $wareHouse)
-                                        <option value="{{ $wareHouse->id }}" {{ $wareHouse->id == $goodReceiptManagement->storage_id ?"selected":"" }}>{{ $wareHouse->name }}</option>
+                                        @if (old('order_wh'))
+                                            <option value="{{ $wareHouse->id }}"
+                                                {{ $wareHouse->id == old('order_wh') ? 'selected' : '' }}>
+                                                {{ $wareHouse->name }}</option>
+                                        @else
+                                            <option value="{{ $wareHouse->id }}"
+                                                {{ $wareHouse->id == $goodReceiptManagement->storage_id ? 'selected' : '' }}>
+                                                {{ $wareHouse->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label for="order_date_manufacture">Ngày nhập kho</label> 
-                            <input type="text" class="form-control datepicker" value="{{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('Y-m-d') : "" }}" name="receipt_date" id=""
-                                data-provide="datepicker">
+                            <label for="order_date_manufacture">Ngày nhập kho</label>
+                            <input type="text" class="form-control datepicker"
+                                value="{{ old('receipt_date') ? old('receipt_date') : ($goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('Y-m-d') : '') }}"
+                                name="receipt_date" id="" data-provide="datepicker">
                         </div>
 
                         <div class="col-sm-12 mt-3">
@@ -91,51 +115,73 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="card" id="containerProduct">
-                             <?php $countt = 1;?>
-                               @if(count($productsGoodReceipt) > 0)
-                                    @foreach ($productsGoodReceipt as $key=>$productReceipt)
+                                <?php $countt = 1; ?>
+                                @if (count($productsGoodReceipt) > 0)
+                                    @foreach ($productsGoodReceipt as $key => $productReceipt)
                                         <div class="form-row mr-0 ml-0 div-add-prod">
                                             <div class="form-group col-md-3">
                                                 <label for="order_product_1">Chọn Sản Phẩm</label>
-                                                <select name="order_product_{{$countt}}" class="form-control select2" required>
+                                                <select name="order_product_{{ $countt }}"
+                                                    class="form-control select2">
                                                     @foreach ($products as $product)
-                                                        <option value="{{ $product->id }}" {{ $product->id == $productReceipt->product_id ?"selected":"" }}>{{ $product->name }}</option>
+                                                        @if (old('order_product_' . $countt))
+                                                            <option value="{{ $product->id }}"
+                                                                {{ $product->id == old('order_product_' . $countt) ? 'selected' : '' }}>
+                                                                {{ $product->name }}</option>
+                                                        @else
+                                                            <option value="{{ $product->id }}"
+                                                                {{ $product->id == $productReceipt->product_id ? 'selected' : '' }}>
+                                                                {{ $product->name }}</option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                             </div>
 
                                             <div class="form-group col-md-2">
                                                 <label for="order_date_manufacture">Nhập số lượng</label>
-                                                <input type="text" class="form-control" value="{{ $productReceipt->quantity }}" name="order_quantity_{{$countt}}" required
+                                                <input type="text" class="form-control"
+                                                    value="{{ old('order_quantity_' . $countt) ?? (old('order_quantity_' . $countt) ?? $productReceipt->quantity) }}"
+                                                    name="order_quantity_{{ $countt }}"
                                                     placeholder="Nhập số lượng...">
                                             </div>
 
                                             <div class="form-group col-md-3">
                                                 <label for="order_date_manufacture">Ngày Sản Xuất</label>
                                                 <input type="text" class="form-control datepicker"
-                                                    name="order_date_manufacture_{{$countt}}" data-provide="datepicker" value="{{ $productReceipt->date_of_manufacture ? $productReceipt->date_of_manufacture->format('Y-m-d') : "" }}">
+                                                    name="order_date_manufacture_{{ $countt }}"
+                                                    data-provide="datepicker"
+                                                    value="{{ old('order_date_manufacture_' . $countt) ?? (old('order_date_manufacture_' . $countt) ?? ($productReceipt->date_of_manufacture ? $productReceipt->date_of_manufacture->format('Y-m-d') : '')) }}"
+                                                    >
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="input_expDate">Hạn Sử Dụng</label>
-                                                <input type="text" class="form-control datepicker" name="input_expDate_{{$countt}}"
-                                                    id="input_expDate" data-provide="datepicker" value="{{ $productReceipt->expiry_date ? $productReceipt->expiry_date->format('Y-m-d') : "" }}">
+                                                <input type="text" class="form-control datepicker"
+                                                    name="input_expDate_{{ $countt }}" id="input_expDate"
+                                                    data-provide="datepicker"
+                                                    value="{{ old('input_expDate_' . $countt) ?? (old('input_expDate_' . $countt) ?? ($productReceipt->expiry_date ? $productReceipt->expiry_date->format('Y-m-d') : '')) }}"
+                                                    >
                                             </div>
-                                            @if($countt > 1)
-                                            <div class="form-group col-md-1 align-self-center d-flex justify-content-center mb-0 div-product">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash delete-product" viewBox="0 0 16 16">
-                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
-                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
-                                                </svg>
-                                            </div>
+                                            @if ($countt > 1)
+                                                <div
+                                                    class="form-group col-md-1 align-self-center d-flex justify-content-center mb-0 div-product">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                        height="16" fill="currentColor"
+                                                        class="bi bi-trash delete-product" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                                                        <path
+                                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                                                    </svg>
+                                                </div>
                                             @endif
                                         </div>
-                                        <?php $countt++;?>
+                                        <?php $countt++; ?>
                                     @endforeach
                                 @else
                                     <div class="form-row mr-0 ml-0">
                                         <div class="form-group col-md-3 div-add-prod">
                                             <label for="order_product_1">Chọn Sản Phẩm</label>
-                                            <select name="order_product_1" class="form-control select2" required>
+                                            <select name="order_product_1" class="form-control select2">
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}">{{ $product->name }}</option>
                                                 @endforeach
@@ -144,7 +190,7 @@
 
                                         <div class="form-group col-md-2">
                                             <label for="order_date_manufacture">Nhập số lượng</label>
-                                            <input type="text" class="form-control" name="order_quantity_1" required
+                                            <input type="text" class="form-control" name="order_quantity_1"
                                                 placeholder="Nhập số lượng...">
                                         </div>
 
@@ -155,8 +201,8 @@
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label for="input_expDate">Hạn Sử Dụng</label>
-                                            <input type="text" class="form-control datepicker" name="input_expDate_1"
-                                                id="input_expDate" data-provide="datepicker">
+                                            <input type="text" class="form-control datepicker"
+                                                name="input_expDate_1" id="input_expDate" data-provide="datepicker">
                                         </div>
                                     </div>
                                 @endif
@@ -165,7 +211,8 @@
 
                             </div>
                             <div class="form-group col-md-3">
-                                <button type="button" id="addProduct" class="btn btn-secondary">Thêm Sản Phẩm</button>
+                                <button type="button" id="addProduct" class="btn btn-secondary">Thêm Sản
+                                    Phẩm</button>
                             </div>
 
                         </div>
@@ -211,7 +258,7 @@
                     '<div class="form-group col-md-2">' +
                     '<label for="order_date_manufacture">Nhập số lượng</label>' +
                     '<input type="text" class="form-control" name="order_quantity_' + newNumItems +
-                    '" placeholder="Nhập số lượng..." required>' +
+                    '" placeholder="Nhập số lượng...">' +
                     '</div>' +
                     '<div class="form-group col-md-3">' +
                     '<label for="inputCity">Ngày Sản Xuất</label>' +
