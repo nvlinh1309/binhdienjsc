@@ -45,8 +45,8 @@
                 <div><b>Nhà cung cấp:</b> {{ $goodReceiptManagement->supplier->name }}</div>
                 <div><b>Chứng từ (Mã hợp đồng,v.v...):</b> {{ $goodReceiptManagement->document }}</div>
                 <div><b>Kho:</b> {{ $goodReceiptManagement->storage->name }}</div>
-                <div><b>Ngày nhập kho:</b> {{ $goodReceiptManagement->receipt_date ?$goodReceiptManagement->receipt_date->format('Y-m-d') :'' }}</div>
-                <div><b>Ngày tạo:</b> {{ $goodReceiptManagement->created_at }}</div>
+                <div><b>Ngày nhập kho:</b> {{ $goodReceiptManagement->receipt_date ?$goodReceiptManagement->receipt_date->format('d-m-Y') :'' }}</div>
+                <div><b>Ngày tạo:</b> {{ $goodReceiptManagement->created_at->format('d-m-Y') }}</div>
                 {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
                 <button class="btn btn-warning" onclick="window.location='{{ route("stock-in.edit",$goodReceiptManagement->id) }}'">Chỉnh sửa</button>
             </div>
@@ -158,10 +158,10 @@
                                             {{ $productPrice->quantity }}
                                         </td>
                                         <td>
-                                            {{ $productPrice->date_of_manufacture }}
+                                            {{ $productPrice->date_of_manufacture ? $productPrice->date_of_manufacture->format('d-m-Y') : '' }}
                                         </td>
                                         <td>
-                                            {{ $productPrice->expiry_date }}
+                                            {{ $productPrice->expiry_date ? $productPrice->expiry_date->format('d-m-Y') : ''}}
                                         </td>
                                     </tr>
                                     <?php $num++; ?>

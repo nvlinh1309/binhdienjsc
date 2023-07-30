@@ -32,7 +32,7 @@ class StoreInstockRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'order_code.required' => 'Trường :attribute là bắt buộc.',
+            'order_code.required' => 'Mã nhập kho là bắt buộc.',
             'order_code.unique' => 'Giá trị mã nhập kho phải là duy nhất.'
         ];
     }

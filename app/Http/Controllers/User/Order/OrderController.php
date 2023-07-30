@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Instock\StoreInstockRequest;
 use App\Http\Requests\User\Instock\UpdateInstockRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
 use App\Models\User\Customer;
@@ -108,6 +109,12 @@ class OrderController extends Controller
         //
     }
 
+    /**
+     * Set price
+     *
+     * @param  $request
+     * @return \Illuminate\Http\Response
+     */
     public function setPriceStore(Request $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
@@ -128,6 +135,13 @@ class OrderController extends Controller
             return redirect()->back()->with(['error' => $message]);
         }
     }
+
+    /**
+     * Show in-Stock
+     *
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
     public function showInstock($id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
@@ -142,6 +156,13 @@ class OrderController extends Controller
             return back()->withErrors(['msg' => $message])->withInput();
         }
     }
+
+    /**
+     * stockInIndex
+     *
+     * @param  $request
+     * @return \Illuminate\Http\Response
+     */
     public function stockInIndex(Request $request)
     {
         $data = GoodsReceiptManagement::with('supplier', 'storage')->orderBy('id', 'DESC');
@@ -149,6 +170,12 @@ class OrderController extends Controller
         return view('user.order.stock-in.index', compact('data'));
     }
 
+    /**
+     * Edit warehouse receipt
+     *
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
     public function stockInEdit($id)
     {
         // Get list supplier:
@@ -165,6 +192,11 @@ class OrderController extends Controller
         return view('user.order.stock-in.edit', compact('goodReceiptManagement', 'suppliers', 'wareHouses', 'products', 'productsGoodReceipt'));
     }
 
+    /**
+     * export list warehouse receipt pdf
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function exportListStockPDF()
     {
         // return "sdsd";
@@ -177,7 +209,7 @@ class OrderController extends Controller
                 $value->goods_receipt_code,
                 $value->supplier->name,
                 $value->storage->name,
-                $value->receipt_date,
+                $value->receipt_date? $value->receipt_date->format('d-m-Y'): '',
                 $value->status,
                 '<a href="' . route('stock-in.price', $value->id) . '">Xem</a>'
             ];
@@ -194,6 +226,14 @@ class OrderController extends Controller
         $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
         return $pdf->download('warehouse_receipt' . date('YmdHms') . '.pdf');
     }
+
+    /**
+     * Update warehouse receipt
+     *
+     * @param  $id
+     * @param  $request
+     * @return \Illuminate\Http\Response
+     */
     public function stockInUpdate($id, UpdateInstockRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
@@ -207,7 +247,7 @@ class OrderController extends Controller
             $goodReceiptManagement->supplier_id = $param['order_supplier'];
             $goodReceiptManagement->document = $param['order_contract_no'];
             $goodReceiptManagement->storage_id = $param['order_wh'];
-            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('Y-m-d');
+            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
             $goodReceiptManagement->save();
 
             // Handel with list product
@@ -274,12 +314,17 @@ class OrderController extends Controller
             return redirect()->back()->with(['success' => 'Thông tin đơn mua (nhập kho) đã được cập nhật.!!!']);
         } catch (\Exception $e) {
             \DB::rollback();
-            return redirect()->back()->with(['error' => $message]);
+            return redirect()->back()->with(['error' => $message])->withInput();
             // return back()->withErrors(['msg' => $message])->withInput();
         }
     }
 
 
+    /**
+     * Create warehouse receipt
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function stockInCreate()
     {
         // Get list supplier:
@@ -288,9 +333,18 @@ class OrderController extends Controller
         $wareHouses = Storage::get();
         // Get list product:
         $products = Product::get();
-        return view('user.order.stock-in.create', compact('suppliers', 'wareHouses', 'products'));
+        // Get all user
+        // $data = User::with('roles')->orderBy('id', 'DESC')->get();
+        $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
+        return view('user.order.stock-in.create', compact('suppliers', 'wareHouses', 'products', 'dataUser'));
     }
 
+    /**
+     * Export warehouse receipt pdf
+     *
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
     public function exportStockPDF($id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
@@ -334,7 +388,7 @@ class OrderController extends Controller
             $goodReceiptManagement->supplier_id = $param['order_supplier'];
             $goodReceiptManagement->document = $param['order_contract_no'];
             $goodReceiptManagement->storage_id = $param['order_wh'];
-            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('Y-m-d');
+            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
             $goodReceiptManagement->save();
             $idGoodReceipt = $goodReceiptManagement->id;
             // Handel with list product:
@@ -349,6 +403,11 @@ class OrderController extends Controller
 
                     if ($param['order_quantity_' . $array[2]] == '') {
                         $message = 'Số lượng của sản phẩm là bắt buộc.';
+                        throw new \Exception($message);
+                    }
+
+                    if(!is_numeric($param['order_quantity_' . $array[2]])){
+                        $message = 'Số lượng của sản phẩm là dạng số.';
                         throw new \Exception($message);
                     }
                     array_push($arrayProduct, $param['order_product_' . $array[2]]);
@@ -376,7 +435,7 @@ class OrderController extends Controller
             }
             //--------------------------
             \DB::commit();
-            return redirect()->route('stock-in.index');
+            return redirect()->route('stock-in.index')->with(['success' => 'Đơn hàng mới đã được tạo thành công.']);;
         } catch (\Exception $e) {
             \DB::rollback();
             // return back()->withErrors(['msg' => $message])->withInput();

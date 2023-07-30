@@ -241,7 +241,7 @@
                 </tr>
                 <tr>
                     <td class="bLeft">Thông tin giao nhận</td>
-                    <td class="middle">Kho NQP - Cần Thơ</td>
+                    <td class="middle">.................</td>
                     <td class="middle">Xe/Cont.................</td>
                 </tr>
             </table>
@@ -273,18 +273,23 @@
                 @if ($goodReceiptManagement->productGood)
                     <?php $num = 1; ?>
                     <?php $totalArrQuantity=array();?>
+                    <?php $totalKg=array();?>
                     @foreach ($goodReceiptManagement->productGood as $value)
                         <tr class="tr-first tr-body" style="font-size: 11px">
                             <td class="center-text">{{ $num }}</td>
                             <td class="center-text">{{ $value->product->name }}</td>
                             <td class="center-text">{{ $value->product->specification }}</td>
                             <td class="center-text">{{ $value->product->unit }}</td>
-                            <td class="center-text"></td>
-                            <td class="center-text">{{ $value->expiry_date }}</td>
-                            <td class="center-text"></td>
+                            <td class="center-text">{{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('d-m-Y') : '' }}</td>
+                            <td class="center-text">{{ $value->expiry_date ? $value->expiry_date->format('d-m-Y') : '' }}</td>
+                            <?php $kg = $value->quantity && $value->product->specification && is_numeric($value->product->specification)? $value->quantity*$value->product->specification : 0;?>
+                            <td class="center-text">
+                            {{ $kg }}
+                            </td>
                             <td class="center-text">{{ $value->quantity }}</td>
                             <td class="center-text"></td>
                         </tr>
+                        <?php array_push($totalKg, $kg);?>
                         <?php array_push($totalArrQuantity, $value->quantity);?>
                         <?php $num++; ?>
                     @endforeach
@@ -295,7 +300,7 @@
                         <td class="center-text"></td>
                         <td class="center-text"></td>
                         <td class="center-text"></td>
-                        <td class="center-text"></td>
+                        <td class="center-text">{{array_sum($totalKg)}}</td>
                         <td class="center-text">{{array_sum($totalArrQuantity)}}</td>
                         <td class="center-text"></td>
                     </tr>

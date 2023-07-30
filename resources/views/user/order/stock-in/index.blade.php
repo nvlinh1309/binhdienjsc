@@ -68,7 +68,7 @@
                                 <td>{{ $value->goods_receipt_code  }}</td>
                                 <td>{{ $value->supplier->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
-                                <td>{{ $value->receipt_date }}</td>
+                                <td>{{ $value->receipt_date->format('d-m-Y') }}</td>
                                 <td>{{ $value->status }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('stock-in.destroy', $value->id) }}">
