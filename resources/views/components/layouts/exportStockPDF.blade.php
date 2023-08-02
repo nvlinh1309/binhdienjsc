@@ -241,8 +241,8 @@
                 </tr>
                 <tr>
                     <td class="bLeft">Thông tin giao nhận</td>
-                    <td class="middle">.................</td>
-                    <td class="middle">Xe/Cont.................</td>
+                    <td class="middle">{{ $goodReceiptManagement->receive_info }}</td>
+                    <td class="middle">Xe/Cont: {{ $goodReceiptManagement->receive_cont }}</td>
                 </tr>
             </table>
         </div>
@@ -322,9 +322,9 @@
             <table cellspacing="0" cellpadding="0">
                 <tr class="tr-first">
                     <td class="center-text w-25">{{Auth::user()->name}}</td>
-                    <td class="center-text w-25"></td>
-                    <td class="center-text w-25"></td>
-                    <td class="center-text w-25"></td>
+                    <td class="center-text w-25">{{  $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : ''}}</td>
+                    <td class="center-text w-25">{{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : ''}}</td>
+                    <td class="center-text w-25">{{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : ''}}</td>
                 </tr>
             </table>
         </div>

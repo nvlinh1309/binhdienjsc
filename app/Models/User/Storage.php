@@ -20,7 +20,7 @@ class Storage extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'storage_product', 'product_id', 'storage_id');
+        return $this->belongsToMany(Product::class, 'storage_product', 'storage_id', 'product_id');
     }
 
 }

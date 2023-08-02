@@ -69,12 +69,12 @@
                                 <td>{{ $value->supplier->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
                                 <td>{{ $value->receipt_date->format('d-m-Y') }}</td>
-                                <td>{{ $value->status }}</td>
+                                <td>{{ $value->receipt_status ? $statusList[$value->receipt_status] : '' }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('stock-in.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <span class="btn btn-xs btn-danger delete"
+                                        <span  class="btn btn-xs  @if($value->receipt_status != 3) btn-danger delete @else btn-secondary @endif "
                                             data-id="{{ $value->goods_receipt_code }}">Xoá</span>
                                     </form>
                                     <a href="{{ route('stock-in.price', $value->id) }}"

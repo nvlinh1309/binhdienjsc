@@ -47,8 +47,15 @@
                 <div><b>Kho:</b> {{ $goodReceiptManagement->storage->name }}</div>
                 <div><b>Ngày nhập kho:</b> {{ $goodReceiptManagement->receipt_date ?$goodReceiptManagement->receipt_date->format('d-m-Y') :'' }}</div>
                 <div><b>Ngày tạo:</b> {{ $goodReceiptManagement->created_at->format('d-m-Y') }}</div>
+                <div><b>Thông tin giao nhận:</b> {{ $goodReceiptManagement->receive_info }}</div>
+                <div><b>Xe/Cont:</b> {{ $goodReceiptManagement->receive_cont }}</div>
+                <div><b>Người phê duyệt:</b> {{ $goodReceiptManagement->approval_user ? $goodReceiptManagement->approvalUser->name : '' }}</div>
+                <div><b>Bộ phận giao nhận:</b> {{  $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : ''}}</div>
+                <div><b>Thủ kho hàng:</b> {{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : ''}}</div>
+                <div><b>Phụ trách tổ kinh doanh:</b> {{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : ''}}</div>
+                <div><b>Trạng thái đơn hàng:</b> {{ $goodReceiptManagement->receipt_status ? $statusList[$goodReceiptManagement->receipt_status] : '' }}</div>
                 {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-                <button class="btn btn-warning" onclick="window.location='{{ route("stock-in.edit",$goodReceiptManagement->id) }}'">Chỉnh sửa</button>
+                <button @if($goodReceiptManagement->receipt_status == 3) disabled @endif class="btn btn-warning" onclick="window.location='{{ route("stock-in.edit",$goodReceiptManagement->id) }}'">Chỉnh sửa</button>
             </div>
 
             {{-- <div class="card-header"> --}}

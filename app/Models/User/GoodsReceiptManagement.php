@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User\Supplier;
 use App\Models\User\Storage;
 use App\Models\User\ProductGoodsReceiptManagement;
+use App\Models\User;
 
 class GoodsReceiptManagement extends Model
 {
@@ -35,4 +36,25 @@ class GoodsReceiptManagement extends Model
     {
         return $this->hasMany(ProductGoodsReceiptManagement::class, 'goods_receipt_id', 'id');
     }
+
+    public function approvalUser()
+    {
+        return $this->belongsTo(User::class, 'approval_user', 'id');
+    }
+
+    public function receiveUser()
+    {
+        return $this->belongsTo(User::class, 'receive_user', 'id');
+    }
+
+    public function whUser()
+    {
+        return $this->belongsTo(User::class, 'wh_user', 'id');
+    }
+
+    public function saleUser()
+    {
+        return $this->belongsTo(User::class, 'sales_user', 'id');
+    }
+
 }
