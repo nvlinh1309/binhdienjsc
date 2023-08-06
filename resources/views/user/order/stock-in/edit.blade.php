@@ -45,7 +45,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="order_code">Mã Nhập kho</label>
+                                <label for="order_code">Mã Nhập kho</label><span class="text-danger">*</span>
                                 <input type="text" name="order_code" class="form-control"
                                     value="{{ old('order_code', $goodReceiptManagement->goods_receipt_code) }}"
                                     id="order_code" placeholder="Nhập mã đơn hàng...">
@@ -203,7 +203,7 @@
                                         @if ($countt == 1 || count($dataOldProduct) == 0)
                                             <div class="form-row mr-0 ml-0 div-add-prod">
                                                 <div class="form-group col-md-3">
-                                                    <label for="order_product_1">Chọn Sản Phẩm</label>
+                                                    <label for="order_product_1">Chọn Sản Phẩm</label><span class="text-danger">*</span>
                                                     <select name="order_product_{{ $countt }}"
                                                         class="form-control select2">
                                                         @foreach ($products as $product)
@@ -221,7 +221,7 @@
                                                 </div>
 
                                                 <div class="form-group col-md-2">
-                                                    <label for="order_date_manufacture">Nhập số lượng</label>
+                                                    <label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>
                                                     <input type="text" class="form-control"
                                                         value="{{ old('order_quantity_' . $countt, $productReceipt->quantity) }}"
                                                         name="order_quantity_{{ $countt }}"
@@ -269,7 +269,7 @@
                                 @else
                                     <div class="form-row mr-0 ml-0">
                                         <div class="form-group col-md-3 div-add-prod">
-                                            <label for="order_product_1">Chọn Sản Phẩm</label>
+                                            <label for="order_product_1">Chọn Sản Phẩm</label><span class="text-danger">*</span>
                                             <select name="order_product_1" class="form-control select2">
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -278,7 +278,7 @@
                                         </div>
 
                                         <div class="form-group col-md-2">
-                                            <label for="order_date_manufacture">Nhập số lượng</label>
+                                            <label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>
                                             <input type="text" class="form-control" name="order_quantity_1"
                                                 placeholder="Nhập số lượng...">
                                         </div>
@@ -306,7 +306,7 @@
                                     @foreach ($dataOldProduct as $index)
                                         <div class="form-row mr-0 ml-0 div-add-prod">
                                             <div class="form-group col-md-3">
-                                                <label for="order_product_{{ $newIndex }}">Chọn Sản Phẩm</label>
+                                                <label for="order_product_{{ $newIndex }}">Chọn Sản Phẩm</label><span class="text-danger">*</span>
                                                 <select name="order_product_{{ $newIndex }}"
                                                     class="form-control select2">
                                                     @foreach ($products as $product)
@@ -318,7 +318,7 @@
                                             </div>
 
                                             <div class="form-group col-md-2">
-                                                <label for="order_date_manufacture">Nhập số lượng</label>
+                                                <label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>
                                                 <input type="text" value="{{ old('order_quantity_' . $index) }}"
                                                     class="form-control" name="order_quantity_{{ $newIndex }}"
                                                     placeholder="Nhập số lượng...">
@@ -403,13 +403,13 @@
                 var newNumItems = numItems + 1;
                 var structure = '<div class="form-row mr-0 ml-0 div-add-prod">' +
                     '<div class="form-group col-md-3">' +
-                    '<label for="inputState">Chọn Sản Phẩm</label>' +
+                    '<label for="inputState">Chọn Sản Phẩm</label><span class="text-danger">*</span>' +
                     '<select name="order_product_' + newNumItems + '" class="form-control select2">' +
                     options;
                 structure += '</select>' +
                     '</div>' +
                     '<div class="form-group col-md-2">' +
-                    '<label for="order_date_manufacture">Nhập số lượng</label>' +
+                    '<label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>' +
                     '<input type="text" class="form-control" name="order_quantity_' + newNumItems +
                     '" placeholder="Nhập số lượng...">' +
                     '</div>' +

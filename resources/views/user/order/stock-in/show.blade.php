@@ -32,14 +32,15 @@
     </div>
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
+            
+            <div class="callout callout-info">
+            <div class="card-header pl-0">
                 <h3 class="card-title">
                     <a href="{{ route('instock.export', $goodReceiptManagement->id) }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Xuất phiếu nhập kho</button>
                     </a>
                 </h3>
             </div>
-            <div class="callout callout-info">
                 <h5><i class="fas fa-info"></i> Thông tin</h5>
                 <div><b>Mã nhập kho:</b> {{ $goodReceiptManagement->goods_receipt_code }}</div>
                 <div><b>Nhà cung cấp:</b> {{ $goodReceiptManagement->supplier->name }}</div>
