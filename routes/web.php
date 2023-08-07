@@ -10,7 +10,7 @@ use App\Http\Controllers\User\Customer\CustomerController;
 use App\Http\Controllers\User\Storage\StorageController;
 use App\Http\Controllers\User\Users\UsersController;
 use App\Http\Controllers\User\Brand\BrandController;
-
+use App\Http\Controllers\User\Auth\ForgotPasswordController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,9 +39,14 @@ Route::get('/', function() {
 });
 Route::resource('login', LoginController::class);
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-Route::match(['get', 'post'], '/forgot-password', function(){
-    return view('auth.forgot_password');
-})->name('forgot-password');
+Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forgot-password');
+Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
+Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
+Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
+
+// Route::match(['get', 'post'], '/forgot-password', function(){
+//     return view('auth.forgot_password');
+// })->name('forgot-password');
 Route::middleware('auth')->group(function (){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
