@@ -7,8 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ strtoupper($data['title']) }}</title>
     <style>
+        @font-face {
+            font-family: 'TimesNewRoman';
+            src: url('{{ public_path("fonts/times.ttf") }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-variant: normal;
+        }
+
+        @font-face {
+            font-family: 'TimesNewRoman';
+            src: url('{{ public_path("fonts/SVN-Times New Roman 2 bold.ttf") }}') format('truetype');
+            font-weight: bold;
+        }
+
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: 'TimesNewRoman' !important;
         }
 
         table {

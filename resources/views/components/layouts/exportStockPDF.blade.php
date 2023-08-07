@@ -7,8 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
     <style>
+        @font-face {
+            font-family: 'TimesNewRoman';
+            src: url('{{ public_path("fonts/times.ttf") }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-variant: normal;
+        }
+
+        @font-face {
+            font-family: 'TimesNewRoman';
+            src: url('{{ public_path("fonts/SVN-Times New Roman 2 bold.ttf") }}') format('truetype');
+            font-weight: bold;
+        }
+
         body {
-            font-family: DejaVu Sans, sans-serif;
+            font-family: 'TimesNewRoman' !important;
         }
 
         table {
@@ -109,8 +123,6 @@
             margin-top: 20px;
         }
 
-        .footer-div {}
-
         .inner {
             width: 25%;
             box-sizing: border-box;
@@ -182,15 +194,18 @@
         }
 
         .tr-body {
-             height: 40px;
+            height: 40px;
         }
+
         .tr-sub-header {
             height: 16px !important;
             background-color: darkgrey;
         }
+
         .w-25 {
             width: 25%;
         }
+
         .mt-40 {
             margin-top: 40px;
         }
@@ -219,7 +234,9 @@
                     <td class="center-text font-15">Số: {{ $goodReceiptManagement->goods_receipt_code }}</td>
                 </tr>
                 <tr>
-                    <td class="center-text font-12">Ngày: {{$goodReceiptManagement->receipt_date->format('d')}} tháng {{$goodReceiptManagement->receipt_date->format('m')}} năm {{$goodReceiptManagement->receipt_date->format('Y')}} </td>
+                    <td class="center-text font-12">Ngày: {{ $goodReceiptManagement->receipt_date->format('d') }} tháng
+                        {{ $goodReceiptManagement->receipt_date->format('m') }} năm
+                        {{ $goodReceiptManagement->receipt_date->format('Y') }} </td>
                 </tr>
             </table>
         </div>
@@ -272,25 +289,28 @@
                 </tr>
                 @if ($goodReceiptManagement->productGood)
                     <?php $num = 1; ?>
-                    <?php $totalArrQuantity=array();?>
-                    <?php $totalKg=array();?>
+                    <?php $totalArrQuantity = []; ?>
+                    <?php $totalKg = []; ?>
                     @foreach ($goodReceiptManagement->productGood as $value)
                         <tr class="tr-first tr-body" style="font-size: 11px">
                             <td class="center-text">{{ $num }}</td>
                             <td class="center-text">{{ $value->product->name }}</td>
                             <td class="center-text">{{ $value->product->specification }}</td>
                             <td class="center-text">{{ $value->product->unit }}</td>
-                            <td class="center-text">{{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('d-m-Y') : '' }}</td>
-                            <td class="center-text">{{ $value->expiry_date ? $value->expiry_date->format('d-m-Y') : '' }}</td>
-                            <?php $kg = $value->quantity && $value->product->specification && is_numeric($value->product->specification)? $value->quantity*$value->product->specification : 0;?>
                             <td class="center-text">
-                            {{ $kg }}
+                                {{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('d-m-Y') : '' }}
+                            </td>
+                            <td class="center-text">
+                                {{ $value->expiry_date ? $value->expiry_date->format('d-m-Y') : '' }}</td>
+                            <?php $kg = $value->quantity && $value->product->specification && is_numeric($value->product->specification) ? $value->quantity * $value->product->specification : 0; ?>
+                            <td class="center-text">
+                                {{ $kg }}
                             </td>
                             <td class="center-text">{{ $value->quantity }}</td>
                             <td class="center-text"></td>
                         </tr>
-                        <?php array_push($totalKg, $kg);?>
-                        <?php array_push($totalArrQuantity, $value->quantity);?>
+                        <?php array_push($totalKg, $kg); ?>
+                        <?php array_push($totalArrQuantity, $value->quantity); ?>
                         <?php $num++; ?>
                     @endforeach
                     <tr class="tr-first" style="font-size: 11px">
@@ -300,8 +320,8 @@
                         <td class="center-text"></td>
                         <td class="center-text"></td>
                         <td class="center-text"></td>
-                        <td class="center-text">{{array_sum($totalKg)}}</td>
-                        <td class="center-text">{{array_sum($totalArrQuantity)}}</td>
+                        <td class="center-text">{{ array_sum($totalKg) }}</td>
+                        <td class="center-text">{{ array_sum($totalArrQuantity) }}</td>
                         <td class="center-text"></td>
                     </tr>
                 @endif
@@ -321,10 +341,14 @@
         <div class="footer-div mt-40">
             <table cellspacing="0" cellpadding="0">
                 <tr class="tr-first">
-                    <td class="center-text w-25">{{Auth::user()->name}}</td>
-                    <td class="center-text w-25">{{  $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : ''}}</td>
-                    <td class="center-text w-25">{{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : ''}}</td>
-                    <td class="center-text w-25">{{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : ''}}</td>
+                    <td class="center-text w-25">{{ Auth::user()->name }}</td>
+                    <td class="center-text w-25">
+                        {{ $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : '' }}
+                    </td>
+                    <td class="center-text w-25">
+                        {{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : '' }}</td>
+                    <td class="center-text w-25">
+                        {{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : '' }}</td>
                 </tr>
             </table>
         </div>
