@@ -43,7 +43,6 @@ Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPassw
 Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
 Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
-
 // Route::match(['get', 'post'], '/forgot-password', function(){
 //     return view('auth.forgot_password');
 // })->name('forgot-password');
@@ -66,6 +65,7 @@ Route::middleware('auth')->group(function (){
     });
 
     Route::get('instock-export/{id}', [OrderController::class, 'exportStockPDF'])->name('instock.export');
+    // Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('product', ProductController::class);
     Route::get('product-export', [ProductController::class, 'exportPDF'])->name('product.export');
@@ -77,6 +77,8 @@ Route::middleware('auth')->group(function (){
     Route::get('customer-export', [CustomerController::class, 'exportPDF'])->name('customer.export');
 
     Route::resource('user', UserController::class);
+
+    Route::post('changePassword',[UserController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('brand', BrandController::class);
     Route::get('brand-export', [BrandController::class, 'exportPDF'])->name('brand.export');
