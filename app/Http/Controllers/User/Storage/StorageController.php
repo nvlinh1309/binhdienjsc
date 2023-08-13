@@ -122,7 +122,7 @@ class StorageController extends Controller
     public function exportPDF()
     {
         // return "sdsd";
-        $storages = Storage::get();
+        $storages = Storage::with('storage_product')->get();
         $rows = [];
         foreach ($storages as $key => $value) {
             $rows[] = [
@@ -130,7 +130,7 @@ class StorageController extends Controller
                 $value->code,
                 $value->name,
                 $value->address,
-                $value->products->count(),
+                $value->storage_product->count(),
                 '<a href="'.route('store.show', $value->id).'">Xem</a>'
             ];
         }

@@ -255,7 +255,7 @@ class OrderController extends Controller
                 $value->delivery_date ? $value->delivery_date->format('d-m-Y') : '',
                 $value->payment_method ? $paymentMethodList[$value->payment_method] : '',
                 $value->order_status ? $statusList[$value->order_status] : '',
-                '<a href="' . route('stock-in.price', $value->id) . '">Xem</a>'
+                '<a href="' . route('order.show', $value->id) . '">Xem</a>'
             ];
         }
 
