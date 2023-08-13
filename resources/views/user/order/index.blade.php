@@ -37,7 +37,10 @@
                     <a href="{{ route('order.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
+                   
+                    <a href="{{ route('order.list.delivery') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                    </a>
                 </h3>
 
                 <div class="card-tools">
@@ -59,22 +62,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $value)
+                        @foreach ($data as $key=>$value)
                             <tr>
+                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->order_code }}</td>
-                                <td>{{ $value->customer_id }}</td>
+                                <td>{{ $value->customer->name }}</td>
                                 <td>{{ $value->created_at }}</td>
-                                <td>{{ $value->payment_method }}</td>
-                                <td>{{ $value->status }}</td>
+                                <td>{{ $value->payment_method ? $paymentMethodList[$value->payment_method] : '' }}</td>
+                                <td>{{ $value->order_status ? $statusList[$value->order_status] : '' }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('order.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('order.edit', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
-                                        <span class="btn btn-xs btn-danger delete"
+                                        <span  class="btn btn-xs  @if($value->receipt_status != 3) btn-danger delete @else btn-secondary @endif "
                                             data-id="{{ $value->order_code }}">Xoá</span>
                                     </form>
+                                    <a href="{{ route('order.show', $value->id) }}"
+                                            class="btn btn-xs btn-warning">Chi tiết</a>
+
+                                    
                                 </td>
                             </tr>
                         @endforeach
@@ -91,7 +97,7 @@
             $('.delete').on('click', function(e) {
                 var order_code = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng '+namorder_codee+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng '+order_code+'?')) {
                     $(e.target).closest('form').submit()
                 }
             });

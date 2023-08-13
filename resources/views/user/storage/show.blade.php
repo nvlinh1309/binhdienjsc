@@ -64,13 +64,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data->products as $key=>$value)
+                        @foreach ($data->storage_product as $key=>$value)
                         <tr>
                             <td>{{ $key + 1 }}</td>
-                            <td>{{ $value->barcode }}</td>
-                            <td>{{ $value->name }}</td>
-                            <td>{{ $value->brand->name }}</td>
-                            <td>{{ $value->quantity }}</td>
+                            <td>{{ $value->product->barcode }}</td>
+                            <td>{{ $value->product->name }}</td>
+                            <td>{{ $value->product->brand->name }}</td>
+                            <td>{{ $value->quantity_plus - $value->quantity_mins}}</td>
                             <td>
                                 <a href="http://127.0.0.1:8000/store/1" class="btn btn-xs btn-warning">Chi tiêt</a>
                             </td>

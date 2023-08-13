@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User\Product;
+use App\Models\User\StorageProduct;
 
 class Storage extends Model
 {
@@ -18,9 +19,13 @@ class Storage extends Model
         'name', 'address', 'code'
     ];
 
-    public function products()
+    // public function storage_product()
+    // {
+    //     return $this->belongsToMany(Product::class, 'storage_product', 'storage_id', 'product_id');
+    // }
+    public function storage_product()
     {
-        return $this->belongsToMany(Product::class, 'storage_product', 'storage_id', 'product_id');
+        return $this->hasMany(StorageProduct::class, 'storage_id', 'id');
     }
 
 }

@@ -49,7 +49,14 @@ Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPass
 Route::middleware('auth')->group(function (){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
-
+    Route::post('/get-products', [OrderController::class, 'getProductBasedWh'])->name('order.get.product');
+    Route::name('order.')->prefix('order')->group(function() {
+        // Route::get('/show/{id}', [OrderController::class, 'showOrder'])->name('show');
+        Route::get('delivery-export/{id}', [OrderController::class, 'exportDeliveryPDF'])->name('export');
+        Route::get('export/delivery-list-export', [OrderController::class, 'exportListDeliveryPDF'])->name('list.delivery');
+        Route::delete('/delete/{id}', [OrderController::class, 'deliveryDelete'])->name('destroy');
+    });
+    
     Route::name('stock-in.')->prefix('stock-in')->group(function() {
         Route::get('/show/{id}', [OrderController::class, 'showInstock'])->name('price');
         Route::post('/set-price', [OrderController::class, 'setPriceStore'])->name('price.store');

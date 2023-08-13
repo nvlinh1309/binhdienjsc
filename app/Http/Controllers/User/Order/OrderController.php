@@ -5,9 +5,11 @@ namespace App\Http\Controllers\User\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Instock\StoreInstockRequest;
 use App\Http\Requests\User\Instock\UpdateInstockRequest;
+use App\Http\Requests\User\Order\StoreOrderRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
+use App\Models\User\OrderDetail;
 use App\Models\User\Customer;
 use App\Models\User\Supplier;
 use App\Models\User\Product;
@@ -28,7 +30,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Order::orderBy('id', 'DESC');
+        $data = Order::with('customer')->orderBy('id', 'DESC');
         if (isset($request->search)) {
             $search = $request->search;
             $columns = ['order_code', 'payment_method'];
@@ -40,7 +42,9 @@ class OrderController extends Controller
             });
         }
         $data = $data->paginate(5);
-        return view('user.order.index', compact('data'));
+        $paymentMethodList = config('constants.payment_method_list');
+        $statusList = config('constants.status_receipt_list');
+        return view('user.order.index', compact('data', 'paymentMethodList', 'statusList'));
     }
 
     /**
@@ -51,18 +55,150 @@ class OrderController extends Controller
     public function create()
     {
         $customers = Customer::get();
-        return view('user.order.create', compact('customers'));
+        // Get info ware-house:
+        $wareHouses = Storage::get();
+        // Get all user:
+        $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
+        // Get payment method list
+        $paymentMethodList = config('constants.payment_method_list');
+        $statusList = config('constants.status_receipt_list');
+        // Get lst product:
+        $products = Product::get();
+        return view('user.order.create', compact('customers', 'wareHouses', 'dataUser', 'products', 'paymentMethodList', 'statusList'));
     }
 
+    public function getProductBasedWh(Request $request)
+    {
+        $param = $request->all();
+        $whId = $param['wh_id'];
+        $customerId = $param['cus_id'];
+        $data = Storage::with('storage_product', 'storage_product.product')->find($whId);
+        $listProd = [];
+        if ($data) {
+            $temp = $data->toArray();
+            foreach ($temp['storage_product'] as $no => $detail) {
+                $quantityReal = $detail['quantity_plus'] - $detail['quantity_mins'];
+                if ($quantityReal > 0) {
+                    // Get price 
+                    $price = GoodsReceiptManagement::with([
+                        'productGood' => function ($query) use ($detail, $customerId) {
+                            $query->with([
+                                'prices' => function ($query) use ($customerId) {
+                                    $query->where('customer_id', '=', $customerId)->first();
+                                }
+                            ])
+                                ->where('product_id', '=', $detail['product_id'])->first();
+                        }
+                    ])->where(array('storage_id' => $whId, 'receipt_status' => 3))->whereRelation('productGood', 'product_id', $detail['product_id'])->get();
+                    if ($price) {
+                        $temp = $price->toArray();
+                        $price = $temp[0]['product_good'][0]['prices'][0]['price'];
+                    }
+                    $listProd[$detail['product_id']] = array(
+                        'real_quantity' => $quantityReal,
+                        'price' => $price,
+                        'name' => $detail['product']['name']
+                    );
+                }
+            }
+        }
+        return response()->json(['status_respone' => true, 'list_product' => $listProd]);
+    }
+
+    public function showOrder()
+    {
+
+    }
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        //
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $param = $request->all();
+            $order = new Order();
+            $order->order_code = $param['order_code'];
+            $order->customer_id = $param['customer_id'];
+            $order->payment_method = $param['payment_method'];
+            $order->document = $param['order_contract_no'];
+            $order->storage_id = $param['order_wh'];
+            $order->receive_info = $param['receive_info'];
+            $order->receive_cont = $param['receive_cont'];
+            $order->delivery_date = $param['delivery_date'];
+            $order->receive_user = $param['receive_user'];
+            $order->wh_user = $param['wh_user'];
+            $order->sales_user = $param['sales_user'];
+            $order->order_status = $param['order_status'];
+            $order->approval_user = $param['approval_user'];
+            $order->save();
+            $orderId = $order->id;
+            // Handel with list product:
+            $arrayProduct = array();
+            foreach ($param as $name => $value) {
+                if (strpos($name, 'order_product_') !== false) {
+                    $array = explode('_', $name);
+                    if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
+                        $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
+                        throw new \Exception($message);
+                    }
+
+                    if ($param['order_quantity_' . $array[2]] == '') {
+                        $message = 'Số lượng của sản phẩm là bắt buộc.';
+                        throw new \Exception($message);
+                    }
+
+                    if (!is_numeric($param['order_quantity_' . $array[2]])) {
+                        $message = 'Số lượng của sản phẩm là dạng số.';
+                        throw new \Exception($message);
+                    }
+                    $getPriceT = explode('_', $param['order_product_' . $array[2]]);
+
+                    // Kiểm tra giới hạn mua hàng:
+                    $t = Storage::
+                    with([
+                        'storage_product' => function ($query) use ($getPriceT) {
+                            $query
+                                ->where('product_id', '=', $getPriceT[0])->first();
+                        }
+                    ])->where(array('id' => $param['order_wh']))->get()->toArray();
+                    $maxLimit = 0;
+                    if($t) {
+                        $maxLimit = $t[0]['storage_product'][0]['quantity_plus'] - $t[0]['storage_product'][0]['quantity_mins']; 
+                    }
+                    if($param['order_quantity_' . $array[2]] > $maxLimit) {
+                        $message = 'Số lượng vượt quá giới hạn trong kho.';
+                        throw new \Exception($message);
+                    }
+                    array_push($arrayProduct, $param['order_product_' . $array[2]]);
+                    // Insert table 
+                    $orderDetail = new OrderDetail();
+                    $orderDetail->order_id = $orderId;
+                    $orderDetail->product_id = $getPriceT[0];
+                    $orderDetail->quantity = $param['order_quantity_' . $array[2]];
+                    $orderDetail->price = $getPriceT[1];
+                    $orderDetail->note_product = $param['note_product_' . $array[2]];
+                    $orderDetail->save();
+                    // Update table storage:
+                    $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $getPriceT[0]));
+                    if ($stoStaProduct->exists) {
+                        $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins + $param['order_quantity_' . $array[2]];
+                        $stoStaProduct->save();
+                    }
+                }
+            }
+            //--------------------------
+            \DB::commit();
+            return redirect()->route('order.index')->with(['success' => 'Đơn bán đã được tạo thành công.']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            // return back()->withErrors(['msg' => $message])->withInput();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -73,9 +209,67 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $order = Order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
+            if (!$order) {
+                $message = 'Đơn hàng không tồn tại.';
+                return redirect()->route('order.index')->with(['error' => $message]);
+            }
+
+            $statusList = config('constants.status_receipt_list');
+            $paymentMethodList = config('constants.payment_method_list');
+            return view('user.order.show', compact('order', 'statusList', 'paymentMethodList'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['msg' => $message])->withInput();
+        }
     }
 
+    public function exportDeliveryPDF($id)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            // Get info:
+            $order = Order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
+            $statusList = config('constants.status_receipt_list');
+            // return view('user.order.stock-in.exportStockPDF', compact('goodReceiptManagement'));
+            $pdf = PDF::loadView('components.layouts.deliveryExportPDF', compact('order', 'statusList'));
+            return $pdf->download('order_delivery' . date('YmdHms') . '.pdf');
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
+
+    public function exportListDeliveryPDF()
+    {
+        $paymentMethodList = config('constants.payment_method_list');
+        $statusList = config('constants.status_receipt_list');
+        $data = Order::with('customer', 'storage')->orderBy('id', 'DESC')->get();
+        $rows = [];
+        foreach ($data as $key => $value) {
+            $rows[] = [
+                $key + 1,
+                $value->order_code,
+                $value->customer->name,
+                $value->storage->name,
+                $value->delivery_date ? $value->delivery_date->format('d-m-Y') : '',
+                $value->payment_method ? $paymentMethodList[$value->payment_method] : '',
+                $value->order_status ? $statusList[$value->order_status] : '',
+                '<a href="' . route('stock-in.price', $value->id) . '">Xem</a>'
+            ];
+        }
+
+        $data = [
+            'title' => 'DANH SÁCH ĐƠN MUA (XUẤT KHO)',
+            'count_record' => 'Tổng số đơn xuất: ' . count($rows),
+            'columns' => ['#', 'Mã xuất kho', 'Khách hàng', 'Kho hàng', 'Ngày tạo đơn', 'Hình thức thanh toán', 'Trạng thái', 'Chi tiết'],
+            'rows' => $rows
+
+        ];
+
+        $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
+        return $pdf->download('export_order' . date('YmdHms') . '.pdf');
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -84,7 +278,37 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-        //
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $customers = Customer::get();
+            // Get info ware-house:
+            // Get list supplier:
+            $suppliers = Supplier::get();
+            // Get list ware house:
+            $wareHouses = Storage::get();
+            // Get list product:
+            $products = Product::get();
+            // Get info warehouse receipt:
+            $order = order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
+            if ($order == null) {
+                $message = 'Đơn hàng không tồn tại.';
+                throw new \Exception($message);
+            }
+
+            if ($order->order_status == 3) {
+                $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
+                throw new \Exception($message);
+            }
+            //Get status
+            $statusList = config('constants.status_receipt_list');
+            $paymentMethodList = config('constants.payment_method_list');
+            // Get all user
+            $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
+            // Return
+            return view('user.order.edit', compact('customers', 'wareHouses', 'order', 'dataUser', 'paymentMethodList', 'statusList'));
+        } catch (\Exception $e) {
+            return redirect()->route('stock-in.price', $id)->with(['error' => $message]);
+        }
     }
 
     /**
@@ -105,9 +329,33 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function deliveryDelete($id)
     {
-        //
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $order = Order::find($id);
+            if ($order->receipt_status == 3) {
+                $message = 'Đơn hàng đã được duyệt. Không cho phép xóa.';
+                return redirect()->route('stock-in.index')->with(['error' => $message]);
+            }
+            Order::where(array('id' => $id))->delete();
+
+            $prodList = OrderDetail::where(array('order_id' => $id))->get();
+            foreach ($prodList as $detailProd) {
+                $detailProd->delete();
+                $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $order->storage_id, 'product_id' => $detailProd->product_id));
+                if ($stoStaProduct->exists) {
+                    $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins - $detailProd->quantity;
+                    $stoStaProduct->save();
+                }
+            }
+            \DB::commit();
+            return redirect()->back()->with(['success' => 'Thông tin đơn bán (xuất kho) đã được xóa.!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message]);
+        }
     }
 
     /**
@@ -148,7 +396,7 @@ class OrderController extends Controller
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
             $goodReceiptManagement = GoodsReceiptManagement::with('approvalUser', 'receiveUser', 'whUser', 'saleUser')->find($id);
-            if(!$goodReceiptManagement) {
+            if (!$goodReceiptManagement) {
                 $message = 'Đơn hàng không tồn tại.';
                 return redirect()->route('stock-in.index')->with(['error' => $message]);
             }
@@ -156,6 +404,7 @@ class OrderController extends Controller
             $customers = Customer::get();
             //
             $listProductPrice = ProductGoodsReceiptManagement::with('prices', 'product', 'prices.customer')->where('goods_receipt_id', '=', $goodReceiptManagement->id)->get();
+            // dd(3);
             $statusList = config('constants.status_receipt_list');
             return view('user.order.stock-in.show', compact('goodReceiptManagement', 'customers', 'productsGoodReceipt', 'listProductPrice', 'statusList'));
         } catch (\Exception $e) {
@@ -196,12 +445,12 @@ class OrderController extends Controller
             $products = Product::get();
             // Get info warehouse receipt:
             $goodReceiptManagement = GoodsReceiptManagement::find($id);
-            if($goodReceiptManagement == null) {
+            if ($goodReceiptManagement == null) {
                 $message = 'Đơn hàng không tồn tại.';
                 throw new \Exception($message);
             }
 
-            if($goodReceiptManagement->receipt_status == 3) {
+            if ($goodReceiptManagement->receipt_status == 3) {
                 $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
                 throw new \Exception($message);
             }
@@ -212,7 +461,7 @@ class OrderController extends Controller
             // Get all user
             $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
             // Return
-        return view('user.order.stock-in.edit', compact('goodReceiptManagement', 'suppliers', 'wareHouses', 'products', 'productsGoodReceipt', 'statusList', 'dataUser'));
+            return view('user.order.stock-in.edit', compact('goodReceiptManagement', 'suppliers', 'wareHouses', 'products', 'productsGoodReceipt', 'statusList', 'dataUser'));
         } catch (\Exception $e) {
             return redirect()->route('stock-in.price', $id)->with(['error' => $message]);
         }
@@ -235,7 +484,7 @@ class OrderController extends Controller
                 $value->goods_receipt_code,
                 $value->supplier->name,
                 $value->storage->name,
-                $value->receipt_date? $value->receipt_date->format('d-m-Y'): '',
+                $value->receipt_date ? $value->receipt_date->format('d-m-Y') : '',
                 $value->status,
                 '<a href="' . route('stock-in.price', $value->id) . '">Xem</a>'
             ];
@@ -268,7 +517,7 @@ class OrderController extends Controller
             $param = $request->all();
             // dd($param);
             $goodReceiptManagementFind = GoodsReceiptManagement::find($id);
-            if($goodReceiptManagementFind->receipt_status == 3) {
+            if ($goodReceiptManagementFind->receipt_status == 3) {
                 $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
                 return redirect()->route('stock-in.price', $id)->with(['error' => $message]);
             }
@@ -279,13 +528,13 @@ class OrderController extends Controller
             $goodReceiptManagement->document = $param['order_contract_no'];
             $goodReceiptManagement->storage_id = $param['order_wh'];
             $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
-            $goodReceiptManagement->receive_cont        = $param['receive_cont'];
-            $goodReceiptManagement->receive_info        = $param['receive_info'];
-            $goodReceiptManagement->receipt_status      = $param['receipt_status'];
-            $goodReceiptManagement->sales_user          = $param['sales_user']; 
-            $goodReceiptManagement->wh_user             = $param['wh_user']; 
-            $goodReceiptManagement->receive_user        = $param['receive_user'];
-            $goodReceiptManagement->approval_user       = $param['approval_user'];
+            $goodReceiptManagement->receive_cont = $param['receive_cont'];
+            $goodReceiptManagement->receive_info = $param['receive_info'];
+            $goodReceiptManagement->receipt_status = $param['receipt_status'];
+            $goodReceiptManagement->sales_user = $param['sales_user'];
+            $goodReceiptManagement->wh_user = $param['wh_user'];
+            $goodReceiptManagement->receive_user = $param['receive_user'];
+            $goodReceiptManagement->approval_user = $param['approval_user'];
             $goodReceiptManagement->save();
 
             // Handel with list product
@@ -351,13 +600,21 @@ class OrderController extends Controller
             }
 
             // Handle with status "đã duyệt xong"
-            if($goodReceiptManagement->receipt_status == 3) {
+            if ($goodReceiptManagement->receipt_status == 3) {
                 foreach ($prodOlds as $prodOld) {
-                    $stoProd = new StorageProduct();
-                    $stoProd->storage_id = $goodReceiptManagement->storage_id;
-                    $stoProd->product_id = $prodOld->product_id;
-                    $stoProd->quantity = $prodOld->quantity;
-                    $stoProd->save();
+                    // check exist product in storage
+                    $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $goodReceiptManagement->storage_id, 'product_id' => $prodOld->product_id));
+                    if ($stoStaProduct->exists) {
+                        $stoStaProduct->quantity_plus = $stoStaProduct->quantity_plus + $prodOld->quantity;
+                        $stoStaProduct->save();
+                    } else {
+                        $stoStaProduct = new StorageProduct();
+                        $stoStaProduct->storage_id = $goodReceiptManagement->storage_id;
+                        $stoStaProduct->product_id = $prodOld->product_id;
+                        $stoStaProduct->quantity_plus = $prodOld->quantity;
+                        $stoStaProduct->save();
+                    }
+
                 }
             }
 
@@ -420,12 +677,12 @@ class OrderController extends Controller
         \DB::beginTransaction();
         try {
             $goodReceiptManagement = GoodsReceiptManagement::find($idGoodReceipt);
-            if($goodReceiptManagement->receipt_status == 3) {
+            if ($goodReceiptManagement->receipt_status == 3) {
                 $message = 'Đơn hàng đã được duyệt. Không cho phép xóa.';
                 return redirect()->route('stock-in.index')->with(['error' => $message]);
             }
             GoodsReceiptManagement::where(array('id' => $idGoodReceipt))->delete();
-            
+
             $prodList = ProductGoodsReceiptManagement::where(array('goods_receipt_id' => $idGoodReceipt))->get();
             foreach ($prodList as $detailProd) {
                 $detailProd->delete();
@@ -445,18 +702,18 @@ class OrderController extends Controller
         try {
             $param = $request->all();
             $goodReceiptManagement = new GoodsReceiptManagement();
-            $goodReceiptManagement->goods_receipt_code  = $param['order_code'];
-            $goodReceiptManagement->supplier_id         = $param['order_supplier'];
-            $goodReceiptManagement->document            = $param['order_contract_no'];
-            $goodReceiptManagement->storage_id          = $param['order_wh'];
-            $goodReceiptManagement->receipt_date        = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
-            $goodReceiptManagement->receive_cont        = $param['receive_cont'];
-            $goodReceiptManagement->receive_info        = $param['receive_info'];
-            $goodReceiptManagement->receipt_status      = $param['receipt_status'];
-            $goodReceiptManagement->sales_user          = $param['sales_user']; 
-            $goodReceiptManagement->wh_user             = $param['wh_user']; 
-            $goodReceiptManagement->receive_user        = $param['receive_user'];
-            $goodReceiptManagement->approval_user       = $param['approval_user'];
+            $goodReceiptManagement->goods_receipt_code = $param['order_code'];
+            $goodReceiptManagement->supplier_id = $param['order_supplier'];
+            $goodReceiptManagement->document = $param['order_contract_no'];
+            $goodReceiptManagement->storage_id = $param['order_wh'];
+            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
+            $goodReceiptManagement->receive_cont = $param['receive_cont'];
+            $goodReceiptManagement->receive_info = $param['receive_info'];
+            $goodReceiptManagement->receipt_status = $param['receipt_status'];
+            $goodReceiptManagement->sales_user = $param['sales_user'];
+            $goodReceiptManagement->wh_user = $param['wh_user'];
+            $goodReceiptManagement->receive_user = $param['receive_user'];
+            $goodReceiptManagement->approval_user = $param['approval_user'];
             $goodReceiptManagement->save();
             $idGoodReceipt = $goodReceiptManagement->id;
             // Handel with list product:
@@ -474,7 +731,7 @@ class OrderController extends Controller
                         throw new \Exception($message);
                     }
 
-                    if(!is_numeric($param['order_quantity_' . $array[2]])){
+                    if (!is_numeric($param['order_quantity_' . $array[2]])) {
                         $message = 'Số lượng của sản phẩm là dạng số.';
                         throw new \Exception($message);
                     }
@@ -504,7 +761,7 @@ class OrderController extends Controller
             }
             //--------------------------
             \DB::commit();
-            return redirect()->route('stock-in.index')->with(['success' => 'Đơn hàng mới đã được tạo thành công.']);;
+            return redirect()->route('stock-in.index')->with(['success' => 'Đơn hàng mới đã được tạo thành công.']);
         } catch (\Exception $e) {
             \DB::rollback();
             // return back()->withErrors(['msg' => $message])->withInput();

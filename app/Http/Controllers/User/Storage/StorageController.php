@@ -61,7 +61,7 @@ class StorageController extends Controller
      */
     public function show($id)
     {
-        $data = Storage::with('products')->find($id);
+        $data = Storage::with('storage_product', 'storage_product.product')->find($id);
         if (!$data) {
             abort(404);
         }
