@@ -74,7 +74,7 @@
                                     <form method="POST" action="{{ route('order.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <span  class="btn btn-xs  @if($value->receipt_status != 3) btn-danger delete @else btn-secondary @endif "
+                                        <span  class="btn btn-xs  @if($value->order_status != 3) btn-danger delete @else btn-secondary @endif "
                                             data-id="{{ $value->order_code }}">Xoá</span>
                                     </form>
                                     <a href="{{ route('order.show', $value->id) }}"

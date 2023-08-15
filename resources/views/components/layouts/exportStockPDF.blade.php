@@ -298,7 +298,7 @@
                             <td class="center-text">{{ $value->product->specification }}</td>
                             <td class="center-text">{{ $value->product->unit }}</td>
                             <td class="center-text">
-                                {{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('d-m-Y') : '' }}
+                                {{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('dmY') : '' }}
                             </td>
                             <td class="center-text">
                                 {{ $value->expiry_date ? $value->expiry_date->format('d-m-Y') : '' }}</td>

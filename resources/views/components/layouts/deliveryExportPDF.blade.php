@@ -298,7 +298,7 @@
                             <td class="center-text">{{ $value->product->specification }}</td>
                             <td class="center-text">{{ $value->product->unit }}</td>
                             <td class="center-text">
-                                {{ $order->delivery_date ? $order->delivery_date->format('d-m-Y') : '' }}
+                                {{ $order->delivery_date ? $order->delivery_date->format('dmY') : '' }}
                             </td>
                             <td class="center-text"></td>
                             <?php $kg = $value->quantity && $value->product->specification && is_numeric($value->product->specification) ? $value->quantity * $value->product->specification : 0; ?>

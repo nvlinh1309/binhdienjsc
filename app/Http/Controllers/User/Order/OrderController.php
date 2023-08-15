@@ -335,11 +335,12 @@ class OrderController extends Controller
         try {
             $param = $request->all();
             $order = Order::find($id);
+            // Check status order when edit:
             if ($order->order_status == 3) {
                 $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
                 return redirect()->route('order.show', $id)->with(['error' => $message]);
             }
-
+            // Update info order:
             $orderUpdate = Order::firstOrNew(array('id' => $id));
             $orderUpdate->order_code = $param['order_code'];
             $orderUpdate->customer_id = $param['customer_id'];
@@ -358,75 +359,115 @@ class OrderController extends Controller
             // Handel with list product:
             $arrayProduct = array();
             $isCheckProduct = false;
-            // Reset sp trong old:
+            //Lưu danh sách sp update
+            $arrayProductUpdate = array();
+            foreach ($param as $name => $value) {
+                if (strpos($name, 'order_product_') !== false) {
+                    $isCheckProduct = true;
+                    $array = explode('_', $name);
+                    if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
+                        $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
+                        throw new \Exception($message);
+                    }
 
-            // foreach ($param as $name => $value) {
-            //     if (strpos($name, 'order_product_') !== false) {
-            //         $isCheckProduct = true;
-            //         $array = explode('_', $name);
-            //         if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
-            //             $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
-            //             throw new \Exception($message);
-            //         }
-
-            //         if ($param['order_quantity_' . $array[2]] == '') {
-            //             $message = 'Số lượng của sản phẩm là bắt buộc.';
-            //             throw new \Exception($message);
-            //         }
-
-            //         if (!is_numeric($param['order_quantity_' . $array[2]])) {
-            //             $message = 'Số lượng của sản phẩm là dạng số.';
-            //             throw new \Exception($message);
-            //         }
-            //         $getPriceT = explode('_', $param['order_product_' . $array[2]]);
-
-            //         // Kiểm tra giới hạn mua hàng:
-            //         $t = Storage::
-            //             with([
-            //                 'storage_product' => function ($query) use ($getPriceT) {
-            //                     $query
-            //                         ->where('product_id', '=', $getPriceT[0])->first();
-            //                 }
-            //             ])->where(array('id' => $param['order_wh']))->get()->toArray();
-            //         $maxLimit = 0;
-            //         if ($t) {
-            //             $maxLimit = $t[0]['storage_product'][0]['quantity_plus'] - $t[0]['storage_product'][0]['quantity_mins'];
-            //         }
-            //         if ($param['order_quantity_' . $array[2]] > $maxLimit) {
-            //             $message = 'Số lượng vượt quá giới hạn trong kho.';
-            //             throw new \Exception($message);
-            //         }
-            //         array_push($arrayProduct, $param['order_product_' . $array[2]]);
-            //         // Insert table 
-            //         $orderDetail = new OrderDetail();
-            //         $orderDetail->order_id = $id;
-            //         $orderDetail->product_id = $getPriceT[0];
-            //         $orderDetail->quantity = $param['order_quantity_' . $array[2]];
-            //         $orderDetail->price = $getPriceT[1];
-            //         $orderDetail->note_product = $param['note_product_' . $array[2]];
-            //         $orderDetail->save();
-            //         // Update table storage:
-            //         $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $getPriceT[0]));
-            //         if ($stoStaProduct->exists) {
-            //             $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins + $param['order_quantity_' . $array[2]];
-            //             $stoStaProduct->save();
-            //         }
-            //     }
-            // }
-
-            // if (!$isCheckProduct) {
-            //     $message = 'Vui lòng chọn kho hàng có sản phẩm.';
-            //     throw new \Exception($message);
-            // }
+                    if ($param['order_quantity_' . $array[2]] == '') {
+                        $message = 'Số lượng của sản phẩm là bắt buộc.';
+                        throw new \Exception($message);
+                    }
 
 
+                    if (!is_numeric($param['order_quantity_' . $array[2]])) {
+                        $message = 'Số lượng của sản phẩm là dạng số.';
+                        throw new \Exception($message);
+                    }
 
+                    if ($param['order_quantity_' . $array[2]] <= 0) {
+                        $message = 'Số lượng của sản phẩm phải lớn hơn 0';
+                        throw new \Exception($message);
+                    }
 
+                    $getPriceT = explode('_', $param['order_product_' . $array[2]]);
+                    //
+                    $temQuantity = Storage::
+                        with([
+                            'storage_product' => function ($query) use ($getPriceT) {
+                                $query
+                                    ->where('product_id', '=', $getPriceT[0])->first();
+                            }
+                        ])->where(array('id' => $param['order_wh']))->get()->toArray();
+                    $maxLimit = 0;
+                    if ($temQuantity) {
+                        $maxLimit = $temQuantity[0]['storage_product'][0]['quantity_plus'] - $temQuantity[0]['storage_product'][0]['quantity_mins'];
+                    }
+                    $orderDetail = OrderDetail::firstOrNew(array('order_id' => $id, 'product_id' => $param['order_product_' . $array[2]]));
+                    // Nếu sp đã tồn tại sẵn:
+                    if ($orderDetail->exists) {
+                        $oldQuantity = $orderDetail->quantity;
+                        $diffQuantity = $oldQuantity - $param['order_quantity_' . $array[2]];
+                        if ($diffQuantity >= 0) {
+                            //Số lượng giảm or không đổi:
+                        } else {
+                            //Tăng số lượng:
+                            //Kiểm tra giới hạn trong kho:
+                            if ($maxLimit + $diffQuantity < 0) {
+                                $message = 'Số lượng vượt quá giới hạn trong kho.';
+                                throw new \Exception($message);
+                            }
+                        }
+                        // Update lại số lượng:
+                        $orderDetail->quantity = $orderDetail->quantity - $diffQuantity;
+                        $orderDetail->save();
+                    } else {
+                        // Trường hợp chưa tồn tại sản phẩm:
+                        if ($param['order_quantity_' . $array[2]] > $maxLimit) {
+                            $message = 'Số lượng vượt quá giới hạn trong kho.';
+                            throw new \Exception($message);
+                        }
+                        // ITạo sản phẩm mới:
+                        $orderDetailNew = new OrderDetail();
+                        $orderDetailNew->order_id = $id;
+                        $orderDetailNew->product_id = $getPriceT[0];
+                        $orderDetailNew->quantity = $param['order_quantity_' . $array[2]];
+                        $orderDetailNew->price = $getPriceT[1];
+                        $orderDetailNew->note_product = $param['note_product_' . $array[2]];
+                        $orderDetailNew->save();
+                        // Update table storage:
+                        $diffQuantity = - $param['order_quantity_' . $array[2]];
+                       
+                    }
+                    //Update lại stogare:
+                    $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $getPriceT[0]));
+                    if ($stoStaProduct->exists) {
+                        $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins - $diffQuantity;
+                        $stoStaProduct->save();
+                    }
+                    array_push($arrayProductUpdate, $getPriceT[0]);
+                    array_push($arrayProduct, $param['order_product_' . $array[2]]);
+                }
+            }
+            // Check required sản phẩm:
+            if (!$isCheckProduct) {
+                $message = 'Vui lòng chọn kho hàng có sản phẩm.';
+                throw new \Exception($message);
+            }
+            // Delete product:
+            $prodOlds = OrderDetail::where('order_id', '=', $id)->get();
+            foreach ($prodOlds as $prodOld) {
+                if (!in_array($prodOld->product_id, $arrayProductUpdate)) {
+                    // Update lại số lượng trong kho
+                    $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $prodOld->product_id));
+                    if ($stoStaProduct->exists) {
+                        $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins - $prodOld->quantity;
+                        $stoStaProduct->save();
+                    }
+                    // remove table order_detail
+                    $prodOld->delete();
+                }
+            }
             // Commit
             \DB::commit();
             return redirect()->route('order.show', $id)->with(['success' => 'Thông tin đơn bán (xuất kho) đã được cập nhật.!!!']);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
         }
