@@ -43,7 +43,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="order_code">Mã đơn hàng</label>
+                                <label for="order_code">Mã đơn hàng</label><span class="text-danger">*</span>
                                 <input type="text" value="{{ old('order_code') }}" name="order_code"
                                     class="form-control" id="order_code" placeholder="Nhập mã đơn hàng...">
                                 @if ($errors->has('order_code'))
@@ -234,7 +234,7 @@
                                                     class="form-control select2">
                                                     @foreach ($listProOld as $keyP => $product)
                                                         <option value="{{ $keyP.'_'.$product['price'] }}"
-                                                            {{ $keyP == old('order_product_' . $index) ? 'selected' : '' }}>
+                                                            {{ $keyP.'_'.$product['price'] == old('order_product_' . $index) ? 'selected' : '' }}>
                                                             {{ $product['name'].' - Giá '.$product['price'].' - Số lượng còn lại '.$product['real_quantity'] }}</option>
                                                     @endforeach
                                                 </select>

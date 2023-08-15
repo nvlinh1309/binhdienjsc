@@ -135,6 +135,7 @@
             <!-- /.card-header -->
             <div class="card-body p-0">
                 <form id="setPriceForm" action="{{ route('stock-in.price.store') }}" method="POST">
+                <input type="hidden" name="good_receipt_id" value="{{$goodReceiptManagement->id}}"/>
                 <table class="table">
                     @csrf
                     @foreach ($listProductPrice as $productPrice)

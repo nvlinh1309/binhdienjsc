@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Instock\StoreInstockRequest;
 use App\Http\Requests\User\Instock\UpdateInstockRequest;
 use App\Http\Requests\User\Order\StoreOrderRequest;
+use App\Http\Requests\User\Order\UpdateOrderRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
@@ -139,8 +140,10 @@ class OrderController extends Controller
             $orderId = $order->id;
             // Handel with list product:
             $arrayProduct = array();
+            $isCheckProduct = false;
             foreach ($param as $name => $value) {
                 if (strpos($name, 'order_product_') !== false) {
+                    $isCheckProduct = true;
                     $array = explode('_', $name);
                     if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
                         $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
@@ -160,17 +163,17 @@ class OrderController extends Controller
 
                     // Kiểm tra giới hạn mua hàng:
                     $t = Storage::
-                    with([
-                        'storage_product' => function ($query) use ($getPriceT) {
-                            $query
-                                ->where('product_id', '=', $getPriceT[0])->first();
-                        }
-                    ])->where(array('id' => $param['order_wh']))->get()->toArray();
+                        with([
+                            'storage_product' => function ($query) use ($getPriceT) {
+                                $query
+                                    ->where('product_id', '=', $getPriceT[0])->first();
+                            }
+                        ])->where(array('id' => $param['order_wh']))->get()->toArray();
                     $maxLimit = 0;
-                    if($t) {
-                        $maxLimit = $t[0]['storage_product'][0]['quantity_plus'] - $t[0]['storage_product'][0]['quantity_mins']; 
+                    if ($t) {
+                        $maxLimit = $t[0]['storage_product'][0]['quantity_plus'] - $t[0]['storage_product'][0]['quantity_mins'];
                     }
-                    if($param['order_quantity_' . $array[2]] > $maxLimit) {
+                    if ($param['order_quantity_' . $array[2]] > $maxLimit) {
                         $message = 'Số lượng vượt quá giới hạn trong kho.';
                         throw new \Exception($message);
                     }
@@ -190,6 +193,11 @@ class OrderController extends Controller
                         $stoStaProduct->save();
                     }
                 }
+            }
+
+            if (!$isCheckProduct) {
+                $message = 'Vui lòng chọn kho hàng có sản phẩm.';
+                throw new \Exception($message);
             }
             //--------------------------
             \DB::commit();
@@ -289,7 +297,7 @@ class OrderController extends Controller
             // Get list product:
             $products = Product::get();
             // Get info warehouse receipt:
-            $order = order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
+            $order = Order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
             if ($order == null) {
                 $message = 'Đơn hàng không tồn tại.';
                 throw new \Exception($message);
@@ -304,10 +312,12 @@ class OrderController extends Controller
             $paymentMethodList = config('constants.payment_method_list');
             // Get all user
             $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
+            // Get list product:
+            $productL = getProductBasedWhHelper($order->storage_id, $order->customer_id);
             // Return
-            return view('user.order.edit', compact('customers', 'wareHouses', 'order', 'dataUser', 'paymentMethodList', 'statusList'));
+            return view('user.order.edit', compact('customers', 'wareHouses', 'order', 'dataUser', 'paymentMethodList', 'statusList', 'productL'));
         } catch (\Exception $e) {
-            return redirect()->route('stock-in.price', $id)->with(['error' => $message]);
+            return redirect()->route('order.show', $id)->with(['error' => $message]);
         }
     }
 
@@ -318,9 +328,108 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, UpdateOrderRequest $request)
     {
-        //
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $param = $request->all();
+            $order = Order::find($id);
+            if ($order->order_status == 3) {
+                $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
+                return redirect()->route('order.show', $id)->with(['error' => $message]);
+            }
+
+            $orderUpdate = Order::firstOrNew(array('id' => $id));
+            $orderUpdate->order_code = $param['order_code'];
+            $orderUpdate->customer_id = $param['customer_id'];
+            $orderUpdate->payment_method = $param['payment_method'];
+            $orderUpdate->document = $param['order_contract_no'];
+            $orderUpdate->storage_id = $param['order_wh'];
+            $orderUpdate->receive_info = $param['receive_info'];
+            $orderUpdate->receive_cont = $param['receive_cont'];
+            $orderUpdate->delivery_date = $param['delivery_date'];
+            $orderUpdate->receive_user = $param['receive_user'];
+            $orderUpdate->wh_user = $param['wh_user'];
+            $orderUpdate->sales_user = $param['sales_user'];
+            $orderUpdate->order_status = $param['order_status'];
+            $orderUpdate->approval_user = $param['approval_user'];
+            $orderUpdate->save();
+            // Handel with list product:
+            $arrayProduct = array();
+            $isCheckProduct = false;
+            // Reset sp trong old:
+
+            // foreach ($param as $name => $value) {
+            //     if (strpos($name, 'order_product_') !== false) {
+            //         $isCheckProduct = true;
+            //         $array = explode('_', $name);
+            //         if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
+            //             $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
+            //             throw new \Exception($message);
+            //         }
+
+            //         if ($param['order_quantity_' . $array[2]] == '') {
+            //             $message = 'Số lượng của sản phẩm là bắt buộc.';
+            //             throw new \Exception($message);
+            //         }
+
+            //         if (!is_numeric($param['order_quantity_' . $array[2]])) {
+            //             $message = 'Số lượng của sản phẩm là dạng số.';
+            //             throw new \Exception($message);
+            //         }
+            //         $getPriceT = explode('_', $param['order_product_' . $array[2]]);
+
+            //         // Kiểm tra giới hạn mua hàng:
+            //         $t = Storage::
+            //             with([
+            //                 'storage_product' => function ($query) use ($getPriceT) {
+            //                     $query
+            //                         ->where('product_id', '=', $getPriceT[0])->first();
+            //                 }
+            //             ])->where(array('id' => $param['order_wh']))->get()->toArray();
+            //         $maxLimit = 0;
+            //         if ($t) {
+            //             $maxLimit = $t[0]['storage_product'][0]['quantity_plus'] - $t[0]['storage_product'][0]['quantity_mins'];
+            //         }
+            //         if ($param['order_quantity_' . $array[2]] > $maxLimit) {
+            //             $message = 'Số lượng vượt quá giới hạn trong kho.';
+            //             throw new \Exception($message);
+            //         }
+            //         array_push($arrayProduct, $param['order_product_' . $array[2]]);
+            //         // Insert table 
+            //         $orderDetail = new OrderDetail();
+            //         $orderDetail->order_id = $id;
+            //         $orderDetail->product_id = $getPriceT[0];
+            //         $orderDetail->quantity = $param['order_quantity_' . $array[2]];
+            //         $orderDetail->price = $getPriceT[1];
+            //         $orderDetail->note_product = $param['note_product_' . $array[2]];
+            //         $orderDetail->save();
+            //         // Update table storage:
+            //         $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $getPriceT[0]));
+            //         if ($stoStaProduct->exists) {
+            //             $stoStaProduct->quantity_mins = $stoStaProduct->quantity_mins + $param['order_quantity_' . $array[2]];
+            //             $stoStaProduct->save();
+            //         }
+            //     }
+            // }
+
+            // if (!$isCheckProduct) {
+            //     $message = 'Vui lòng chọn kho hàng có sản phẩm.';
+            //     throw new \Exception($message);
+            // }
+
+
+
+
+            // Commit
+            \DB::commit();
+            return redirect()->route('order.show', $id)->with(['success' => 'Thông tin đơn bán (xuất kho) đã được cập nhật.!!!']);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -369,6 +478,17 @@ class OrderController extends Controller
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
             $param = $request->except('_token');
+            $goodReceiptManagement = GoodsReceiptManagement::find($param['good_receipt_id']);
+            $param = $request->except('_token', 'good_receipt_id');
+            if ($goodReceiptManagement == null) {
+                $message = 'Đơn hàng không tồn tại.';
+                throw new \Exception($message);
+            }
+
+            if ($goodReceiptManagement->receipt_status == 3) {
+                $message = 'Đơn hàng đã được duyệt. Không cho phép update.';
+                throw new \Exception($message);
+            }
             foreach ($param as $key => $value) {
                 $temp = explode('_', $key);
                 $productGoodId = $temp[1];
@@ -515,7 +635,6 @@ class OrderController extends Controller
         \DB::beginTransaction();
         try {
             $param = $request->all();
-            // dd($param);
             $goodReceiptManagementFind = GoodsReceiptManagement::find($id);
             if ($goodReceiptManagementFind->receipt_status == 3) {
                 $message = 'Đơn hàng đã được duyệt. Không cho phép update.';

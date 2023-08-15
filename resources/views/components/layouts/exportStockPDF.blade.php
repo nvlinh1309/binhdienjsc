@@ -248,16 +248,16 @@
                     <td class="middle" colspan="2">{{ $goodReceiptManagement->supplier->name }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Theo chứng từ</td>
+                    <td class="bLeft">Theo chứng từ:</td>
                     <td class="middle" colspan="2"><strong>{{ $goodReceiptManagement->document }}</strong></td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Nhập tại kho</td>
+                    <td class="bLeft">Nhập tại kho:</td>
                     <td class="middle">{{ $goodReceiptManagement->storage->name }}</td>
                     <td class="middle">Địa chỉ: {{ $goodReceiptManagement->storage->address }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Thông tin giao nhận</td>
+                    <td class="bLeft">Thông tin giao nhận:</td>
                     <td class="middle">{{ $goodReceiptManagement->receive_info }}</td>
                     <td class="middle">Xe/Cont: {{ $goodReceiptManagement->receive_cont }}</td>
                 </tr>

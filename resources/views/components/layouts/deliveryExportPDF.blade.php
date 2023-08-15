@@ -248,16 +248,16 @@
                     <td class="middle" colspan="2">{{ $order->customer->name }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Theo chứng từ</td>
+                    <td class="bLeft">Theo chứng từ:</td>
                     <td class="middle" colspan="2"><strong>{{ $order->document }}</strong></td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Xuất tại kho</td>
+                    <td class="bLeft">Xuất tại kho:</td>
                     <td class="middle">{{ $order->storage->name }}</td>
                     <td class="middle">Địa chỉ: {{ $order->storage->address }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Thông tin giao nhận</td>
+                    <td class="bLeft">Thông tin giao nhận:</td>
                     <td class="middle">{{ $order->receive_info }}</td>
                     <td class="middle">Xe/Cont: {{ $order->receive_cont }}</td>
                 </tr>
