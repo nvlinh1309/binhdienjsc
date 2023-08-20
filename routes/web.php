@@ -54,6 +54,8 @@ Route::middleware('auth')->group(function (){
         // Route::get('/show/{id}', [OrderController::class, 'showOrder'])->name('show');
         Route::get('delivery-export/{id}', [OrderController::class, 'exportDeliveryPDF'])->name('export');
         Route::get('export/delivery-list-export', [OrderController::class, 'exportListDeliveryPDF'])->name('list.delivery');
+        Route::get('invoice-export/{id}', [OrderController::class, 'exportInvoicePDF'])->name('invoice.export');
+        Route::get('notification-order/{id}', [OrderController::class, 'notificationOrderPDF'])->name('notification.order');
         Route::delete('/delete/{id}', [OrderController::class, 'deliveryDelete'])->name('destroy');
     });
     
@@ -75,6 +77,7 @@ Route::middleware('auth')->group(function (){
     // Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('product', ProductController::class);
+    Route::post('product/set-price', [ProductController::class, 'setPriceStore'])->name('product.price.store');
     Route::get('product-export', [ProductController::class, 'exportPDF'])->name('product.export');
 
     Route::resource('supplier', SupplierController::class);

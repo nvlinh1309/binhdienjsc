@@ -19,4 +19,9 @@ class Customer extends Model
     protected $fillable = [
         'name', 'code', 'tax_code', 'address', 'contact', 'tax'
     ];
+    public function product_price()
+    {
+        return $this->hasMany(PriceCustomerProdManagement::class, 'customer_id', 'id');
+    }
+
 }

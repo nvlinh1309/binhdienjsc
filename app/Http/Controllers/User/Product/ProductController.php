@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Product;
 
 use App\Http\Controllers\Controller;
+use App\Models\User\Customer;
+use App\Models\User\PriceCustomerProdManagement;
 use Illuminate\Http\Request;
 use App\Http\Requests\User\Product\StoreProductRequest;
 use App\Models\User\Product;
@@ -22,12 +24,12 @@ class ProductController extends Controller
         if (isset($request->search)) {
             $search = $request->search;
             $columns = ['name', 'barcode', 'brand_name', 'specification'];
-            $data->where(function ($subQuery) use ($columns, $search){
+            $data->where(function ($subQuery) use ($columns, $search) {
                 foreach ($columns as $column) {
-                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                    $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
                 }
                 return $subQuery;
-              });
+            });
         }
         $data = $data->paginate(5);
         return view('user.product.index', compact('data'));
@@ -52,10 +54,56 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        Product::create($request->all());
-        return redirect()->route('product.index');
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $product = Product::create($request->all());
+            // Set price for customer
+            if($product) {
+                $productId = $product->id;
+                $customers = Customer::get();
+                foreach ($customers as $customer) {
+                    $pri = new PriceCustomerProdManagement();
+                    $pri->product_id = $productId;
+                    $pri->customer_id = $customer->id;
+                    $pri->price = $product->price;
+                    $pri->save();
+                }
+            }
+            \DB::commit();
+            return redirect()->route('product.index')->with(['success' => 'Sản phẩm đã được tạo thành công.']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message]);
+        }
     }
 
+    public function setPriceStore(Request $request)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $param = $request->except('_token');
+            $productId = $param['product_id'];
+            $product = Product::find($productId);
+            $param = $request->except('_token', 'product_id');
+            if ($product == null) {
+                $message = 'Sản phẩm không tồn tại.';
+                throw new \Exception($message);
+            }
+            foreach ($param as $key => $value) {
+                $temp = explode('_', $key);
+                $customerId = $temp[1];
+                $price = PriceCustomerProdManagement::firstOrNew(array('product_id' => $productId, 'customer_id' => $customerId));
+                $price->product_id = $productId;
+                $price->customer_id = $customerId;
+                $price->price = str_replace(',', '', $value);
+                $price->save();
+            }
+            return redirect()->back()->with(['success' => 'Giá của sản phẩm đối với khách hàng đã được cập nhật!!!']);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
     /**
      * Display the specified resource.
      *
@@ -64,7 +112,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $data = Product::find($id);
+        $data = Product::with('price_customer', 'price_customer.customer')->find($id);
         return view('user.product.show', compact('data'));
     }
 
@@ -93,7 +141,7 @@ class ProductController extends Controller
         $data = Product::find($id);
         $data->update($request->all());
         $name = $data->name;
-        return redirect()->back()->with(['success' => 'Thông tin sản phẩm '.$name.' đã được cập nhật!!!']);
+        return redirect()->back()->with(['success' => 'Thông tin sản phẩm ' . $name . ' đã được cập nhật!!!']);
 
     }
 
@@ -108,7 +156,7 @@ class ProductController extends Controller
         $data = Product::find($id);
         $name = $data->name;
         $data->delete();
-        return redirect()->back()->with(['success' => 'Đã xoá sản phẩm '.$name]);
+        return redirect()->back()->with(['success' => 'Đã xoá sản phẩm ' . $name]);
     }
 
     public function exportPDF()
@@ -119,27 +167,27 @@ class ProductController extends Controller
         ['name', 'barcode', 'brand_name', 'specification'];
         foreach ($products as $key => $value) {
             $rows[] = [
-                $key+1,
+                $key + 1,
                 $value->barcode,
                 $value->name,
                 $value->brand->name,
                 $value->specification,
                 number_format($value->price),
                 $value->unit,
-                '<a href="'.route('product.show', $value->id).'">Xem</a>'
+                '<a href="' . route('product.show', $value->id) . '">Xem</a>'
             ];
         }
 
-        $data=[
-            'title'             =>  'DANH SÁCH SẢN PHẨM',
-            'count_record'      =>  'Tổng số sản phẩm: '.count($rows),
-            'columns'            =>  ['#', 'Barcode', 'Tên sản phẩm', 'Thương hiệu', 'Quy cách đóng gói', 'Giá sản phẩm', 'ĐVT', 'Chi tiết'],
-            'rows'  => $rows
+        $data = [
+            'title' => 'DANH SÁCH SẢN PHẨM',
+            'count_record' => 'Tổng số sản phẩm: ' . count($rows),
+            'columns' => ['#', 'Barcode', 'Tên sản phẩm', 'Thương hiệu', 'Quy cách đóng gói', 'Giá sản phẩm', 'ĐVT', 'Chi tiết'],
+            'rows' => $rows
 
         ];
 
         $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
-        return $pdf->download('products'.date('YmdHms').'.pdf');
+        return $pdf->download('products' . date('YmdHms') . '.pdf');
 
 
     }

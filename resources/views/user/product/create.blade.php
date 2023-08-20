@@ -16,7 +16,20 @@
             </div><!-- /.container-fluid -->
         </div>
     @stop()
-
+    <div class="col-md-12">
+        @if (\Session::has('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {!! \Session::get('success') !!}
+            </div>
+        @endif
+        @if (\Session::has('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {!! \Session::get('error') !!}
+            </div>
+        @endif
+    </div>
     <div class="col-md-12">
         <!-- jquery validation -->
         <div class="card card-primary">
@@ -30,7 +43,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Tên sản phẩm</label>
+                                <label for="name">Tên sản phẩm</label><span class="text-danger">*</span>
                                 <input type="text" name="name" class="form-control" id="name"
                                     placeholder="Nhập tên sản phẩm...">
                             </div>
@@ -44,7 +57,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="specification">Quy cách</label>
+                                <label for="specification">Quy cách</label><span class="text-danger">*</span>
                                 <input type="number" name="specification" class="form-control" id="specification"
                                     placeholder="Nhập quy cách...">
                             </div>
@@ -66,8 +79,8 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label class="brand_id">Chọn thương hiệu</label>
-                                <select class="form-control select2" name="brand_id"
-                                    data-placeholder="Chọn thương hiệu" id="brand_id" style="width: 100%;" >
+                                <select class="form-control select2" name="brand_id" data-placeholder="Chọn thương hiệu"
+                                    id="brand_id" style="width: 100%;">
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                     @endforeach

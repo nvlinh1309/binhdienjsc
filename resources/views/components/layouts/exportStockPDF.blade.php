@@ -52,7 +52,7 @@
 
         body {
             margin: 20px;
-            margin-top: 50px;
+            margin-top: 20px;
             padding: 10px;
         }
 
@@ -209,6 +209,10 @@
         .mt-40 {
             margin-top: 40px;
         }
+        .new-padding {
+            padding-top:2px !important;
+            padding-bottom:2px !important;
+        }
     </style>
 </head>
 
@@ -244,22 +248,22 @@
         <div class="second-div mt-10">
             <table cellspacing="0" cellpadding="0">
                 <tr>
-                    <td class="bLeft">Nhà cung cấp:</td>
-                    <td class="middle" colspan="2">{{ $goodReceiptManagement->supplier->name }}</td>
+                    <td class="bLeft new-padding">Nhà cung cấp:</td>
+                    <td class="middle new-padding" colspan="2">{{ $goodReceiptManagement->supplier->name }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Theo chứng từ:</td>
-                    <td class="middle" colspan="2"><strong>{{ $goodReceiptManagement->document }}</strong></td>
+                    <td class="bLeft new-padding">Theo chứng từ:</td>
+                    <td class="middle new-padding" colspan="2"><strong>{{ $goodReceiptManagement->document }}</strong></td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Nhập tại kho:</td>
-                    <td class="middle">{{ $goodReceiptManagement->storage->name }}</td>
-                    <td class="middle">Địa chỉ: {{ $goodReceiptManagement->storage->address }}</td>
+                    <td class="bLeft new-padding">Nhập tại kho:</td>
+                    <td class="middle new-padding">{{ $goodReceiptManagement->storage->name }}</td>
+                    <td class="middle new-padding">Địa chỉ: {{ $goodReceiptManagement->storage->address }}</td>
                 </tr>
                 <tr>
-                    <td class="bLeft">Thông tin giao nhận:</td>
-                    <td class="middle">{{ $goodReceiptManagement->receive_info }}</td>
-                    <td class="middle">Xe/Cont: {{ $goodReceiptManagement->receive_cont }}</td>
+                    <td class="bLeft new-padding">Thông tin giao nhận:</td>
+                    <td class="middle new-padding">{{ $goodReceiptManagement->receive_info }}</td>
+                    <td class="middle new-padding">Xe/Cont: {{ $goodReceiptManagement->receive_cont }}</td>
                 </tr>
             </table>
         </div>

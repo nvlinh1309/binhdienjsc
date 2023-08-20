@@ -31,37 +31,50 @@
         @endif
     </div>
     <div class="col-md-12">
-        <div class="card">
-            
+        {{-- <div class="card"> --}}
+
             <div class="callout callout-info">
-            <div class="card-header pl-0">
-                <h3 class="card-title">
-                    <a href="{{ route('order.export', $order->id) }}">
-                        <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Xuất phiếu xuất kho</button>
-                    </a>
-                </h3>
-            </div>
+                <div class="card-header pl-0">
+                    <h3 class="card-title">
+                        <a style="text-decoration: none;" href="{{ route('order.export', $order->id) }}">
+                            <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Xuất phiếu xuất kho</button>
+                        </a>
+                        {{-- {{ route('order.invoice.export', $order->id) }} --}}
+                        <a style="text-decoration: none;" href="#">
+                            <button class=" btn btn-sm btn-warning" title="Tạo đơn hàng">Giấy đề nghị xuất hóa
+                                đơn</button>
+                        </a>
+                        {{-- {{ route('order.notification.order', $order->id) }} --}}
+                        <a style="text-decoration: none;" href="#">
+                            <button class=" btn btn-sm btn-info" title="Tạo đơn hàng">Thông báo đặt hàng</button>
+                        </a>
+                    </h3>
+                </div>
                 <h5><i class="fas fa-info"></i> Thông tin</h5>
                 <div><b>Mã đơn hàng:</b> {{ $order->order_code }}</div>
                 <div><b>Tên khách hàng:</b> {{ $order->customer->name }}</div>
                 <div><b>Chứng từ (Mã hợp đồng,v.v...):</b> {{ $order->document }}</div>
                 <div><b>Kho:</b> {{ $order->storage->name }}</div>
-                <div><b>Hình thức thanh toán:</b> {{ $order->payment_method ? $paymentMethodList[$order->payment_method] : '' }}</div>
+                <div><b>Hình thức thanh toán:</b>
+                    {{ $order->payment_method ? $paymentMethodList[$order->payment_method] : '' }}</div>
                 <div><b>Thông tin giao nhận:</b> {{ $order->receive_info }}</div>
                 <div><b>Xe/Cont:</b> {{ $order->receive_cont }}</div>
-                <div><b>Ngày xuất kho:</b> {{ $order->delivery_date ? $order->delivery_date->format('d-m-Y') :'' }}</div>
-                <div><b>Bộ phận giao nhận:</b> {{  $order->receive_user ? $order->receiveUser->name : ''}}</div>
-                <div><b>Thủ kho hàng:</b> {{ $order->wh_user ? $order->whUser->name : ''}}</div>
-                <div><b>Phụ trách tổ kinh doanh:</b> {{ $order->sales_user ? $order->saleUser->name : ''}}</div>
-                <div><b>Trạng thái đơn hàng:</b> {{ $order->order_status ? $statusList[$order->order_status] : '' }}</div>
+                <div><b>Ngày xuất kho:</b> {{ $order->delivery_date ? $order->delivery_date->format('d-m-Y') : '' }}
+                </div>
+                <div><b>Bộ phận giao nhận:</b> {{ $order->receive_user ? $order->receiveUser->name : '' }}</div>
+                <div><b>Thủ kho hàng:</b> {{ $order->wh_user ? $order->whUser->name : '' }}</div>
+                <div><b>Phụ trách tổ kinh doanh:</b> {{ $order->sales_user ? $order->saleUser->name : '' }}</div>
+                <div><b>Trạng thái đơn hàng:</b> {{ $order->order_status ? $statusList[$order->order_status] : '' }}
+                </div>
                 <div><b>Người phê duyệt:</b> {{ $order->approval_user ? $order->approvalUser->name : '' }}</div>
                 <div><b>Ngày tạo:</b> {{ $order->created_at->format('d-m-Y') }}</div>
                 {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-                <button @if($order->order_status == 3) disabled @endif class="btn btn-warning" onclick="window.location='{{ route("order.edit",$order->id) }}'">Chỉnh sửa</button>
+                <button @if ($order->order_status == 3) disabled @endif class="btn btn-warning"
+                    onclick="window.location='{{ route('order.edit', $order->id) }}'">Chỉnh sửa</button>
             </div>
 
-            
-        </div>
+
+        {{-- </div> --}}
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
@@ -80,37 +93,37 @@
             <div class="card-body p-0">
                 <table class="table">
                     @csrf
-                    
-                        <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th >Tên sản phẩm</th>
-                                <th >Giá (VNĐ)</th>
-                                <th >Số lượng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($order->order_detail) > 0)
-                                <?php $num = 1; ?>
-                                @foreach ($order->order_detail as $productExport)
-                                    <tr>
-                                        <td>{{ $num }}</td>
-                                        <td>{{ $productExport->product->name }}</td>
-                                        <td>
-                                            {{ $productExport->price ? number_format($productExport->price) : '' }}
-                                        </td>
-                                        <td>
-                                            {{ $productExport->quantity }}
-                                        </td>
-                                    </tr>
-                                    <?php $num++; ?>
-                                @endforeach
-                            @else
+
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá (VNĐ)</th>
+                            <th>Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (count($order->order_detail) > 0)
+                            <?php $num = 1; ?>
+                            @foreach ($order->order_detail as $productExport)
                                 <tr>
-                                    <td colspan="3">Không tồn tại sản phẩm của đơn hàng.</td>
+                                    <td>{{ $num }}</td>
+                                    <td>{{ $productExport->product->name }}</td>
+                                    <td>
+                                        {{ $productExport->price ? number_format($productExport->price) : '' }}
+                                    </td>
+                                    <td>
+                                        {{ $productExport->quantity }}
+                                    </td>
                                 </tr>
-                            @endif
-                        </tbody>
+                                <?php $num++; ?>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="3">Không tồn tại sản phẩm của đơn hàng.</td>
+                            </tr>
+                        @endif
+                    </tbody>
                 </table>
             </div>
             <!-- /.card-body -->

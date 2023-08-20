@@ -81,20 +81,17 @@ class OrderController extends Controller
                 $quantityReal = $detail['quantity_plus'] - $detail['quantity_mins'];
                 if ($quantityReal > 0) {
                     // Get price 
-                    $price = GoodsReceiptManagement::with([
-                        'productGood' => function ($query) use ($detail, $customerId) {
-                            $query->with([
-                                'prices' => function ($query) use ($customerId) {
-                                    $query->where('customer_id', '=', $customerId)->first();
-                                }
-                            ])
-                                ->where('product_id', '=', $detail['product_id'])->first();
+                    $priceInfo = Product::with([
+                        'price_customer' => function ($query) use ($detail, $customerId) {
+                            $query->with('customer')->where(array('product_id' => $detail['product_id'], 'customer_id' => $customerId))->first();
                         }
-                    ])->where(array('storage_id' => $whId, 'receipt_status' => 3))->whereRelation('productGood', 'product_id', $detail['product_id'])->get();
-                    if ($price) {
-                        $temp = $price->toArray();
-                        $price = $temp[0]['product_good'][0]['prices'][0]['price'];
+                    ])->find($detail['product_id']);
+                    if(count($priceInfo->price_customer) > 0) {
+                        $price = $priceInfo->price_customer[0]['price'];
+                    }else {
+                        $price = 0;
                     }
+                    
                     $listProd[$detail['product_id']] = array(
                         'real_quantity' => $quantityReal,
                         'price' => $price,
@@ -240,7 +237,7 @@ class OrderController extends Controller
             // Get info:
             $order = Order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product')->find($id);
             $statusList = config('constants.status_receipt_list');
-            // return view('user.order.stock-in.exportStockPDF', compact('goodReceiptManagement'));
+            // return view('user.order.stock-in.exportStockPDF', compact('order', 'statusList'));
             $pdf = PDF::loadView('components.layouts.deliveryExportPDF', compact('order', 'statusList'));
             return $pdf->download('order_delivery' . date('YmdHms') . '.pdf');
         } catch (\Exception $e) {
@@ -473,6 +470,25 @@ class OrderController extends Controller
         }
     }
 
+    public function notificationOrderPDF($orderId) 
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
+
+    public function exportInvoicePDF($orderId) 
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            return view('user.order.exportInvoice');
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -564,10 +580,8 @@ class OrderController extends Controller
             $productsGoodReceipt = ProductGoodsReceiptManagement::with('product')->where('goods_receipt_id', '=', $goodReceiptManagement->id)->get();
             $customers = Customer::get();
             //
-            $listProductPrice = ProductGoodsReceiptManagement::with('prices', 'product', 'prices.customer')->where('goods_receipt_id', '=', $goodReceiptManagement->id)->get();
-            // dd(3);
             $statusList = config('constants.status_receipt_list');
-            return view('user.order.stock-in.show', compact('goodReceiptManagement', 'customers', 'productsGoodReceipt', 'listProductPrice', 'statusList'));
+            return view('user.order.stock-in.show', compact('goodReceiptManagement', 'customers', 'productsGoodReceipt', 'statusList'));
         } catch (\Exception $e) {
             return back()->withErrors(['msg' => $message])->withInput();
         }
@@ -738,13 +752,13 @@ class OrderController extends Controller
                         // Insert table price
                         $product = Product::find($param['order_product_' . $array[2]]);
                         $customers = Customer::get();
-                        foreach ($customers as $customer) {
-                            $pri = new PriceCustomerProdManagement();
-                            $pri->product_goods_id = $proId;
-                            $pri->customer_id = $customer->id;
-                            $pri->price = $product->price;
-                            $pri->save();
-                        }
+                        // foreach ($customers as $customer) {
+                        //     $pri = new PriceCustomerProdManagement();
+                        //     $pri->product_goods_id = $proId;
+                        //     $pri->customer_id = $customer->id;
+                        //     $pri->price = $product->price;
+                        //     $pri->save();
+                        // }
                     }
                 }
             }
@@ -755,7 +769,7 @@ class OrderController extends Controller
                     // remove table product_goods_receipt_management
                     $prodOld->delete();
                     // Remove table price_customer_prod_management
-                    PriceCustomerProdManagement::where(array('product_goods_id' => $prodOld->id))->delete();
+                    // PriceCustomerProdManagement::where(array('product_goods_id' => $prodOld->id))->delete();
                 }
             }
 
@@ -846,7 +860,7 @@ class OrderController extends Controller
             $prodList = ProductGoodsReceiptManagement::where(array('goods_receipt_id' => $idGoodReceipt))->get();
             foreach ($prodList as $detailProd) {
                 $detailProd->delete();
-                PriceCustomerProdManagement::where(array('product_goods_id' => $detailProd->id))->delete();
+                // PriceCustomerProdManagement::where(array('product_goods_id' => $detailProd->id))->delete();
             }
             \DB::commit();
             return redirect()->back()->with(['success' => 'Thông tin đơn mua (nhập kho) đã được xóa.!!!']);
@@ -908,15 +922,15 @@ class OrderController extends Controller
                     $insertProduct->save();
                     $proId = $insertProduct->id;
                     // Insert table price
-                    $product = Product::find($param['order_product_' . $array[2]]);
-                    $customers = Customer::get();
-                    foreach ($customers as $customer) {
-                        $pri = new PriceCustomerProdManagement();
-                        $pri->product_goods_id = $proId;
-                        $pri->customer_id = $customer->id;
-                        $pri->price = $product->price;
-                        $pri->save();
-                    }
+                    // $product = Product::find($param['order_product_' . $array[2]]);
+                    // $customers = Customer::get();
+                    // foreach ($customers as $customer) {
+                    //     $pri = new PriceCustomerProdManagement();
+                    //     $pri->product_goods_id = $proId;
+                    //     $pri->customer_id = $customer->id;
+                    //     $pri->price = $product->price;
+                    //     $pri->save();
+                    // }
                 }
             }
             //--------------------------

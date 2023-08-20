@@ -31,9 +31,9 @@
         @endif
     </div>
     <div class="col-md-12">
-        <div class="card">
-            
-            <div class="callout callout-info">
+        {{-- <div class="card"> --}}
+
+        <div class="callout callout-info">
             <div class="card-header pl-0">
                 <h3 class="card-title">
                     <a href="{{ route('instock.export', $goodReceiptManagement->id) }}">
@@ -41,39 +41,48 @@
                     </a>
                 </h3>
             </div>
-                <h5><i class="fas fa-info"></i> Thông tin</h5>
-                <div><b>Mã nhập kho:</b> {{ $goodReceiptManagement->goods_receipt_code }}</div>
-                <div><b>Nhà cung cấp:</b> {{ $goodReceiptManagement->supplier->name }}</div>
-                <div><b>Chứng từ (Mã hợp đồng,v.v...):</b> {{ $goodReceiptManagement->document }}</div>
-                <div><b>Kho:</b> {{ $goodReceiptManagement->storage->name }}</div>
-                <div><b>Ngày nhập kho:</b> {{ $goodReceiptManagement->receipt_date ?$goodReceiptManagement->receipt_date->format('d-m-Y') :'' }}</div>
-                <div><b>Ngày tạo:</b> {{ $goodReceiptManagement->created_at->format('d-m-Y') }}</div>
-                <div><b>Thông tin giao nhận:</b> {{ $goodReceiptManagement->receive_info }}</div>
-                <div><b>Xe/Cont:</b> {{ $goodReceiptManagement->receive_cont }}</div>
-                <div><b>Người phê duyệt:</b> {{ $goodReceiptManagement->approval_user ? $goodReceiptManagement->approvalUser->name : '' }}</div>
-                <div><b>Bộ phận giao nhận:</b> {{  $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : ''}}</div>
-                <div><b>Thủ kho hàng:</b> {{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : ''}}</div>
-                <div><b>Phụ trách tổ kinh doanh:</b> {{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : ''}}</div>
-                <div><b>Trạng thái đơn hàng:</b> {{ $goodReceiptManagement->receipt_status ? $statusList[$goodReceiptManagement->receipt_status] : '' }}</div>
-                {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-                <button @if($goodReceiptManagement->receipt_status == 3) disabled @endif class="btn btn-warning" onclick="window.location='{{ route("stock-in.edit",$goodReceiptManagement->id) }}'">Chỉnh sửa</button>
+            <h5><i class="fas fa-info"></i> Thông tin</h5>
+            <div><b>Mã nhập kho:</b> {{ $goodReceiptManagement->goods_receipt_code }}</div>
+            <div><b>Nhà cung cấp:</b> {{ $goodReceiptManagement->supplier->name }}</div>
+            <div><b>Chứng từ (Mã hợp đồng,v.v...):</b> {{ $goodReceiptManagement->document }}</div>
+            <div><b>Kho:</b> {{ $goodReceiptManagement->storage->name }}</div>
+            <div><b>Ngày nhập kho:</b>
+                {{ $goodReceiptManagement->receipt_date ? $goodReceiptManagement->receipt_date->format('d-m-Y') : '' }}
             </div>
+            <div><b>Ngày tạo:</b> {{ $goodReceiptManagement->created_at->format('d-m-Y') }}</div>
+            <div><b>Thông tin giao nhận:</b> {{ $goodReceiptManagement->receive_info }}</div>
+            <div><b>Xe/Cont:</b> {{ $goodReceiptManagement->receive_cont }}</div>
+            <div><b>Người phê duyệt:</b>
+                {{ $goodReceiptManagement->approval_user ? $goodReceiptManagement->approvalUser->name : '' }}</div>
+            <div><b>Bộ phận giao nhận:</b>
+                {{ $goodReceiptManagement->receive_user ? $goodReceiptManagement->receiveUser->name : '' }}</div>
+            <div><b>Thủ kho hàng:</b> {{ $goodReceiptManagement->wh_user ? $goodReceiptManagement->whUser->name : '' }}
+            </div>
+            <div><b>Phụ trách tổ kinh doanh:</b>
+                {{ $goodReceiptManagement->sales_user ? $goodReceiptManagement->saleUser->name : '' }}</div>
+            <div><b>Trạng thái đơn hàng:</b>
+                {{ $goodReceiptManagement->receipt_status ? $statusList[$goodReceiptManagement->receipt_status] : '' }}
+            </div>
+            {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
+            <button @if ($goodReceiptManagement->receipt_status == 3) disabled @endif class="btn btn-warning"
+                onclick="window.location='{{ route('stock-in.edit', $goodReceiptManagement->id) }}'">Chỉnh sửa</button>
+        </div>
 
-            {{-- <div class="card-header"> --}}
-            {{-- <h3 class="card-title"> --}}
-            {{-- Mã nhập kho: {{ $goodReceiptManagement->goods_receipt_code }} --}}
-            {{-- <a href="{{ route('stock-in.create') }}">
+        {{-- <div class="card-header"> --}}
+        {{-- <h3 class="card-title"> --}}
+        {{-- Mã nhập kho: {{ $goodReceiptManagement->goods_receipt_code }} --}}
+        {{-- <a href="{{ route('stock-in.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
                     <button class=" btn btn-sm btn-success disabled" title="Xuất file"><i class="fas fa-download"></i></button> --}}
-            {{-- </h3> --}}
+        {{-- </h3> --}}
 
-            {{-- <div class="card-tools"> --}}
-            {{-- {{ $data->links('vendor.pagination.default') }} --}}
-            {{-- </div> --}}
-            {{-- </div> --}}
-            <!-- /.card-header -->
-            {{-- <div class="card-body p-0">
+        {{-- <div class="card-tools"> --}}
+        {{-- {{ $data->links('vendor.pagination.default') }} --}}
+        {{-- </div> --}}
+        {{-- </div> --}}
+        <!-- /.card-header -->
+        {{-- <div class="card-body p-0">
                 <table class="table">
                     <thead>
                         <tr>
@@ -116,12 +125,12 @@
                     </tbody>
                 </table>
             </div> --}}
-            <!-- /.card-body -->
-        </div>
+        <!-- /.card-body -->
+        {{-- </div> --}}
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    Danh sách sản phẩm kèm giá theo khách hàng
+                    Danh sách sản phẩm của đơn.
                     {{-- <a href="{{ route('stock-in.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
@@ -132,62 +141,49 @@
                     {{-- {{ $data->links('vendor.pagination.default') }} --}}
                 </div>
             </div>
-            <!-- /.card-header -->
             <div class="card-body p-0">
-                <form id="setPriceForm" action="{{ route('stock-in.price.store') }}" method="POST">
-                <input type="hidden" name="good_receipt_id" value="{{$goodReceiptManagement->id}}"/>
                 <table class="table">
                     @csrf
-                    @foreach ($listProductPrice as $productPrice)
-                        <thead>
-                            <tr>
-                                <th style="width: 10px">#</th>
-                                <th >Sản phẩm: {{ $productPrice->product->name }}</th>
-                                <th >Giá (VNĐ)</th>
-                                <th >Số lượng</th>
-                                <th >Ngày sản xuất</th>
-                                <th >Hạn sử dụng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($productPrice->prices) > 0)
-                                <?php $num = 1; ?>
-                                @foreach ($productPrice->prices as $detailPrice)
-                                    <tr>
-                                        <td>{{ $num }}</td>
-                                        <td>
-                                            {{ $detailPrice->customer->name }}
-                                        </td>
-                                        <td>
-                                            <input type="text" name="price_{{$productPrice->id}}_{{$detailPrice->customer_id}}" class="form-control"
-                                                id="" value="{{ $detailPrice->price }}"
-                                                placeholder="Nhập giá đối với khách hàng...">
-                                        </td>
-                                        <td>
-                                            {{ $productPrice->quantity }}
-                                        </td>
-                                        <td>
-                                            {{ $productPrice->date_of_manufacture ? $productPrice->date_of_manufacture->format('d-m-Y') : '' }}
-                                        </td>
-                                        <td>
-                                            {{ $productPrice->expiry_date ? $productPrice->expiry_date->format('d-m-Y') : ''}}
-                                        </td>
-                                    </tr>
-                                    <?php $num++; ?>
-                                @endforeach
-                            @else
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Ngày sản xuất</th>
+                            <th>Hạn sử dụng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (count($productsGoodReceipt) > 0)
+                            <?php $num = 1; ?>
+                            @foreach ($productsGoodReceipt as $product)
                                 <tr>
-                                    <td colspan="3">Sản phẩm chưa xét giá cho khách hàng.</td>
+                                    <td>{{ $num }}</td>
+                                    <td>
+                                        {{ $product->product->name }}
+                                    </td>
+                                    <td>
+                                        {{ $product->quantity }}
+                                    </td>
+                                    <td>
+                                        {{ $product->date_of_manufacture ? $product->date_of_manufacture->format('d-m-Y') : '' }}
+                                    </td>
+                                    <td>
+                                        {{ $product->expiry_date ? $product->expiry_date->format('d-m-Y') : '' }}
+                                    </td>
                                 </tr>
-                            @endif
-                        </tbody>
-                    @endforeach
+                                <?php $num++; ?>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="3">Sản phẩm chưa xét giá cho khách hàng.</td>
+                            </tr>
+                        @endif
+                    </tbody>
                 </table>
-                <div class="callout">
-                <button type="submit"  class="btn btn-secondary">Cập nhật giá</button>
-                </div>
-                </form>
             </div>
+            <!-- /.card-header -->
+
             <!-- /.card-body -->
         </div>
     </div>

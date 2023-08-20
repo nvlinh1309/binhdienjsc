@@ -16,7 +16,20 @@
             </div><!-- /.container-fluid -->
         </div>
     @stop()
-
+    <div class="col-md-12">
+        @if (\Session::has('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {!! \Session::get('success') !!}
+            </div>
+        @endif
+        @if (\Session::has('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                {!! \Session::get('error') !!}
+            </div>
+        @endif
+    </div>
     <div class="col-md-12">
         @if (\Session::has('success'))
             <div class="alert alert-success alert-dismissible">
@@ -34,7 +47,8 @@
                         <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
                     </a>
                     <a href="{{ route('customer.export') }}">
-                    <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                        <button class=" btn btn-sm btn-success" title="Xuất file"><i
+                                class="fas fa-download"></i></button>
                     </a>
                 </h3>
 
@@ -59,9 +73,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($customers as $key=>$customer)
+                        @foreach ($customers as $key => $customer)
                             <tr>
-                                <td>{{ ($customers->currentpage()-1) * $customers->perpage() + $key + 1 }}</td>
+                                <td>{{ ($customers->currentpage() - 1) * $customers->perpage() + $key + 1 }}</td>
                                 <td>{{ $customer->code }}</td>
                                 <td>{{ $customer->name }}</td>
                                 <td>{{ $customer->tax_code }}</td>
@@ -94,7 +108,7 @@
             $('.delete').on('click', function(e) {
                 var name = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá khách hàng '+name+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá khách hàng ' + name + '?')) {
                     $(e.target).closest('form').submit()
                 }
             });

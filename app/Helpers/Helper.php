@@ -1,5 +1,6 @@
 <?php
 use App\Models\User\GoodsReceiptManagement;
+use App\Models\User\Product;
 use App\Models\User\Storage;
 if (!function_exists('aFunctionName')) {
     function getProductBasedWhHelper($whId, $customerId)
@@ -12,19 +13,15 @@ if (!function_exists('aFunctionName')) {
                 $quantityReal = $detail['quantity_plus'] - $detail['quantity_mins'];
                 if ($quantityReal > 0) {
                     // Get price 
-                    $price = GoodsReceiptManagement::with([
-                        'productGood' => function ($query) use ($detail, $customerId) {
-                            $query->with([
-                                'prices' => function ($query) use ($customerId) {
-                                    $query->where('customer_id', '=', $customerId)->first();
-                                }
-                            ])
-                                ->where('product_id', '=', $detail['product_id'])->first();
+                    $priceInfo = Product::with([
+                        'price_customer' => function ($query) use ($detail, $customerId) {
+                            $query->with('customer')->where(array('product_id' => $detail['product_id'], 'customer_id' => $customerId))->first();
                         }
-                    ])->where(array('storage_id' => $whId, 'receipt_status' => 3))->whereRelation('productGood', 'product_id', $detail['product_id'])->get();
-                    if ($price) {
-                        $temp = $price->toArray();
-                        $price = $temp[0]['product_good'][0]['prices'][0]['price'];
+                    ])->find($detail['product_id']);
+                    if(count($priceInfo->price_customer) > 0) {
+                        $price = $priceInfo->price_customer[0]['price'];
+                    }else {
+                        $price = 0;
                     }
                     $listProd[$detail['product_id']] = array(
                         'real_quantity' => $quantityReal,
