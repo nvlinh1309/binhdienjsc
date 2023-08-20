@@ -94,7 +94,7 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <a href="{{ route('customer.show', $data->id) }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('customer.index') }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu lại</button>
                 </div>
             </form>
