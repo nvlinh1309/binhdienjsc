@@ -479,12 +479,17 @@ class OrderController extends Controller
             return redirect()->back()->with(['error' => $message]);
         }
     }
-
+    
     public function exportInvoicePDF($orderId) 
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
-            return view('user.order.exportInvoice');
+            $order = Order::with('storage', 'approvalUser', 'customer', 'receiveUser', 'whUser', 'saleUser', 'order_detail', 'order_detail.product', 'order_detail.product.brand')->find($orderId);
+            // return view('user.order.stock-in.exportStockPDF', compact('order', 'statusList'));
+            // return view('user.order.exportInvoice', compact('order'));
+            // $pdf = PDF::loadView('user.order.exportInvoice', compact('order'));
+            $pdf = PDF::loadView('components.layouts.exportInvoice', compact('order'));
+            return $pdf->download('warehouse_receipt' . date('YmdHms') . '.pdf');
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => $message]);
         }

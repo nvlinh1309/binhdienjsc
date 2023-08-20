@@ -40,7 +40,7 @@
                             <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Xuất phiếu xuất kho</button>
                         </a>
                         {{-- {{ route('order.invoice.export', $order->id) }} --}}
-                        <a style="text-decoration: none;" href="#">
+                        <a style="text-decoration: none;" href="{{ route('order.invoice.export', $order->id) }}">
                             <button class=" btn btn-sm btn-warning" title="Tạo đơn hàng">Giấy đề nghị xuất hóa
                                 đơn</button>
                         </a>
