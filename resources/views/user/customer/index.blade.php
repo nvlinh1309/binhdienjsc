@@ -31,15 +31,6 @@
         @endif
     </div>
     <div class="col-md-12">
-        @if (\Session::has('success'))
-            <div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {{-- <h5><i class="icon fas fa-check"></i>Xoá thành công!</h5> --}}
-                {!! \Session::get('success') !!}
-            </div>
-        @endif
-    </div>
-    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">

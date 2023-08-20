@@ -70,7 +70,7 @@ class CustomerController extends Controller
                 }
             }
             \DB::commit();
-            return redirect()->route('customer.index') > with(['success' => 'Khách hàng đã được tạo thành công.']);
+            return redirect()->route('customer.index') -> with(['success' => 'Khách hàng đã được tạo thành công.']);
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
