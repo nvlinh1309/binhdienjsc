@@ -36,8 +36,11 @@
         <div class="callout callout-info">
             <div class="card-header pl-0">
                 <h3 class="card-title">
-                    <a href="{{ route('instock.export', $goodReceiptManagement->id) }}">
+                    <a style="text-decoration: none;" href="{{ route('instock.export', $goodReceiptManagement->id) }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Xuất phiếu nhập kho</button>
+                    </a>
+                    <a style="text-decoration: none;" href="{{ route('instock.invoice', $goodReceiptManagement->id) }}">
+                        <button class=" btn btn-sm btn-info" title="Tạo đơn hàng">Xuất đơn đặt hàng</button>
                     </a>
                 </h3>
             </div>

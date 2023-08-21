@@ -494,6 +494,20 @@ class OrderController extends Controller
             return redirect()->back()->with(['error' => $message]);
         }
     }
+
+    public function invoiceStockPDF($orderId)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $goodReceiptManagement = GoodsReceiptManagement::with('productGood', 'supplier', 'storage', 'productGood.product', 'approvalUser', 'receiveUser', 'whUser', 'saleUser')->find($orderId);
+            // return view('components.layouts.invoiceStockPDF', compact('goodReceiptManagement'));
+            $pdf = PDF::loadView('components.layouts.invoiceStockPDF', compact('goodReceiptManagement'));
+            return $pdf->download('purchase_order' . date('YmdHms') . '.pdf');
+            dd($orderId);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => $message]);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *

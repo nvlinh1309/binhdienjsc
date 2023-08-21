@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function (){
     });
 
     Route::get('instock-export/{id}', [OrderController::class, 'exportStockPDF'])->name('instock.export');
+    Route::get('instock-invoice/{id}', [OrderController::class, 'invoiceStockPDF'])->name('instock.invoice');
     // Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('product', ProductController::class);
