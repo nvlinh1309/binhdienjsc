@@ -5,12 +5,12 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-class SupplierHistory extends Model
+class StorageHistory extends Model
 {
     use HasFactory;
-    protected $table = 'supplier_histories';
+    protected $table = 'storages_history';
     protected $fillable = [
-        'supplier_id','name', 'address', 'tax_code', 'supplier_code', 'updated_by', 'created_by'
+        'storage_id', 'name', 'address', 'code', 'updated_by', 'created_by'
     ];
 
     public function user_updated()

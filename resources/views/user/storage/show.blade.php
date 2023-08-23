@@ -24,6 +24,10 @@
             </div>
         @endif
     </div>
+    <div class="col-md-12 float-right">
+        <p class="mb-2 float-right"><a class="link-opacity-100" href="{{ route('store.history', $data->id) }}">Lịch
+                sử</a></p>
+    </div>
     <div class="col-md-12">
         <div class="callout callout-info">
             <h5><i class="fas fa-info"></i> Thông tin</h5>
@@ -64,17 +68,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data->storage_product as $key=>$value)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $value->product->barcode }}</td>
-                            <td>{{ $value->product->name }}</td>
-                            <td>{{ $value->product->brand->name }}</td>
-                            <td>{{ $value->quantity_plus - $value->quantity_mins}}</td>
-                            <td>
-                                <a href="http://127.0.0.1:8000/store/1" class="btn btn-xs btn-warning">Chi tiêt</a>
-                            </td>
-                        </tr>
+                        @foreach ($data->storage_product as $key => $value)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $value->product->barcode }}</td>
+                                <td>{{ $value->product->name }}</td>
+                                <td>{{ $value->product->brand->name }}</td>
+                                <td>{{ $value->quantity_plus - $value->quantity_mins }}</td>
+                                <td>
+                                    <a href="http://127.0.0.1:8000/store/1" class="btn btn-xs btn-warning">Chi tiêt</a>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>

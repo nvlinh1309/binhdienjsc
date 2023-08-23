@@ -24,15 +24,32 @@ class SupplierController extends Controller
         if (isset($request->search)) {
             $search = $request->search;
             $columns = ['name', 'address', 'tax_code'];
-            $data->where(function ($subQuery) use ($columns, $search){
+            $data->where(function ($subQuery) use ($columns, $search) {
                 foreach ($columns as $column) {
-                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                    $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
                 }
                 return $subQuery;
-              });
+            });
         }
         $data = $data->paginate(5);
         return view('user.supplier.index', compact('data'));
+    }
+
+    public function getSupplierHis($id)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $data = Supplier::find($id);
+            $history = SupplierHistory::with('user_updated', 'user_created')->where(array('supplier_id' => $id));
+            if ($history->count() == 0) {
+                return view('user.supplier.show', compact('data'));
+            }
+            $history = $history->paginate(5);
+            return view('user.supplier.listHistory', compact('data', 'history'));
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -53,9 +70,27 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        Supplier::create($request->all());
-
-        return redirect()->route('supplier.index');
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $supplier = Supplier::create($request->all());
+            // --------------------------
+            $his = new SupplierHistory();
+            $his->supplier_id = $supplier->id;
+            $his->name = $supplier->name;
+            $his->address = $supplier->address;
+            $his->tax_code = $supplier->tax_code;
+            $his->supplier_code = $supplier->supplier_code;
+            $his->created_by = \Auth::user()->id;
+            // $his->updated_by = \Auth::user()->id;
+            $his->save();
+            \DB::commit();
+            return redirect()->route('supplier.index');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -94,11 +129,28 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Supplier::find($id);
-        $data->update($request->all());
-        $name = $data->name;
-        return redirect()->route('supplier.show',$id)->with(['success' => 'Thông tin nhà cung cấp '.$name.' đã được cập nhật!!!']);
-
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $data = Supplier::find($id);
+            $data->update($request->all());
+            $name = $data->name;
+            // --------------------------
+            $his = new SupplierHistory();
+            $his->supplier_id = $data->id;
+            $his->name = $data->name;
+            $his->address = $data->address;
+            $his->tax_code = $data->tax_code;
+            $his->supplier_code = $data->supplier_code;
+            $his->updated_by = \Auth::user()->id;
+            // $his->updated_by = \Auth::user()->id;
+            $his->save();
+            \DB::commit();
+            return redirect()->route('supplier.show', $id)->with(['success' => 'Thông tin nhà cung cấp ' . $name . ' đã được cập nhật!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -112,7 +164,7 @@ class SupplierController extends Controller
         $data = Supplier::find($id);
         $name = $data->name;
         $data->delete();
-        return redirect()->back()->with(['success' => 'Đã xoá nhà cung cấp '.$name]);
+        return redirect()->back()->with(['success' => 'Đã xoá nhà cung cấp ' . $name]);
 
     }
 
@@ -123,25 +175,25 @@ class SupplierController extends Controller
         $rows = [];
         foreach ($suppliers as $key => $value) {
             $rows[] = [
-                $key+1,
+                $key + 1,
                 $value->supplier_code,
                 $value->name,
                 $value->address,
                 $value->tax_code,
-                '<a href="'.route('supplier.show', $value->id).'">Xem</a>'
+                '<a href="' . route('supplier.show', $value->id) . '">Xem</a>'
             ];
         }
 
-        $data=[
-            'title'             =>  'DANH SÁCH NHÀ CUNG CẤP',
-            'count_record'      =>  'Tổng số nhà cung cấp: '.count($rows),
-            'columns'            =>  ['#', 'Mã NCC', 'Tên công ty', 'Địa chỉ', 'Mã số thuế', 'Chi tiết'],
-            'rows'  => $rows
+        $data = [
+            'title' => 'DANH SÁCH NHÀ CUNG CẤP',
+            'count_record' => 'Tổng số nhà cung cấp: ' . count($rows),
+            'columns' => ['#', 'Mã NCC', 'Tên công ty', 'Địa chỉ', 'Mã số thuế', 'Chi tiết'],
+            'rows' => $rows
 
         ];
 
         $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
-        return $pdf->download('suppliers'.date('YmdHms').'.pdf');
+        return $pdf->download('suppliers' . date('YmdHms') . '.pdf');
 
 
     }

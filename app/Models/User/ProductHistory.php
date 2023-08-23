@@ -5,13 +5,10 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-class SupplierHistory extends Model
+class ProductHistory extends Model
 {
     use HasFactory;
-    protected $table = 'supplier_histories';
-    protected $fillable = [
-        'supplier_id','name', 'address', 'tax_code', 'supplier_code', 'updated_by', 'created_by'
-    ];
+    protected $table = 'products_histories';
 
     public function user_updated()
     {

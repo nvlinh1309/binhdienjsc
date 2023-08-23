@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User\Brand;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\Brand;
+use App\Models\User\BrandHistory;
 use App\Models\User\Supplier;
 use Illuminate\Http\Request;
 use PDF;
@@ -21,15 +22,32 @@ class BrandController extends Controller
         if (isset($request->search)) {
             $search = $request->search;
             $columns = ['name'];
-            $data->where(function ($subQuery) use ($columns, $search){
+            $data->where(function ($subQuery) use ($columns, $search) {
                 foreach ($columns as $column) {
-                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                    $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
                 }
                 return $subQuery;
-              });
+            });
         }
         $data = $data->paginate(5);
         return view('user.brand.index', compact('data'));
+    }
+
+    public function getBrandHis($id)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $data = Brand::with('suppliers')->find($id);
+            $history = BrandHistory::with('user_updated', 'user_created')->where(array('brand_id' => $id));
+            if ($history->count() == 0) {
+                return view('user.brand.show', compact('data'));
+            }
+            $history = $history->paginate(5);
+            return view('user.brand.listHistory', compact('data', 'history'));
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -51,12 +69,34 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        $supplier_ids = $request->supplier_id;
-        $brand = Brand::create([
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $supplier_ids = $request->supplier_id;
+            $brand = Brand::create([
                 'name' => $request->name
-        ]);
-        $brand->suppliers()->attach($supplier_ids);
-        return redirect()->route('brand.index')->with(['success' => 'Thương hiệu '.$request->name.' đã được thêm mới!!!']);
+            ]);
+            $brand->suppliers()->attach($supplier_ids);
+            //Update history:
+            $his = new BrandHistory();
+            $his->brand_id = $brand->id;
+            $his->name = $brand->name;
+            if ($supplier_ids) {
+                $nameSupplier = [];
+                $supplierData = Supplier::select('name')->whereIn('id', $supplier_ids)->get()->toArray();
+                foreach ($supplierData as $detail) {
+                    array_push($nameSupplier, $detail['name']);
+                }
+                $his->branch_supplier = implode(",", $nameSupplier);
+            }
+            $his->created_by = \Auth::user()->id;
+            $his->save();
+            \DB::commit();
+            return redirect()->route('brand.index')->with(['success' => 'Thương hiệu ' . $request->name . ' đã được thêm mới!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -97,12 +137,34 @@ class BrandController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $supplier_ids = $request->supplier_id;
-        $data = Brand::find($id);
-        $data->update($request->all());
-        $data->suppliers()->sync($supplier_ids);
-        $name = $data->name;
-        return redirect()->route('brand.show', $id)->with(['success' => 'Thông tin thương hiệu '.$name.' đã được cập nhật!!!']);
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $supplier_ids = $request->supplier_id;
+            $data = Brand::find($id);
+            $data->update($request->all());
+            $data->suppliers()->sync($supplier_ids);
+            $name = $data->name;
+            //Update history:
+            $his = new BrandHistory();
+            $his->brand_id = $data->id;
+            $his->name = $data->name;
+            if ($supplier_ids) {
+                $nameSupplier = [];
+                $supplierData = Supplier::select('name')->whereIn('id', $supplier_ids)->get()->toArray();
+                foreach ($supplierData as $detail) {
+                    array_push($nameSupplier, $detail['name']);
+                }
+                $his->branch_supplier = implode(",", $nameSupplier);
+            }
+            $his->updated_by = \Auth::user()->id;
+            $his->save();
+            \DB::commit();
+            return redirect()->route('brand.show', $id)->with(['success' => 'Thông tin thương hiệu ' . $name . ' đã được cập nhật!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -116,7 +178,7 @@ class BrandController extends Controller
         $data = Brand::find($id);
         $name = $data->name;
         $data->delete();
-        return redirect()->back()->with(['success' => 'Đã xoá thương hiệu '.$name]);
+        return redirect()->back()->with(['success' => 'Đã xoá thương hiệu ' . $name]);
     }
 
     public function exportPDF()
@@ -127,26 +189,26 @@ class BrandController extends Controller
         foreach ($brans as $key => $value) {
             $suppliers = null;
             foreach ($value->suppliers as $supplier) {
-                $suppliers = $suppliers."<a href='".route('supplier.show', $supplier->id)."'>- ".$supplier->name."</a><br>";
+                $suppliers = $suppliers . "<a href='" . route('supplier.show', $supplier->id) . "'>- " . $supplier->name . "</a><br>";
             }
             $rows[] = [
-                $key+1,
+                $key + 1,
                 $value->name,
                 $suppliers,
-                '<a href="'.route('brand.show', $value->id).'">Xem</a>'
+                '<a href="' . route('brand.show', $value->id) . '">Xem</a>'
             ];
         }
 
-        $data=[
-            'title'             =>  'DANH SÁCH THƯƠNG HIỆU',
-            'count_record'      =>  'Tổng số thương hiệu: '.count($rows),
-            'columns'            =>  ['#', 'Tên thương hiệu', 'Nhà cung cấp', 'Chi tiết'],
-            'rows'  => $rows
+        $data = [
+            'title' => 'DANH SÁCH THƯƠNG HIỆU',
+            'count_record' => 'Tổng số thương hiệu: ' . count($rows),
+            'columns' => ['#', 'Tên thương hiệu', 'Nhà cung cấp', 'Chi tiết'],
+            'rows' => $rows
 
         ];
 
         $pdf = PDF::loadView('components.layouts.exportPDF_list', compact('data'));
-        return $pdf->download('brands'.date('YmdHms').'.pdf');
+        return $pdf->download('brands' . date('YmdHms') . '.pdf');
 
 
     }

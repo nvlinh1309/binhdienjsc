@@ -78,11 +78,13 @@ Route::middleware('auth')->group(function (){
     // Route::post('/changePassword', [App\Http\Controllers\HomeController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('product', ProductController::class);
+    Route::get('product/history/{id}', [ProductController::class, 'getProductHis'])->name('product.history');
     Route::post('product/set-price', [ProductController::class, 'setPriceStore'])->name('product.price.store');
     Route::get('product-export', [ProductController::class, 'exportPDF'])->name('product.export');
 
     Route::resource('supplier', SupplierController::class);
     Route::get('supplier-export', [SupplierController::class, 'exportPDF'])->name('supplier.export');
+    Route::get('supplier/history/{id}', [SupplierController::class, 'getSupplierHis'])->name('supplier.history');
 
     Route::resource('customer', CustomerController::class);
     Route::get('customer-export', [CustomerController::class, 'exportPDF'])->name('customer.export');
@@ -93,10 +95,11 @@ Route::middleware('auth')->group(function (){
 
     Route::resource('brand', BrandController::class);
     Route::get('brand-export', [BrandController::class, 'exportPDF'])->name('brand.export');
-
+    Route::get('brand/history/{id}', [BrandController::class, 'getBrandHis'])->name('brand.history');
 
     Route::resource('store', StorageController::class);
     Route::get('store-export', [StorageController::class, 'exportPDF'])->name('store.export');
+    Route::get('store/history/{id}', [StorageController::class, 'getStorageHis'])->name('store.history');
 
     Route::resource('users', UsersController::class);
     Route::get('users-export', [UsersController::class, 'exportPDF'])->name('users.export');

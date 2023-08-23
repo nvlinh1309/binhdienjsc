@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User\Product;
 use App\Http\Controllers\Controller;
 use App\Models\User\Customer;
 use App\Models\User\PriceCustomerProdManagement;
+use App\Models\User\ProductHistory;
 use Illuminate\Http\Request;
 use App\Http\Requests\User\Product\StoreProductRequest;
 use App\Models\User\Product;
@@ -35,6 +36,23 @@ class ProductController extends Controller
         return view('user.product.index', compact('data'));
     }
 
+    public function getProductHis($id)
+    {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        try {
+            $data = Product::find($id);
+            $history = ProductHistory::with('user_updated', 'user_created')->where(array('product_id' => $id));
+            if ($history->count() == 0) {
+                return view('user.product.show', compact('data'));
+            }
+            $history = $history->paginate(5);
+            return view('user.product.listHistory', compact('data', 'history'));
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -59,7 +77,7 @@ class ProductController extends Controller
         try {
             $product = Product::create($request->all());
             // Set price for customer
-            if($product) {
+            if ($product) {
                 $productId = $product->id;
                 $customers = Customer::get();
                 foreach ($customers as $customer) {
@@ -70,6 +88,20 @@ class ProductController extends Controller
                     $pri->save();
                 }
             }
+            //Update history
+            $his = new ProductHistory();
+            $his->product_id = $productId;
+            $his->name = $product->name;
+            $his->specification = $product->specification;
+            $his->barcode = $product->barcode;
+            if ($product->brand_id) {
+                $brandInfo = Brand::find($product->brand_id);
+                $his->brand_name = $brandInfo->name;
+            }
+            $his->unit = $product->unit;
+            $his->price = $product->price;
+            $his->created_by = \Auth::user()->id;
+            $his->save();
             \DB::commit();
             return redirect()->route('product.index')->with(['success' => 'Sản phẩm đã được tạo thành công.']);
         } catch (\Exception $e) {
@@ -138,11 +170,33 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
         $data = Product::find($id);
-        $data->update($request->all());
-        $name = $data->name;
-        return redirect()->back()->with(['success' => 'Thông tin sản phẩm ' . $name . ' đã được cập nhật!!!']);
+        try {
+            $data->update($request->all());
+            $name = $data->name;
 
+            //Update history
+            $his = new ProductHistory();
+            $his->product_id = $data->id;
+            $his->name = $data->name;
+            $his->specification = $data->specification;
+            $his->barcode = $data->barcode;
+            if ($data->brand_id) {
+                $brandInfo = Brand::find($data->brand_id);
+                $his->brand_name = $brandInfo->name;
+            }
+            $his->unit = $data->unit;
+            $his->price = $data->price;
+            $his->updated_by = \Auth::user()->id;
+            $his->save();
+            \DB::commit();
+            return redirect()->back()->with(['success' => 'Thông tin sản phẩm ' . $name . ' đã được cập nhật!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**

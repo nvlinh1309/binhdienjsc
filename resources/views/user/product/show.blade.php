@@ -30,6 +30,10 @@
             </div>
         @endif
     </div>
+    <div class="col-md-12 float-right">
+        <p class="mb-2 float-right"><a class="link-opacity-100" href="{{ route('product.history', $data->id) }}">Lịch
+                sử</a></p>
+    </div>
     <div class="col-md-12">
         <div class="callout callout-info">
             <h5><i class="fas fa-info"></i> Thông tin</h5>
