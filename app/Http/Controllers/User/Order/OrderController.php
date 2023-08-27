@@ -503,7 +503,6 @@ class OrderController extends Controller
             // return view('components.layouts.invoiceStockPDF', compact('goodReceiptManagement'));
             $pdf = PDF::loadView('components.layouts.invoiceStockPDF', compact('goodReceiptManagement'));
             return $pdf->download('purchase_order' . date('YmdHms') . '.pdf');
-            dd($orderId);
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => $message]);
         }

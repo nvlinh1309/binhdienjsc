@@ -42,7 +42,10 @@
             <hr>
 
             {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-            <button class="btn btn-warning" onclick="window.location='{{ route("brand.edit",$data->id) }}'">Chỉnh sửa</button>
+            @can('brand-edit')
+                <button class="btn btn-warning" onclick="window.location='{{ route('brand.edit', $data->id) }}'">Chỉnh
+                    sửa</button>
+            @endcan
         </div>
 
     </div>

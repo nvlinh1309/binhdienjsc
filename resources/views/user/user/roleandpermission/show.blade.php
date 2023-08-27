@@ -9,7 +9,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('users.indexRaP') }}">Danh sách</a></li>
-                            <li class="breadcrumb-item active">{{ $data->display_name }}</li>
+                            <li class="breadcrumb-item active">{{ $role->display_name }}</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -30,111 +30,79 @@
                 {!! \Session::get('error') !!}
             </div>
         @endif
+        <div class="alert alert-info alert-dismissible fade d-none alert-permission" role="alert">
+            <span class="permission-text">You should check in on some of those fields below.</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     </div>
+
     <div class="col-md-12">
         <div class="container-fluid">
             <div class="card card-default color-palette-box">
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-tag"></i>
-                        {{ $data->display_name }}
+                        {{ $role->display_name }}
                     </h3>
                 </div>
-                <div class="card-body">
-                    <div class="col-12">
-                        <h5>Quản lý quyền và vai trò</h5>
-                        <hr>
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Truy cập
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Cập nhật
-                        </label>
-                    </div>
-
-                </div>
-
-                <div class="card-body">
-                    <div class="col-12">
-                        <h5>Quản lý người dùng</h5>
-                        <hr>
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Truy cập
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Thêm mới
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Chỉnh sửa
-                        </label>
-                    </div>
-
-                </div>
-
-                <div class="card-body">
-                    <div class="col-12">
-                        <h5>Quản lý kho</h5>
-                        <hr>
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Truy cập
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Thêm mới
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Chỉnh sửa
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" name="" id=""
-                                value="checkedValue">
-                            Xoá
-                        </label>
-                    </div>
-
-                </div>
-
+                @if (count($parentPermissions))
+                    <input type="hidden" id="role_id" value="{{ $role->id }}" />
+                    @foreach ($parentPermissions as $perssionArray)
+                        <div class="card-body">
+                            <div class="col-12">
+                                <h5>{{ $perssionArray->parent_name }}</h5>
+                                <hr>
+                            </div>
+                            @if ($perssionArray->permissions)
+                                @foreach ($perssionArray->permissions as $permission)
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="@can('role-edit') input-permission @endcan" name="" @if($role->name == 'admin') disabled @endif
+                                                id="" value="{{ $permission->name }}"
+                                                @if ($role->hasPermissionTo($permission->name)) checked @endif>
+                                            {{ $permission->display_name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    @endforeach
+                @endif
             </div>
-
         </div>
-
     </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+
+            $('.input-permission').on('change', function(e) {
+                var permission = $(this).val();
+                var roleId = $('#role_id').val();
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('users.role.set') }}",
+                    data: {
+                        'role_id': roleId,
+                        'permission_nm': permission
+                    },
+                    cache: false,
+                    success: function(data) {
+                        if (data.status_respone == true) {
+                            $('.permission-text').html(data.message);
+                            $('.alert-permission').removeClass('d-none');
+                            $('.alert-permission').addClass('show');
+                        }
+                    }
+                });
+
+            });
+        });
+    </script>
 </x-layouts.main>

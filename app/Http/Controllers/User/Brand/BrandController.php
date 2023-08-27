@@ -11,6 +11,15 @@ use PDF;
 
 class BrandController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:brand-view')->only('index');
+        $this->middleware('permission:brand-create')->only('create', 'store');
+        $this->middleware('permission:brand-view')->only('view', 'show');
+        $this->middleware('permission:brand-edit')->only('edit', 'update');
+        $this->middleware('permission:brand-delete')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

@@ -67,7 +67,7 @@
               </li>
             </ul>
           </li>
-
+          @canany(['product-view', 'product-create', 'product-edit', 'product-delete'])
           <li class="nav-item">
             <a href="{{ route('product.index') }}" class="nav-link {{ request()->is('product*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-archive"></i>
@@ -76,6 +76,8 @@
               </p>
             </a>
           </li>
+          @endcanany
+          @canany(['supplier-view', 'supplier-create', 'supplier-edit', 'supplier-delete'])
           <li class="nav-item">
             <a href="{{ route('supplier.index') }}" class="nav-link {{ request()->is('supplier*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-briefcase"></i>
@@ -84,6 +86,8 @@
               </p>
             </a>
           </li>
+          @endcanany
+          @canany(['brand-view', 'brand-create', 'brand-edit', 'brand-delete'])
           <li class="nav-item">
             <a href="{{ route('brand.index') }}" class="nav-link {{ request()->is('brand*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-bookmark"></i>
@@ -92,6 +96,8 @@
               </p>
             </a>
           </li>
+          @endcanany
+          @canany(['customer-view', 'customer-create', 'customer-edit', 'customer-delete'])
           <li class="nav-item">
             <a href="{{ route('customer.index') }}" class="nav-link {{ request()->is('customer*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-handshake"></i>
@@ -100,6 +106,8 @@
               </p>
             </a>
           </li>
+          @endcanany
+          @canany(['warehouse-view', 'warehouse-create', 'warehouse-edit', 'warehouse-delete'])
           <li class="nav-item">
             <a href="{{ route('store.index') }}" class="nav-link {{ request()->is('store*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-warehouse"></i>
@@ -108,6 +116,8 @@
               </p>
             </a>
           </li>
+          @endcanany
+          @canany(['user-view', 'user-create', 'user-edit', 'user-delete', 'role-view', 'role-create', 'role-edit', 'role-delete'])
           <li class="nav-item {{ request()->is('user*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users-cog"></i>
@@ -117,20 +127,25 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+              @canany(['user-view', 'user-create', 'user-edit', 'user-delete'])
               <li class="nav-item">
                 <a href="{{ route('users.index') }}" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Người dùng</p>
                 </a>
               </li>
+              @endcanany
+              @canany(['role-view', 'role-create', 'role-edit', 'role-delete'])
               <li class="nav-item">
                 <a href="{{ route('users.indexRaP') }}" class="nav-link ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vai trò và quyền</p>
                 </a>
               </li>
+              @endcanany
             </ul>
           </li>
+          @endcanany
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

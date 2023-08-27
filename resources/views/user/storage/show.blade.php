@@ -38,8 +38,10 @@
             <div><b>Ngày cập nhật cuối cùng:</b> {{ $data->updated_at ?? $data->created_at }}</div>
             <br>
             {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-            <button class="btn btn-warning" onclick="window.location='{{ route('store.edit', $data->id) }}'">Chỉnh
-                sửa</button>
+            @can('warehouse-edit')
+                <button class="btn btn-warning" onclick="window.location='{{ route('store.edit', $data->id) }}'">Chỉnh
+                    sửa</button>
+            @endcan
         </div>
 
     </div>

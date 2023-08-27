@@ -11,10 +11,20 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
 use Mail;
 use App\Mail\CreateAccount;
+use App\Models\User\ParentPermission;
 use Illuminate\Support\Facades\Mail as FacadesMail;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:user-view')->only('index');
+        $this->middleware('permission:user-create')->only('create', 'store');
+        $this->middleware('permission:user-view')->only('view', 'show');
+        $this->middleware('permission:user-edit')->only('edit', 'update');
+        $this->middleware('permission:user-delete')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -26,12 +36,12 @@ class UsersController extends Controller
         if (isset($request->search)) {
             $search = $request->search;
             $columns = ['name', 'email'];
-            $data->where(function ($subQuery) use ($columns, $search){
+            $data->where(function ($subQuery) use ($columns, $search) {
                 foreach ($columns as $column) {
-                  $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
+                    $subQuery = $subQuery->orWhere($column, 'LIKE', "%{$search}%");
                 }
                 return $subQuery;
-              });
+            });
         }
         $data = $data->paginate(5);
         return view('user.user.index', compact('data'));
@@ -60,9 +70,9 @@ class UsersController extends Controller
         $request['password'] = Hash::make($password);
 
         $data = [
-            'name'  =>  $request->name,
-            'email' =>  $request->email,
-            'password'  =>  $password
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $password
         ];
         Mail::to($request->email)->send(new CreateAccount($data));
 
@@ -117,7 +127,7 @@ class UsersController extends Controller
         }
         $data->assignRole($request->role);
         $data->update($request->all());
-        return redirect()->route('users.show',$id)->with(['success' => 'Thông tin người dùng '.$data->name.' đã được cập nhật!!!']);
+        return redirect()->route('users.show', $id)->with(['success' => 'Thông tin người dùng ' . $data->name . ' đã được cập nhật!!!']);
     }
 
     /**
@@ -158,11 +168,14 @@ class UsersController extends Controller
 
     public function showRaP($id)
     {
-        $data = Role::with('permissions')->find($id);
-        if (!$data) {
+        $role = Role::with('permissions')->find($id);
+        // $role->hasPermissionTo('role-view');
+        $parentPermissions = ParentPermission::with('permissions')->get();
+
+        if (!$role) {
             abort(404);
         }
-        return view('user.user.roleandpermission.show', compact('data'));
+        return view('user.user.roleandpermission.show', compact('role', 'parentPermissions'));
     }
 
     public function storeRaP(Request $request)
@@ -174,5 +187,31 @@ class UsersController extends Controller
     public function exportPDF()
     {
         return "Tính năng đang phát triển";
+    }
+
+    public function setPermission(Request $request)
+    {
+        $user = \Auth::user();
+        $req = $request->all();
+        $roleId = $req['role_id'];
+        $permissionNm = $req['permission_nm'];
+        //Set message:
+        $mesg = '';
+        //Get Role:
+        $role = Role::find($roleId);
+        if ($role->name == 'admin') {
+            $mesg = 'Không được phép thay đổi quyền cho '.$role->display_name;
+        } else {
+            //Set permision
+            if ($role->hasPermissionTo($permissionNm)) {
+                $role->revokePermissionTo($permissionNm);
+                $mesg = 'Đã xóa quyền ' . $permissionNm . ' thành công cho ' . $role->display_name;
+            } else {
+                $role->givePermissionTo($permissionNm);
+                $mesg = 'Đã xét quyền ' . $permissionNm . ' thành công cho ' . $role->display_name;
+            }
+        }
+
+        return response()->json(['status_respone' => true, 'message' => $mesg]);
     }
 }

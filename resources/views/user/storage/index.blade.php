@@ -34,11 +34,14 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('store.create') }}">
-                        <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
-                    </a>
+                    @can('warehouse-create')
+                        <a href="{{ route('store.create') }}">
+                            <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
+                        </a>
+                    @endcan
                     <a href="{{ route('store.export') }}">
-                    <button class=" btn btn-sm btn-success" title="Xuất file PDF"><i class="fas fa-download"></i></button>
+                        <button class=" btn btn-sm btn-success" title="Xuất file PDF"><i
+                                class="fas fa-download"></i></button>
                     </a>
                 </h3>
 
@@ -59,9 +62,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $key=>$value)
+                        @foreach ($data as $key => $value)
                             <tr>
-                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
+                                <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->code }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->address }}</td>
@@ -69,10 +72,14 @@
                                     <form method="POST" action="{{ route('store.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('store.show', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Chi tiết</a>
-                                        <span class="btn btn-xs btn-danger delete"
-                                            data-id="{{ $value->name }}">Xoá</span>
+                                        @can('warehouse-view')
+                                            <a href="{{ route('store.show', $value->id) }}"
+                                                class="btn btn-xs btn-warning">Chi tiết</a>
+                                        @endcan
+                                        @can('warehouse-delete')
+                                            <span class="btn btn-xs btn-danger delete "
+                                                data-id="{{ $value->name }}">Xoá</span>
+                                        @endcan
                                     </form>
                                 </td>
                             </tr>
@@ -90,7 +97,7 @@
             $('.delete').on('click', function(e) {
                 var name = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá kho '+name+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá kho ' + name + '?')) {
                     $(e.target).closest('form').submit()
                 }
             });

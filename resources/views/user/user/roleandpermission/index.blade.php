@@ -48,7 +48,7 @@
                             <tr>
                                 <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->display_name }}</td>
-                                <td class="text-center"><a href="{{ route('users.showRaP', $value->id) }}">Xem</a></td>
+                                <td class="text-center"><a @can('role-view') href="{{ route('users.showRaP', $value->id) }}" @endcan >Xem</a></td>
                             </tr>
                         @endforeach
 

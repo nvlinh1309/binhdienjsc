@@ -14,6 +14,15 @@ use PDF;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:product-view')->only('index');
+        $this->middleware('permission:product-create')->only('create', 'store');
+        $this->middleware('permission:product-view')->only('view', 'show');
+        $this->middleware('permission:product-edit')->only('edit', 'update');
+        $this->middleware('permission:product-delete')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

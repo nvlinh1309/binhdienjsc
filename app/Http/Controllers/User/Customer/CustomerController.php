@@ -11,6 +11,15 @@ use PDF;
 
 class CustomerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:customer-view')->only('index');
+        $this->middleware('permission:customer-create')->only('create', 'store');
+        $this->middleware('permission:customer-view')->only('view', 'show');
+        $this->middleware('permission:customer-edit')->only('edit', 'update');
+        $this->middleware('permission:customer-delete')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -70,7 +79,7 @@ class CustomerController extends Controller
                 }
             }
             \DB::commit();
-            return redirect()->route('customer.index') -> with(['success' => 'Khách hàng đã được tạo thành công.']);
+            return redirect()->route('customer.index')->with(['success' => 'Khách hàng đã được tạo thành công.']);
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
@@ -85,7 +94,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        
+
     }
 
     /**
@@ -119,7 +128,7 @@ class CustomerController extends Controller
             $products = Product::get();
             foreach ($products as $product) {
                 $price = PriceCustomerProdManagement::firstOrNew(array('product_id' => $product->id, 'customer_id' => $customer->id));
-                if(!$price->false) {
+                if (!$price->false) {
                     $pri = new PriceCustomerProdManagement();
                     $pri->product_id = $product->id;
                     $pri->customer_id = $customer->id;

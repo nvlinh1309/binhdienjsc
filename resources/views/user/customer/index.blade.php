@@ -34,9 +34,11 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('customer.create') }}">
-                        <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
-                    </a>
+                    @can('customer-create')
+                        <a href="{{ route('customer.create') }}">
+                            <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
+                        </a>
+                    @endcan
                     <a href="{{ route('customer.export') }}">
                         <button class=" btn btn-sm btn-success" title="Xuất file"><i
                                 class="fas fa-download"></i></button>
@@ -78,10 +80,14 @@
                                     <form method="POST" action="{{ route('customer.destroy', $customer->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('customer.edit', $customer->id) }}"
-                                            class="btn btn-xs btn-warning">Sửa</a>
-                                        <span class="btn btn-xs btn-danger delete"
-                                            data-id="{{ $customer->name }}">Xoá</span>
+                                        @can('customer-edit')
+                                            <a href="{{ route('customer.edit', $customer->id) }}"
+                                                class="btn btn-xs btn-warning">Sửa</a>
+                                        @endcan
+                                        @can('customer-delete')
+                                            <span class="btn btn-xs btn-danger delete"
+                                                data-id="{{ $customer->name }}">Xoá</span>
+                                        @endcan
                                     </form>
                                 </td>
                             </tr>

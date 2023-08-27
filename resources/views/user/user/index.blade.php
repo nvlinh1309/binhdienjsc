@@ -34,11 +34,14 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('users.create') }}">
-                        <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
-                    </a>
+                    @can('role-create')
+                        <a href="{{ route('users.create') }}">
+                            <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
+                        </a>
+                    @endcan
                     <a href="{{ route('users.export') }}">
-                    <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
+                        <button class=" btn btn-sm btn-success" title="Xuất file"><i
+                                class="fas fa-download"></i></button>
                     </a>
                 </h3>
 
@@ -59,20 +62,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $key=>$value)
+                        @foreach ($data as $key => $value)
                             <tr>
-                                <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
+                                <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->email }}</td>
-                                <td>{{ $value->roles[0]->display_name??"" }}</td>
+                                <td>{{ $value->roles[0]->display_name ?? '' }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('users.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
-                                        <a href="{{ route('users.show', $value->id) }}"
-                                            class="btn btn-xs btn-warning">Xem</a>
-                                        <span class="btn btn-xs btn-danger delete"
-                                            data-id="{{ $value->name }}">Xoá</span>
+                                        @can('role-view')
+                                            <a href="{{ route('users.show', $value->id) }}"
+                                                class="btn btn-xs btn-warning">Xem</a>
+                                        @endcan
+                                        @can('role-delete')
+                                            <span class="btn btn-xs btn-danger  delete "
+                                                data-id="{{ $value->name }}">Xoá</span>
+                                        @endcan
                                     </form>
                                 </td>
                             </tr>
@@ -90,7 +97,7 @@
             $('.delete').on('click', function(e) {
                 var name = $(this).attr('data-id');
                 e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá người dùng '+name+'?')) {
+                if (confirm('Bạn có chắc chắn muốn xoá người dùng ' + name + '?')) {
                     $(e.target).closest('form').submit()
                 }
             });

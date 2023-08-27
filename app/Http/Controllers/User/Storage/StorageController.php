@@ -10,6 +10,16 @@ use PDF;
 
 class StorageController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:warehouse-view')->only('index');
+        $this->middleware('permission:warehouse-create')->only('create', 'store');
+        $this->middleware('permission:warehouse-view')->only('view', 'show');
+        $this->middleware('permission:warehouse-edit')->only('edit', 'update');
+        $this->middleware('permission:warehouse-delete')->only('destroy');
+    }
+
     /**
      * Display a listing of the resource.
      *

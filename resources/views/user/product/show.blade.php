@@ -49,8 +49,10 @@
             <hr>
 
             {{-- <button class="btn btn-secondary" onclick="window.history.go(-1); return false;">Quay lại</button> --}}
-            <button class="btn btn-warning" onclick="window.location='{{ route('product.edit', $data->id) }}'">Chỉnh
-                sửa</button>
+            @can('product-edit')
+                <button class="btn btn-warning" onclick="window.location='{{ route('product.edit', $data->id) }}'">Chỉnh
+                    sửa</button>
+            @endcan
         </div>
         <div class="card">
             <div class="card-header">
@@ -95,9 +97,11 @@
                                 @endif
                             @endforeach
                         </table>
-                        <div class="callout">
-                            <button type="submit" class="btn btn-secondary">Cập nhật giá</button>
-                        </div>
+                        @can('product-edit')
+                            <div class="callout">
+                                <button type="submit" class="btn btn-secondary">Cập nhật giá</button>
+                            </div>
+                        @endcan
                     </form>
                 </div>
             @else

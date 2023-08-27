@@ -34,8 +34,10 @@
             <div><b>Ngày cập nhật cuối cùng:</b> {{ $data->updated_at ?? $data->created_at }}</div>
             <br>
             <button class="btn btn-secondary" onclick="window.location='{{ route('users.index') }}'">Quay lại</button>
+            @can('role-edit')
             <button class="btn btn-warning" onclick="window.location='{{ route('users.edit', $data->id) }}'">Chỉnh
                 sửa</button>
+            @endcan
         </div>
 
     </div>

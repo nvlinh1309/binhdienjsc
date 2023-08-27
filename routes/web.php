@@ -11,6 +11,7 @@ use App\Http\Controllers\User\Storage\StorageController;
 use App\Http\Controllers\User\Users\UsersController;
 use App\Http\Controllers\User\Brand\BrandController;
 use App\Http\Controllers\User\Auth\ForgotPasswordController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,7 +35,7 @@ use App\Http\Controllers\User\Auth\ForgotPasswordController;
 //     return view('auth.forgot_password');
 // })->name('forgot-password');
 
-Route::get('/', function() {
+Route::get('/', function () {
     return redirect()->route('login.index');
 });
 Route::resource('login', LoginController::class);
@@ -46,11 +47,11 @@ Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPass
 // Route::match(['get', 'post'], '/forgot-password', function(){
 //     return view('auth.forgot_password');
 // })->name('forgot-password');
-Route::middleware('auth')->group(function (){
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
     Route::post('/get-products', [OrderController::class, 'getProductBasedWh'])->name('order.get.product');
-    Route::name('order.')->prefix('order')->group(function() {
+    Route::name('order.')->prefix('order')->group(function () {
         // Route::get('/show/{id}', [OrderController::class, 'showOrder'])->name('show');
         Route::get('delivery-export/{id}', [OrderController::class, 'exportDeliveryPDF'])->name('export');
         Route::get('export/delivery-list-export', [OrderController::class, 'exportListDeliveryPDF'])->name('list.delivery');
@@ -58,8 +59,8 @@ Route::middleware('auth')->group(function (){
         Route::get('notification-order/{id}', [OrderController::class, 'notificationOrderPDF'])->name('notification.order');
         Route::delete('/delete/{id}', [OrderController::class, 'deliveryDelete'])->name('destroy');
     });
-    
-    Route::name('stock-in.')->prefix('stock-in')->group(function() {
+
+    Route::name('stock-in.')->prefix('stock-in')->group(function () {
         Route::get('/show/{id}', [OrderController::class, 'showInstock'])->name('price');
         Route::post('/set-price', [OrderController::class, 'setPriceStore'])->name('price.store');
         Route::get('/', [OrderController::class, 'stockInIndex'])->name('index');
@@ -91,7 +92,7 @@ Route::middleware('auth')->group(function (){
 
     Route::resource('user', UserController::class);
 
-    Route::post('changePassword',[UserController::class, 'changePasswordPost'])->name('changePasswordPost');
+    Route::post('changePassword', [UserController::class, 'changePasswordPost'])->name('changePasswordPost');
 
     Route::resource('brand', BrandController::class);
     Route::get('brand-export', [BrandController::class, 'exportPDF'])->name('brand.export');
@@ -104,6 +105,12 @@ Route::middleware('auth')->group(function (){
     Route::resource('users', UsersController::class);
     Route::get('users-export', [UsersController::class, 'exportPDF'])->name('users.export');
 
-    Route::get('role-and-permission', [UsersController::class, 'indexRaP'])->name('users.indexRaP');
-    Route::get('role-and-permission/view/{id}', [UsersController::class, 'showRaP'])->name('users.showRaP');
+    Route::group(['middleware' => ['can:role-view']], function () {
+        Route::get('role-and-permission', [UsersController::class, 'indexRaP'])->name('users.indexRaP');
+        Route::get('role-and-permission/view/{id}', [UsersController::class, 'showRaP'])->name('users.showRaP');
+    });
+    Route::group(['middleware' => ['can:role-edit']], function () {
+        Route::post('set-permission', [UsersController::class, 'setPermission'])->name('users.role.set');
+    });
+
 });
