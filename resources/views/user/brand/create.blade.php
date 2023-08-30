@@ -29,21 +29,27 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Tên thương hiệu</label>
-                                <input type="text" name="name" class="form-control" id="name"
+                                <label for="name">Tên thương hiệu</label><span class="text-danger">*</span>
+                                <input type="text" name="name" class="form-control" id="name" value="{{ old('name') }}"
                                     placeholder="Nhập tên thương hiệu...">
+                                @if ($errors->has('name'))
+                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                @endif
                             </div>
 
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Chọn nhà cung cấp</label>
+                                <label>Chọn nhà cung cấp</label><span class="text-danger">*</span>
                                 <select class="form-control select2" name="supplier_id[]" multiple="multiple"
                                     data-placeholder="Chọn nhà cung cấp" style="width: 100%;">
                                     @foreach ($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('supplier_id'))
+                                    <div class="error text-danger">{{ $errors->first('supplier_id') }}</div>
+                                @endif
                             </div>
                         </div>
                     </div>

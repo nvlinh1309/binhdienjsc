@@ -37,28 +37,37 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Họ tên</label>
-                                <input type="text" required name="name"  value="" required class="form-control" id="name"
-                                    placeholder="Nhập họ tên...">
+                                <label for="name">Họ tên</label><span class="text-danger">*</span>
+                                <input type="text" name="name" value="{{ old('name') }}"
+                                    class="form-control" id="name" placeholder="Nhập họ tên...">
+                                @if ($errors->has('name'))
+                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" required name="email" value="" required class="form-control"
-                                    id="email" placeholder="Nhập email...">
+                                <label for="email">Email</label><span class="text-danger">*</span>
+                                <input type="input" name="email" value="{{ old('email') }}"
+                                    class="form-control" id="email" placeholder="Nhập email...">
+                                @if ($errors->has('email'))
+                                    <div class="error text-danger">{{ $errors->first('email') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="role">Vai trò</label>
-                                <select required class="form-control select2" name="role"
-                                    data-placeholder="Chọn vai trò" id="role" style="width: 100%;" >
+                                <label for="role">Vai trò</label><span class="text-danger">*</span>
+                                <select class="form-control select2" name="role"
+                                    data-placeholder="Chọn vai trò" id="role" style="width: 100%;">
                                     <option value=""></option>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}">{{ $role->display_name }}</option>
+                                        <option value="{{ $role->name }}" {{ $role->name == old('role') ? 'selected' : '' }}>{{ $role->display_name }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('role'))
+                                    <div class="error text-danger">{{ $errors->first('role') }}</div>
+                                @endif
                             </div>
                         </div>
 

@@ -34,34 +34,47 @@
             <form id="update" action="{{ route('supplier.update', $data->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" value="{{$data->id}}" name="id"/>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="supplier_code">Mã nhà cung cấp</label>
-                                <input type="text" name="supplier_code"  value="{{ $data->supplier_code }}" required class="form-control" id="supplier_code"
-                                    placeholder="Nhập mã nhà cung cấp...">
+                                <label for="supplier_code">Mã nhà cung cấp</label><span class="text-danger">*</span>
+                                <input type="text" name="supplier_code" value="{{ old('supplier_code', $data->supplier_code) }}"
+                                    class="form-control" id="supplier_code" placeholder="Nhập mã nhà cung cấp...">
+                                @if ($errors->has('supplier_code'))
+                                    <div class="error text-danger">{{ $errors->first('supplier_code') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Tên công ty</label>
-                                <input type="text" name="name" value="{{ $data->name }}" required class="form-control"
+                                <label for="name">Tên công ty</label><span class="text-danger">*</span>
+                                <input type="text" name="name" value="{{ old('name', $data->name) }}" class="form-control"
                                     id="name" placeholder="Nhập công ty...">
+                                @if ($errors->has('name'))
+                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="address">Địa chỉ</label>
-                                <input type="text" name="address" value="{{ $data->address }}" class="form-control"
+                                <label for="address">Địa chỉ</label><span class="text-danger">*</span>
+                                <input type="text" name="address" value="{{ old('address', $data->address) }}" class="form-control"
                                     id="address" placeholder="Nhập địa chỉ...">
+                                @if ($errors->has('address'))
+                                    <div class="error text-danger">{{ $errors->first('address') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="tax_code">Mã số thuế</label>
-                                <input type="text" name="tax_code" value="{{ $data->tax_code }}" required class="form-control"
-                                    id="tax_code" placeholder="Nhập mã số thuế">
+                                <label for="tax_code">Mã số thuế</label><span class="text-danger">*</span>
+                                <input type="text" name="tax_code" value="{{ old('tax_code', $data->tax_code) }}"
+                                    class="form-control" id="tax_code" placeholder="Nhập mã số thuế">
+                                @if ($errors->has('tax_code'))
+                                    <div class="error text-danger">{{ $errors->first('tax_code') }}</div>
+                                @endif
                             </div>
                         </div>
 

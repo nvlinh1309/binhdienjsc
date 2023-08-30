@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Users\StoreUserRequest;
+use App\Http\Requests\User\Users\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,8 @@ use Mail;
 use App\Mail\CreateAccount;
 use App\Models\User\ParentPermission;
 use Illuminate\Support\Facades\Mail as FacadesMail;
+use DB;
+use Carbon\Carbon;
 
 class UsersController extends Controller
 {
@@ -64,21 +68,47 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $password = Str::random(10);
-        $request['password'] = Hash::make($password);
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $password = Str::random(10);
+            $request['password'] = Hash::make($password);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $password
-        ];
-        Mail::to($request->email)->send(new CreateAccount($data));
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $password
+            ];
+            new CreateAccount($data);
+            // Mail::to($request->email)->send(new CreateAccount($data));
 
-        User::create($request->all())->assignRole($request->role);
-        return redirect()->route('users.index');
+            User::create($request->all())->assignRole($request->role);
 
+            //Send mail:
+            $token = Str::random(64);
+            DB::table('password_resets')->insert([
+                'email' => $request->email,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+            //Get role
+            $role = Role::where('name', '=', $request->role)->first();
+            $data['role'] = $role->display_name;
+            $data['token'] = $token;
+            //Send mail
+            Mail::send('email.createUser', ['data' => $data], function ($message) use ($request) {
+                $message->to($request->email);
+                $message->subject('Tạo mới người dùng thành công.');
+            });
+            \DB::commit();
+            return redirect()->route('users.index')->with(['success' => 'Người dùng ' . $data['name'] . ' được tạo thành công.']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            // return back()->withErrors(['msg' => $message])->withInput();
+            return redirect()->back()->with(['error' => $message])->withInput();
+        }
     }
 
     /**
@@ -119,15 +149,28 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $data = User::find($id);
-        if (!$data) {
-            abort(404);
+        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        \DB::beginTransaction();
+        try {
+            $data = User::find($id);
+            if (!$data) {
+                abort(404);
+            }
+            //Remove role old
+            $data->removeRole($data->getRoleNames()[0]);
+            //Add new role
+            $data->assignRole($request->role);
+            $data->update($request->all());
+            \DB::commit();
+            return redirect()->route('users.show', $id)->with(['success' => 'Thông tin người dùng ' . $data->name . ' đã được cập nhật!!!']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            // return back()->withErrors(['msg' => $message])->withInput();
+            return redirect()->back()->with(['error' => $message])->withInput();
         }
-        $data->assignRole($request->role);
-        $data->update($request->all());
-        return redirect()->route('users.show', $id)->with(['success' => 'Thông tin người dùng ' . $data->name . ' đã được cập nhật!!!']);
+
     }
 
     /**
@@ -200,7 +243,7 @@ class UsersController extends Controller
         //Get Role:
         $role = Role::find($roleId);
         if ($role->name == 'admin') {
-            $mesg = 'Không được phép thay đổi quyền cho '.$role->display_name;
+            $mesg = 'Không được phép thay đổi quyền cho ' . $role->display_name;
         } else {
             //Set permision
             if ($role->hasPermissionTo($permissionNm)) {

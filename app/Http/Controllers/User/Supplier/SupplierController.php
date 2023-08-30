@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Supplier;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Supplier\StoreSupplierRequest;
+use App\Http\Requests\User\Supplier\UpdateSupplierRequest;
 use Illuminate\Http\Request;
 use App\Models\User\Supplier;
 use ViKon\Diff\Diff;
@@ -78,7 +80,7 @@ class SupplierController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreSupplierRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -95,9 +97,9 @@ class SupplierController extends Controller
             // $his->updated_by = \Auth::user()->id;
             $his->save();
             \DB::commit();
-            return redirect()->route('supplier.index');
+            return redirect()->route('supplier.index')->with(['success' => 'Nhà cung cấp ' . $supplier->name . ' đã được tạo mới!!!']);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+    
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
         }
@@ -137,7 +139,7 @@ class SupplierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateSupplierRequest $request, $id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();

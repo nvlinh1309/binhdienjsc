@@ -32,34 +32,44 @@
             </div>
 
             <form id="update" action="{{ route('users.update', $data->id) }}" method="POST">
+                <input type="hidden" value="{{$data->id}}" name="id"/>
                 @csrf
                 @method('PATCH')
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Họ tên</label>
-                                <input type="text" required name="name"  value="{{ $data->name }}" required class="form-control" id="name"
+                                <label for="name">Họ tên</label><span class="text-danger">*</span>
+                                <input type="text"  name="name"  value="{{ old('name', $data->name) }}"  class="form-control" id="name"
                                     placeholder="Nhập họ tên...">
+                                     @if ($errors->has('name'))
+                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="text" readonly name="email" value="{{ $data->email }}" required class="form-control"
+                                <label for="email">Email</label><span class="text-danger">*</span>
+                                <input type="text" readonly name="email" value="{{ old('email', $data->email) }}"  class="form-control"
                                     id="email" placeholder="Nhập email...">
+                                    @if ($errors->has('email'))
+                                    <div class="error text-danger">{{ $errors->first('email') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="role">Vai trò</label>
-                                <select required class="form-control select2" name="role"
+                                <label for="role">Vai trò</label><span class="text-danger">*</span>
+                                <select  class="form-control select2" name="role"
                                     data-placeholder="Chọn vai trò" id="role" style="width: 100%;" >
                                     <option value=""></option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}" {{ $role->name == ($data->getRoleNames()[0]??"")?"selected":"" }}>{{ $role->display_name }}</option>
+                                    @foreach ($roles as $role) 
+                                        <option value="{{ $role->name }}" {{ $role->name == old('role', $data->getRoleNames()[0]) ? 'selected' : '' }}>{{ $role->display_name }}</option>
                                     @endforeach
                                 </select>
+                                 @if ($errors->has('role'))
+                                    <div class="error text-danger">{{ $errors->first('role') }}</div>
+                                @endif
                             </div>
                         </div>
 

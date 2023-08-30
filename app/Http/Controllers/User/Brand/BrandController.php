@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Brand;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Brand\StoreBrandRequest;
+use App\Http\Requests\User\Brand\UpdateBrandRequest;
 use App\Models\User\Brand;
 use App\Models\User\BrandHistory;
 use App\Models\User\Supplier;
@@ -76,7 +78,7 @@ class BrandController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreBrandRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -144,7 +146,7 @@ class BrandController extends Controller
      * @param  \App\Models\User\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateBrandRequest $request, $id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();

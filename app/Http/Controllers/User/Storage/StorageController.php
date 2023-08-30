@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Storage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Storage\StoreStorageRequest;
+use App\Http\Requests\User\Storage\UpdateStorageRequest;
 use App\Models\User\Storage;
 use App\Models\User\StorageHistory;
 use Illuminate\Http\Request;
@@ -58,7 +60,7 @@ class StorageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreStorageRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -74,7 +76,7 @@ class StorageController extends Controller
             // $his->updated_by = \Auth::user()->id;
             $his->save();
             \DB::commit();
-            return redirect()->route('store.index');
+            return redirect()->route('store.index')->with(['success' => 'Kho hàng ' . $storage->name . ' đã được tạo thành công!!!']);
         } catch (\Exception $e) {
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
@@ -115,7 +117,7 @@ class StorageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateStorageRequest $request, $id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
