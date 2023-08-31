@@ -7,6 +7,8 @@ use App\Http\Requests\User\Instock\StoreInstockRequest;
 use App\Http\Requests\User\Instock\UpdateInstockRequest;
 use App\Http\Requests\User\Order\StoreOrderRequest;
 use App\Http\Requests\User\Order\UpdateOrderRequest;
+use App\Http\Requests\User\OrderBuyer\OrderBuyerStoreRequest;
+use App\Http\Requests\User\OrderBuyer\OrderBuyerUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\User\Order;
@@ -19,6 +21,7 @@ use App\Models\User\GoodsReceiptManagement;
 use App\Models\User\ProductGoodsReceiptManagement;
 use App\Models\User\PriceCustomerProdManagement;
 use App\Models\User\StorageProduct;
+use App\Models\User\OrderBuyer;
 use PDF;
 use DB;
 
@@ -80,7 +83,7 @@ class OrderController extends Controller
             foreach ($temp['storage_product'] as $no => $detail) {
                 $quantityReal = $detail['quantity_plus'] - $detail['quantity_mins'];
                 if ($quantityReal > 0) {
-                    // Get price 
+                    // Get price
                     $priceInfo = Product::with([
                         'price_customer' => function ($query) use ($detail, $customerId) {
                             $query->with('customer')->where(array('product_id' => $detail['product_id'], 'customer_id' => $customerId))->first();
@@ -91,7 +94,7 @@ class OrderController extends Controller
                     }else {
                         $price = 0;
                     }
-                    
+
                     $listProd[$detail['product_id']] = array(
                         'real_quantity' => $quantityReal,
                         'price' => $price,
@@ -175,7 +178,7 @@ class OrderController extends Controller
                         throw new \Exception($message);
                     }
                     array_push($arrayProduct, $param['order_product_' . $array[2]]);
-                    // Insert table 
+                    // Insert table
                     $orderDetail = new OrderDetail();
                     $orderDetail->order_id = $orderId;
                     $orderDetail->product_id = $getPriceT[0];
@@ -430,7 +433,7 @@ class OrderController extends Controller
                         $orderDetailNew->save();
                         // Update table storage:
                         $diffQuantity = - $param['order_quantity_' . $array[2]];
-                       
+
                     }
                     //Update lại stogare:
                     $stoStaProduct = StorageProduct::firstOrNew(array('storage_id' => $param['order_wh'], 'product_id' => $getPriceT[0]));
@@ -470,17 +473,17 @@ class OrderController extends Controller
         }
     }
 
-    public function notificationOrderPDF($orderId) 
+    public function notificationOrderPDF($orderId)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
-            
+
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => $message]);
         }
     }
-    
-    public function exportInvoicePDF($orderId) 
+
+    public function exportInvoicePDF($orderId)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
@@ -615,7 +618,7 @@ class OrderController extends Controller
     {
         //Get status
         $statusList = config('constants.status_receipt_list');
-        $data = GoodsReceiptManagement::with('supplier', 'storage')->orderBy('id', 'DESC');
+        $data = OrderBuyer::with('supplier', 'storage')->where('status','<','5')->orderBy('id', 'DESC');
         $data = $data->paginate(5);
         return view('user.order.stock-in.index', compact('data', 'statusList'));
     }
@@ -836,10 +839,12 @@ class OrderController extends Controller
         $products = Product::get();
         // Get list status
         $statusList = config('constants.status_receipt_list');
+        //Get company info
+        $companyInfo= config('companyInfo');
         // Get all user
         // $data = User::with('roles')->orderBy('id', 'DESC')->get();
         $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
-        return view('user.order.stock-in.create', compact('suppliers', 'wareHouses', 'products', 'dataUser', 'statusList'));
+        return view('user.order.stock-in.create', compact('suppliers', 'wareHouses', 'products', 'dataUser', 'statusList', 'companyInfo'));
     }
 
     /**
@@ -887,71 +892,23 @@ class OrderController extends Controller
             return redirect()->back()->with(['error' => $message]);
         }
     }
-    public function stockInStore(StoreInstockRequest $request)
+    public function stockInStore(OrderBuyerStoreRequest $request)
     {
-        $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
+        // $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
         try {
-            $param = $request->all();
-            $goodReceiptManagement = new GoodsReceiptManagement();
-            $goodReceiptManagement->goods_receipt_code = $param['order_code'];
-            $goodReceiptManagement->supplier_id = $param['order_supplier'];
-            $goodReceiptManagement->document = $param['order_contract_no'];
-            $goodReceiptManagement->storage_id = $param['order_wh'];
-            $goodReceiptManagement->receipt_date = $param['receipt_date'] ? $param['receipt_date'] : now()->format('d-m-Y');
-            $goodReceiptManagement->receive_cont = $param['receive_cont'];
-            $goodReceiptManagement->receive_info = $param['receive_info'];
-            $goodReceiptManagement->receipt_status = $param['receipt_status'];
-            $goodReceiptManagement->sales_user = $param['sales_user'];
-            $goodReceiptManagement->wh_user = $param['wh_user'];
-            $goodReceiptManagement->receive_user = $param['receive_user'];
-            $goodReceiptManagement->approval_user = $param['approval_user'];
-            $goodReceiptManagement->save();
-            $idGoodReceipt = $goodReceiptManagement->id;
-            // Handel with list product:
-            $arrayProduct = array();
-            foreach ($param as $name => $value) {
-                if (strpos($name, 'order_product_') !== false) {
-                    $array = explode('_', $name);
-                    if (in_array($param['order_product_' . $array[2]], $arrayProduct)) {
-                        $message = 'Sản phẩm trong đơn hàng không được trùng nhau.';
-                        throw new \Exception($message);
-                    }
-
-                    if ($param['order_quantity_' . $array[2]] == '') {
-                        $message = 'Số lượng của sản phẩm là bắt buộc.';
-                        throw new \Exception($message);
-                    }
-
-                    if (!is_numeric($param['order_quantity_' . $array[2]])) {
-                        $message = 'Số lượng của sản phẩm là dạng số.';
-                        throw new \Exception($message);
-                    }
-                    array_push($arrayProduct, $param['order_product_' . $array[2]]);
-
-                    // Insert table 
-                    $insertProduct = new ProductGoodsReceiptManagement();
-                    $insertProduct->goods_receipt_id = $idGoodReceipt;
-                    $insertProduct->product_id = $param['order_product_' . $array[2]];
-                    $insertProduct->quantity = $param['order_quantity_' . $array[2]];
-                    $insertProduct->date_of_manufacture = $param['order_date_manufacture_' . $array[2]];
-                    $insertProduct->expiry_date = $param['input_expDate_' . $array[2]];
-                    $insertProduct->note_product = $param['note_product_' . $array[2]];
-                    $insertProduct->save();
-                    $proId = $insertProduct->id;
-                    // Insert table price
-                    // $product = Product::find($param['order_product_' . $array[2]]);
-                    // $customers = Customer::get();
-                    // foreach ($customers as $customer) {
-                    //     $pri = new PriceCustomerProdManagement();
-                    //     $pri->product_goods_id = $proId;
-                    //     $pri->customer_id = $customer->id;
-                    //     $pri->price = $product->price;
-                    //     $pri->save();
-                    // }
-                }
-            }
-            //--------------------------
+            $data = [];
+            $data['code']           = $request->code;
+            $data['supplier_id']    = $request->supplier_id;
+            $data['storage_id']     = $request->storage_id;
+            $data['order_info'] = json_encode([
+                'estimate_delivery_time'    => $request->estimate_delivery_time,
+                'receipt_date'              => $request->receipt_date,
+                'buyer_name'                => $request->buyer_name,
+                'buyer_address'             => $request->buyer_address,
+                'buyer_tax_code'            => $request->buyer_tax_code
+            ]);
+            OrderBuyer::create($data);
             \DB::commit();
             return redirect()->route('stock-in.index')->with(['success' => 'Đơn hàng mới đã được tạo thành công.']);
         } catch (\Exception $e) {

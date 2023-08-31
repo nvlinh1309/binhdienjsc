@@ -8,5 +8,5 @@ return [
     'payment_method_list' => [
         1 => 'Chuyển khoản',
         2 => 'Tiền mặt'
-    ]
+    ],
 ];

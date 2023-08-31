@@ -37,6 +37,9 @@
                     <a href="{{ route('stock-in.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
+                    <a href="#">
+                        <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
+                    </a>
                     <a href="{{ route('stock-in.list.export') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
                     </a>
@@ -63,19 +66,22 @@
                     <tbody>
                         <?php $num = 1;?>
                         @foreach ($data as $key=>$value)
+                        @php
+                            $order_info = json_decode($value->order_info);
+                        @endphp
                             <tr>
                                 <td>{{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}</td>
-                                <td>{{ $value->goods_receipt_code  }}</td>
+                                <td>{{ $value->code  }}</td>
                                 <td>{{ $value->supplier->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
-                                <td>{{ $value->receipt_date->format('d-m-Y') }}</td>
-                                <td>{{ $value->receipt_status ? $statusList[$value->receipt_status] : '' }}</td>
+                                <td>{{ $order_info->receipt_date }}</td>
+                                <td>{{ $value->status ? $statusList[$value->status] : '' }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('stock-in.destroy', $value->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
                                         <span  class="btn btn-xs  @if($value->receipt_status != 3) btn-danger delete @else btn-secondary @endif "
-                                            data-id="{{ $value->goods_receipt_code }}">Xoá</span>
+                                            data-id="{{ $value->goods_receipt_code }}">Huỷ</span>
                                     </form>
                                     <a href="{{ route('stock-in.price', $value->id) }}"
                                             class="btn btn-xs btn-success">Chi tiết</a>
@@ -87,7 +93,7 @@
                         @endforeach
 
                     </tbody>
-                </table> 
+                </table>
             </div>
             <!-- /.card-body -->
         </div>

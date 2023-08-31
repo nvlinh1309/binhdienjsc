@@ -44,249 +44,147 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="order_code">Mã Nhập kho</label><span class="text-danger">*</span>
-                                <input value="{{ old('order_code') }}" type="text" name="order_code"
-                                    class="form-control" id="order_code" placeholder="Nhập mã đơn hàng...">
-                                @if ($errors->has('order_code'))
-                                    <div class="error text-danger">{{ $errors->first('order_code') }}</div>
-                                @endif
+                                <label for="code">Mã đặt hàng<span class="text-danger">*</span></label>
+                                <input value="{{ old('code') }}" type="text" name="code"
+                                    class="form-control {{ $errors->has('code')?"is-invalid":"" }}" id="code" placeholder="Nhập mã đặt hàng..." {{ $errors->has('code')?'aria-describedby="order_code-error" aria-invalid="true"':''}}>
+                                    @if ($errors->has('code'))
+                                        <span id="code-error" class="error invalid-feedback">{{ $errors->first('code') }}</span>
+                                    @endif
                             </div>
-
                         </div>
 
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Chọn nhà cung cấp</label>
-                                <select class="form-control select2" name="order_supplier" id="order_supplier"
+                                <label>Chọn nhà cung cấp<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="supplier_id" id="supplier_id"
                                     style="width: 100%;">
                                     @foreach ($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}"
-                                            {{ $supplier->id == old('order_supplier') ? 'selected' : '' }}>
+                                            {{ $supplier->id == old('supplier_id') ? 'selected' : '' }}>
                                             {{ $supplier->name }}</option>
                                     @endforeach
-
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="order_contract_no">Chứng từ (Mã hợp đồng,v.v...)</label>
-                                <input value="{{ old('order_contract_no') }}" type="text" name="order_contract_no"
-                                    class="form-control" id="order_contract_no" placeholder="Nhập mã đơn hàng...">
+                                <label for="estimate_delivery_time">Thời gian dự kiến giao hàng<span class="text-danger">*</span></label>
+                                <input value="{{ old('estimate_delivery_time') }}" type="text"
+                                    name="estimate_delivery_time" class="form-control" id="order_contract_no"
+                                    placeholder="Nhập thời gian dự kiến giao hàng...">
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="order_wh">Chọn kho</label>
-                                <select class="form-control select2" name="order_wh" style="width: 100%;">
+                                <label for="storage_id">Chọn kho nhập hàng<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="storage_id" style="width: 100%;">
                                     @foreach ($wareHouses as $wareHouse)
                                         <option value="{{ $wareHouse->id }}"
-                                            {{ $wareHouse->id == old('order_wh') ? 'selected' : '' }}>
+                                            {{ $wareHouse->id == old('storage_id') ? 'selected' : '' }}>
                                             {{ $wareHouse->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <label for="order_date_manufacture">Ngày nhập kho</label>
-                            <input value="{{ old('receipt_date', now()->format('d-m-Y')) }}" type="text"
-                                class="form-control datepicker" name="receipt_date" id=""
-                                data-provide="datepicker">
-                        </div>
-
-                        <div class="col-sm-4">
-                            <label for="order_date_manufacture">Thông tin giao nhận</label>
-                            <textarea class="form-control" name="receive_info"  value="{{ old('receive_info') }}"  rows="1">{{ old('receive_info') }}</textarea>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <label for="receive_cont">Xe/Cont</label>
-                            <textarea class="form-control" name="receive_cont" value="{{ old('receive_cont') }}" rows="1">{{ old('receive_cont') }}</textarea>
-                        </div>
-
-                        <div class="col-sm-4 mt-3">
-                            <label for="receipt_status">Trạng thái đơn hàng</label>
-                            <select class="form-control select2" name="receipt_status" style="width: 100%;">
-                                    @foreach ($statusList as $keyStatus => $status)
-                                        @if($status != 'Đã phê duyệt' || ($status == 'Đã phê duyệt' && \Auth::user()->hasRole('manager')))
-                                            <option value="{{ $keyStatus }}"
-                                            {{ $keyStatus == old('receipt_status') ? 'selected' : '' }}>
-                                            {{ $status }}</option>
-                                        @endif
-                                        
-                                    @endforeach
-                                </select>
-                        </div>
-
-                        <div class="col-sm-4 mt-3">
-                            <label for="approval_user">Phê duyệt lệnh mua</label>
-                            <select class="form-control select2" name="approval_user" style="width: 100%;">
-                                    @foreach ($dataUser as $userDetail)
-                                        <option value="{{ $userDetail->id }}"
-                                            {{ $userDetail->id == old('approval_user') ? 'selected' : '' }}>
-                                            {{ $userDetail->name }}</option>
-                                    @endforeach
-                                </select>
-                        </div>
-
-                        <div class="col-sm-4 mt-3">
                             <div class="form-group">
-                                <label for="receive_user">Bộ phận giao nhận</label>
-                                <select class="form-control select2" name="receive_user" style="width: 100%;">
-                                    @foreach ($dataUser as $userDetail)
-                                        <option value="{{ $userDetail->id }}"
-                                            {{ $userDetail->id == old('receive_user') ? 'selected' : '' }}>
-                                            {{ $userDetail->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="order_date_manufacture">Ngày đặt hàng<span class="text-danger">*</span></label>
+                                <input value="{{ old('receipt_date', now()->format('d-m-Y')) }}" type="text"
+                                    class="form-control datepicker" name="receipt_date" id="receipt_date"
+                                    data-provide="datepicker" placeholder="dd-mm-yyyy">
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="wh_user">Thủ kho hàng</label>
-                                <select class="form-control select2" name="wh_user" style="width: 100%;">
-                                    @foreach ($dataUser as $userDetail)
-                                        <option value="{{ $userDetail->id }}"
-                                            {{ $userDetail->id == old('wh_user') ? 'selected' : '' }}>
-                                            {{ $userDetail->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="sales_user">Phụ trách tổ kinh doanh</label>
-                                <select class="form-control select2" name="sales_user" style="width: 100%;">
-                                    @foreach ($dataUser as $userDetail)
-                                        <option value="{{ $userDetail->id }}"
-                                            {{ $userDetail->id == old('sales_user') ? 'selected' : '' }}>
-                                            {{ $userDetail->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-12">
-                            <label for="order_code">Sản Phẩm</label>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="card" id="containerProduct">
-                                <div class="form-row mr-0 ml-0 div-add-prod">
-                                    <div class="form-group col-md-3">
-                                        <label for="order_product_1">Chọn Sản Phẩm</label><span class="text-danger">*</span>
-                                        <select name="order_product_1" class="form-control select2">
-                                            @foreach ($products as $product)
-                                                <option value="{{ $product->id }}"
-                                                    {{ $product->id == old('order_product_1') ? 'selected' : '' }}>
-                                                    {{ $product->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-md-2">
-                                        <label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>
-                                        <input type="text" value="{{ old('order_quantity_1') }}"
-                                            class="form-control" name="order_quantity_1"
-                                            placeholder="Nhập số lượng...">
-                                    </div>
-
-                                    <div class="form-group col-md-2">
-                                        <label for="order_date_manufacture">Ngày Sản Xuất</label>
-                                        <input type="text" value="{{ old('order_date_manufacture_1') }}"
-                                            class="form-control datepicker" name="order_date_manufacture_1"
-                                            data-provide="datepicker">
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="input_expDate">Hạn Sử Dụng</label>
-                                        <input type="text" value="{{ old('input_expDate_1') }}"
-                                            class="form-control datepicker" name="input_expDate_1" id="input_expDate"
-                                            data-provide="datepicker">
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="note_product_1">Ghi chú</label>
-                                        <textarea class="form-control" id="note_product_1" name="note_product_1" rows="1">{{ old('note_product_1') }}</textarea>
-                                    </div>
+                        <div class="col-md-12">
+                            <div class="callout callout-info">
+                                <h5><i class="fas fa-info"></i> Thông tin đơn vị mua hàng</h5>
+                                <hr>
+                                <div class="form-group">
+                                    <label for="buyer_name">Tên công ty<span class="text-danger">*</span></label>
+                                    <input value="{{ $companyInfo['name'] }}" type="text" name="buyer_name"
+                                        class="form-control" id="buyer_name" placeholder="Nhập tên công ty...">
                                 </div>
-                                <?php
-                                $dataOld = session()->getOldInput();
-                                $dataOldProduct = [];
-                                if (count($dataOld) > 0) {
-                                    foreach ($dataOld as $key => $value) {
-                                        if (strpos($key, 'order_product_') !== false && $key != 'order_product_1') {
-                                            $arrayTemp = explode('_', $key);
-                                            array_push($dataOldProduct, $arrayTemp[2]);
-                                        }
-                                    }
-                                }
-                                ?>
-                                @if (count($dataOldProduct) > 0)
-                                    <?php $newIndex = 2; ?>
-                                    @foreach ($dataOldProduct as $index)
-                                        <div class="form-row mr-0 ml-0 div-add-prod">
-                                            <div class="form-group col-md-3">
-                                                <label for="order_product_{{ $newIndex }}">Chọn Sản Phẩm</label><span class="text-danger">*</span>
-                                                <select name="order_product_{{ $newIndex }}"
-                                                    class="form-control select2">
-                                                    @foreach ($products as $product)
-                                                        <option value="{{ $product->id }}"
-                                                            {{ $product->id == old('order_product_' . $index) ? 'selected' : '' }}>
-                                                            {{ $product->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                <div class="form-group">
+                                    <label for="buyer_address">Địa chỉ<span class="text-danger">*</span></label>
+                                    <input value="{{ $companyInfo['address'] }}" type="text" name="buyer_address"
+                                        class="form-control" id="buyer_address" placeholder="Nhập địa chỉ...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="buyer_tax_code">Mã số thuế<span class="text-danger">*</span></label>
+                                    <input value="{{ $companyInfo['tax_code'] }}" type="text" name="buyer_tax_code"
+                                        class="form-control" id="buyer_tax_code" placeholder="Nhập mã số thuế...">
+                                </div>
+                            </div>
+                        </div>
 
-                                            <div class="form-group col-md-2">
-                                                <label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>
-                                                <input type="text" value="{{ old('order_quantity_' . $index) }}"
-                                                    class="form-control" name="order_quantity_{{ $newIndex }}"
-                                                    placeholder="Nhập số lượng...">
-                                            </div>
+                        {{-- <div class="col-md-12">
+                            <div class="callout callout-info">
+                                <h5><i class="fas fa-info"></i> Sản phẩm đặt hàng</h5>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card" id="containerProduct">
+                                            <div class="form-row mr-0 ml-0 div-add-prod">
+                                                <div class="form-group col-md-8">
+                                                    <label for="order_product_1">Chọn Sản Phẩm<span class="text-danger">*</span></label>
+                                                    <select name="order_product_1" class="form-control select2">
+                                                        @foreach ($products as $product)
+                                                            <option value="{{ $product->id }}"
+                                                                {{ $product->id == old('order_product_1') ? 'selected' : '' }}>
+                                                                {{ $product->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="order_date_manufacture">Nhập số lượng <span class="text-danger">*</span></label>
+                                                    <input type="text" value="{{ old('order_quantity_1') }}"
+                                                        class="form-control" name="order_quantity_1"
+                                                        placeholder="Nhập số lượng...">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="order_date_manufacture">Ngày Sản Xuất</label>
+                                                    <input type="text"
+                                                        value="{{ old('order_date_manufacture_1') }}"
+                                                        class="form-control datepicker"
+                                                        name="order_date_manufacture_1" data-provide="datepicker">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="input_expDate">Hạn Sử Dụng</label>
+                                                    <input type="text" value="{{ old('input_expDate_1') }}"
+                                                        class="form-control datepicker" name="input_expDate_1"
+                                                        id="input_expDate" data-provide="datepicker">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="note_product_1">Ghi chú</label>
+                                                    <textarea class="form-control" id="note_product_1" name="note_product_1" rows="1">{{ old('note_product_1') }}</textarea>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label class="btn btn-success btn-sm" id="add_product">Thêm</label>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <input type="hidden" name="products">
+                                                    <div></div>
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Tên sản phẩm</th>
+                                                                <th>Số lượng</th>
+                                                                <th>Ngày sản xuất</th>
+                                                                <th>Hạn sử dụng</th>
+                                                                <th>Ghi chú</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="products">
 
-                                            <div class="form-group col-md-2">
-                                                <label for="order_date_manufacture">Ngày Sản Xuất</label>
-                                                <input type="text"
-                                                    value="{{ old('order_date_manufacture_' . $index) }}"
-                                                    class="form-control datepicker"
-                                                    name="order_date_manufacture_{{ $newIndex }}"
-                                                    data-provide="datepicker">
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <label for="input_expDate">Hạn Sử Dụng</label>
-                                                <input type="text" value="{{ old('input_expDate_' . $index) }}"
-                                                    class="form-control datepicker"
-                                                    name="input_expDate_{{ $newIndex }}" id="input_expDate"
-                                                    data-provide="datepicker">
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <label for="note_product_{{ $newIndex }}">Ghi chú</label>
-                                                <textarea class="form-control" value="{{ old('note_product_' . $index) }}" id="note_product_1" name="note_product_{{ $newIndex }}" rows="1">{{ old('note_product_' . $index) }}</textarea>
-                                            </div>
-                                            <div
-                                                class="form-group col-md-1 align-self-center d-flex justify-content-center mb-0 div-product">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-trash delete-product"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
-                                                    <path
-                                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
-                                                </svg>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
-                                        <?php $newIndex++; ?>
-                                    @endforeach
-
-                                @endif
-                                <!-- /.card-header -->
-                                <!-- /.card-body -->
-
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group col-md-3">
-                                <button type="button" id="addProduct" class="btn btn-secondary">Thêm Sản
-                                    Phẩm</button>
-                            </div>
-
-                        </div>
+                        </div> --}}
 
                     </div>
 
@@ -301,63 +199,80 @@
         <!-- /.card -->
     </div>
 
+
+    <script>
+        $(function() {
+            $("#add_product").click(function(){
+                alert(1);
+            })
+            if ($("#quickForm").length > 0) {
+                $('#quickForm').validate({
+                    rules: {
+                        code: {
+                            required: true,
+                        },
+                        estimate_delivery_time: {
+                            required: true
+                        },
+                        receipt_date: {
+                            required: true
+                        },
+                        buyer_name: {
+                            required: true
+                        },
+                        buyer_address: {
+                            required: true
+                        },
+                        buyer_tax_code: {
+                            required: true
+                        },
+                        products: {
+                            required: true
+                        }
+                    },
+                    messages: {
+                        code: {
+                            required: "Vui lòng nhập mã đặt hàng"
+                        },
+                        estimate_delivery_time: {
+                            required: "Vui lòng nhập thời gian dự kiến giao hàng",
+                        },
+                        receipt_date: {
+                            required: "Vui lòng nhập ngày đặt hàng",
+                        },
+                        buyer_name: {
+                            required: "Vui lòng nhập tên công ty",
+                        },
+                        buyer_address: {
+                            required: "Vui lòng nhập địa chỉ",
+                        },
+                        buyer_tax_code: {
+                            required: "Vui lòng nhập mã số thuế",
+                        },
+                        products: {
+                            required: "Vui lòng thêm ít nhất 1 sản phẩm"
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            }
+        });
+    </script>
+
     <script>
         jQuery(document).on('focus', ".datepicker", function() {
             jQuery(this).datepicker({
                 format: 'dd-mm-yyyy'
-            });
-        });
-        $(document).ready(function() {
-
-            $('#addProduct').on('click', function(e) {
-                var array = {!! json_encode($products) !!};
-                var options;
-                console.log(array);
-                $.each(array, function(key, value) {
-                    options = options + '<option value="' + value.id + '">' + value.name +
-                        '</option>';
-                });
-                var numItems = $('.div-add-prod').length
-                var newNumItems = numItems + 1;
-                var structure = '<div class="form-row mr-0 ml-0 div-add-prod">' +
-                    '<div class="form-group col-md-3">' +
-                    '<label for="inputState">Chọn Sản Phẩm</label><span class="text-danger">*</span>' +
-                    '<select name="order_product_' + newNumItems + '" class="form-control select2">' +
-                    options;
-                structure += '</select>' +
-                    '</div>' +
-                    '<div class="form-group col-md-2">' +
-                    '<label for="order_date_manufacture">Nhập số lượng</label><span class="text-danger">*</span>' +
-                    '<input type="text" class="form-control" name="order_quantity_' + newNumItems +
-                    '" placeholder="Nhập số lượng...">' +
-                    '</div>' +
-                    '<div class="form-group col-md-2">' +
-                    '<label for="inputCity">Ngày Sản Xuất</label>' +
-                    '<input type="text" class="form-control datepicker" name="order_date_manufacture_' +
-                    newNumItems + '" data-provide="datepicker">' +
-                    '</div>' +
-                    '<div class="form-group col-md-2">' +
-                    '<label for="inputZip">Hạn Dùng</label>' +
-                    '<input type="text" class="form-control datepicker"  name="input_expDate_' +
-                    newNumItems + '" data-provide="datepicker">' +
-                    '</div>' +
-                    '<div class="form-group col-md-2">' +
-                    '<label for="note_product_'+newNumItems+'">Ghi chú</label>'+
-                    '<textarea class="form-control" id="note_product_'+newNumItems+'" name="note_product_'+newNumItems+'" rows="1">'+
-                    '</textarea>'+
-                    '</div>' +
-                    '<div class="form-group col-md-1 a /nblign-self-center d-flex justify-content-center mb-0 div-product">' +
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash delete-product" viewBox="0 0 16 16">' +
-                    '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />' +
-                    '<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />' +
-                    '</svg>' +
-                    '</div>' +
-                    '</div>';
-                $("#containerProduct").append(structure);
-            });
-
-            $('#containerProduct').on('click', '.delete-product', function() {
-                $(this).parent().parent().remove();
             });
         });
     </script>

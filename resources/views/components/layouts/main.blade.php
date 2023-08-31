@@ -45,7 +45,8 @@
     <script src="/template/admin/plugins/chart.js/Chart.min.js"></script>
     <script src="/template/admin//plugins/select2/js/select2.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-
+    <script src="/template/admin/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/template/admin/plugins/jquery-validation/additional-methods.min.js"></script>
     {{-- <script src="/template/admin/dist/js/demo.js"></script> --}}
     <script src="/template/admin/dist/js/pages/dashboard3.js"></script>
     <!-- bootstrap datepicker -->

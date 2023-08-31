@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User\Instock;
+namespace App\Http\Requests\user\OrderBuyer;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreInstockRequest extends FormRequest
+class OrderBuyerStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +24,14 @@ class StoreInstockRequest extends FormRequest
     public function rules()
     {
         return [
-            'order_code' => 'required|unique:goods_receipt_management,goods_receipt_code',
+            'code' => 'unique:order_buyer,code',
         ];
 
     }
-
     public function messages(): array
     {
         return [
-            'order_code.required' => 'Vui lòng không bỏ trống Mã đặt hàng.',
-            'order_code.unique' => 'Giá trị mã nhập kho phải là duy nhất.'
+            'code.unique' => 'Mã đơn đặt hàng đã tồn tại',
         ];
     }
 }
