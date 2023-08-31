@@ -2,9 +2,11 @@
 
 namespace App\Models\User;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 
 class OrderBuyer extends Model
@@ -14,7 +16,7 @@ class OrderBuyer extends Model
     protected $table = 'order_buyer';
 
     protected $fillable = [
-        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status'
+        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by'
     ];
 
     public function supplier()
@@ -25,6 +27,16 @@ class OrderBuyer extends Model
     public function storage()
     {
         return $this->belongsTo(Storage::class, 'storage_id', 'id');
+    }
+
+    public function user_assignee()
+    {
+        return $this->belongsTo(User::class, 'assignee', 'id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
 }

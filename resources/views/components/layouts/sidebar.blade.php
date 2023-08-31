@@ -54,13 +54,13 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{ route('order.index') }}" class="nav-link {{ request()->is('order*') ? 'active' : '' }}">
+                <a href="{{ route('order-seller.index') }}" class="nav-link {{ request()->is('order-seller*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Đơn bán (Xuất kho)</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ route('stock-in.index') }}" class="nav-link {{ request()->is('stock-in*') ? 'active' : '' }}">
+                <a href="{{ route('order-buyer.index') }}" class="nav-link {{ request()->is('order-buyer*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Đơn mua (Nhập kho)</p>
                 </a>

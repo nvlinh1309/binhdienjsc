@@ -11,6 +11,8 @@ use App\Http\Controllers\User\Storage\StorageController;
 use App\Http\Controllers\User\Users\UsersController;
 use App\Http\Controllers\User\Brand\BrandController;
 use App\Http\Controllers\User\Auth\ForgotPasswordController;
+use App\Http\Controllers\User\Order\OrderBuyerController;
+use App\Http\Controllers\User\Order\OrderSellerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +52,12 @@ Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPass
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
+
+    Route::resource('order-buyer', OrderBuyerController::class);
+    Route::get('order-buyer/export/{id}', [OrderBuyerController::class, 'purchaseOrderExport'])->name('order-buyer.purchase-order-export');
+    // Route::get('product/create/step-2/{id}', [OrderBuyerController::class, 'createStep2'])->name('order-buyer.create-step-2');
+
+    Route::resource('order-seller', OrderSellerController::class);
     Route::post('/get-products', [OrderController::class, 'getProductBasedWh'])->name('order.get.product');
     Route::name('order.')->prefix('order')->group(function () {
         // Route::get('/show/{id}', [OrderController::class, 'showOrder'])->name('show');
