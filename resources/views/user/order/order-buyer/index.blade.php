@@ -37,9 +37,9 @@
                     <a href="{{ route('order-buyer.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
-                    <a href="#">
+                    {{-- <a href="#">
                         <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
-                    </a>
+                    </a> --}}
                     <a href="{{ route('stock-in.list.export') }}">
                     <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
                     </a>
@@ -75,18 +75,10 @@
                                 <td>{{ $value->supplier->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
                                 <td>{{ $order_info->receipt_date }}</td>
-                                <td>{{ $value->status ? $statusList[$value->status] : '' }}</td>
+                                <td><i>{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
-                                    {{-- <form method="POST" action="{{ route('stock-in.destroy', $value->id) }}">
-                                        {{ csrf_field() }}
-                                        {{ method_field('DELETE') }}
-                                        <span  class="btn btn-xs  @if($value->receipt_status != 3) btn-danger delete @else btn-secondary @endif "
-                                            data-id="{{ $value->goods_receipt_code }}">Huỷ</span>
-                                    </form> --}}
                                     <a href="{{ route('order-buyer.show', $value->id) }}"
                                             class="btn btn-xs btn-success">Chi tiết</a>
-                                    {{-- <a href="{{ route('instock.export', $value->id) }}"
-                                            class="btn btn-xs btn-success">Phiếu nhập kho</a> --}}
                                 </td>
                             </tr>
                             <?php $num++;?>
