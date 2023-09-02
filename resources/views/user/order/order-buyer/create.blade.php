@@ -69,6 +69,21 @@
 
                         <div class="col-sm-4">
                             <div class="form-group">
+                                <label>Chọn Thủ kho<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="warehouse_keeper" id="warehouse_keeper"
+                                    style="width: 100%;">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}"
+                                            {{ $user->id == old('warehouse_keeper') ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
                                 <label>Chọn nhà cung cấp<span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="supplier_id" id="supplier_id"
                                     style="width: 100%;">

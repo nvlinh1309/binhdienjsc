@@ -16,7 +16,7 @@ class OrderBuyer extends Model
     protected $table = 'order_buyer';
 
     protected $fillable = [
-        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by', 'order_approver'
+        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by', 'order_approver', 'warehouse_keeper'
     ];
 
     protected $casts = [
@@ -51,6 +51,10 @@ class OrderBuyer extends Model
     public function product()
     {
         return $this->hasManyJson(Product::class, 'products[]->product_id');
+    }
+    public function warehouseKeeper()
+    {
+        return $this->belongsTo(User::class, 'warehouse_keeper', 'id');
     }
 
 }
