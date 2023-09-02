@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label for="name">Họ tên</label><span class="text-danger">*</span>
                                 <input type="text" name="name" value="{{ old('name') }}"
-                                    class="form-control" id="name" placeholder="Nhập họ tên...">
+                                    class="form-control {{ $errors->has('name')?"is-invalid":"" }}" id="name" placeholder="Nhập họ tên...">
                                 @if ($errors->has('name'))
                                     <div class="error text-danger invalid-feedback-custom">{{ $errors->first('name') }}</div>
                                 @endif
@@ -49,7 +49,7 @@
                             <div class="form-group">
                                 <label for="email">Email</label><span class="text-danger">*</span>
                                 <input type="input" name="email" value="{{ old('email') }}"
-                                    class="form-control" id="email" placeholder="Nhập email...">
+                                    class="form-control {{ $errors->has('email')?"is-invalid":"" }}" id="email" placeholder="Nhập email...">
                                 @if ($errors->has('email'))
                                     <div class="error text-danger invalid-feedback-custom">{{ $errors->first('email') }}</div>
                                 @endif
@@ -58,7 +58,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="role">Vai trò</label><span class="text-danger">*</span>
-                                <select class="form-control select2" name="role"
+                                <select class="form-control select2 {{ $errors->has('role')?"is-invalid":"" }}" name="role"
                                     data-placeholder="Chọn vai trò" id="role" style="width: 100%;">
                                     <option value=""></option>
                                     @foreach ($roles as $role)

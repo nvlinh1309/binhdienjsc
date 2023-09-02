@@ -40,7 +40,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="name">Họ tên</label><span class="text-danger">*</span>
-                                <input type="text"  name="name"  value="{{ old('name', $data->name) }}"  class="form-control" id="name"
+                                <input type="text"  name="name"  value="{{ old('name', $data->name) }}"  class="form-control {{ $errors->has('name')?"is-invalid":"" }}" id="name"
                                     placeholder="Nhập họ tên...">
                                      @if ($errors->has('name'))
                                     <div class="error text-danger invalid-feedback-custom">{{ $errors->first('name') }}</div>
@@ -60,7 +60,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="role">Vai trò</label><span class="text-danger">*</span>
-                                <select  class="form-control select2" name="role"
+                                <select  class="form-control select2 {{ $errors->has('role')?"is-invalid":"" }}" name="role"
                                     data-placeholder="Chọn vai trò" id="role" style="width: 100%;" >
                                     <option value=""></option>
                                     @foreach ($roles as $role) 
