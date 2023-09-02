@@ -41,7 +41,7 @@
                                 <input type="text" name="name" value="{{ old('name') }}"
                                     class="form-control" id="name" placeholder="Nhập họ tên...">
                                 @if ($errors->has('name'))
-                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('name') }}</div>
                                 @endif
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                 <input type="input" name="email" value="{{ old('email') }}"
                                     class="form-control" id="email" placeholder="Nhập email...">
                                 @if ($errors->has('email'))
-                                    <div class="error text-danger">{{ $errors->first('email') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('email') }}</div>
                                 @endif
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                                     @endforeach
                                 </select>
                                 @if ($errors->has('role'))
-                                    <div class="error text-danger">{{ $errors->first('role') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('role') }}</div>
                                 @endif
                             </div>
                         </div>

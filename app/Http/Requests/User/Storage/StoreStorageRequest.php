@@ -33,13 +33,13 @@ class StoreStorageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'code.required' => 'Mã kho là bắt buộc.',
-            'code.unique' => 'Mã kho phải là duy nhất.',
-            'code.max' => 'Giới hạn 100 ký tự.',
-            'name.required' => 'Tên kho là bắt buộc.',
-            'name.max' => 'Giới hạn 100 ký tự.',
-            'address.required' => 'Địa chỉ là bắt buộc.',
-            'address.max' => 'Giới hạn 100 ký tự.',
+            'code.required' => 'Mã kho là bắt buộc',
+            'code.unique' => 'Mã kho phải là duy nhất',
+            'code.max' => 'Giới hạn 100 ký tự',
+            'name.required' => 'Tên kho là bắt buộc',
+            'name.max' => 'Giới hạn 100 ký tự',
+            'address.required' => 'Địa chỉ là bắt buộc',
+            'address.max' => 'Giới hạn 100 ký tự',
         ];
     }
 }

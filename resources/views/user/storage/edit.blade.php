@@ -39,32 +39,32 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="code">Mã kho</label>
-                                <input type="text" name="code" value="{{ old('code', $data->code) }}" class="form-control"
+                                <label for="code">Mã kho</label><span class="text-danger">*</span>
+                                <input type="text" name="code" value="{{ old('code', $data->code) }}" class="form-control {{ $errors->has('code')?"is-invalid":"" }}"
                                     id="code" placeholder="Nhập mã kho...">
                                     @if ($errors->has('code'))
-                                    <div class="error text-danger">{{ $errors->first('code') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('code') }}</div>
                                 @endif
                             </div>
 
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Tên kho</label>
-                                <input type="text" name="name" value="{{ old('name', $data->name) }}" class="form-control"
+                                <label for="name">Tên kho</label><span class="text-danger">*</span>
+                                <input type="text" name="name" value="{{ old('name', $data->name) }}" class="form-control {{ $errors->has('name')?"is-invalid":"" }}"
                                     id="name" placeholder="Nhập tên kho...">
                                      @if ($errors->has('name'))
-                                    <div class="error text-danger">{{ $errors->first('name') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('name') }}</div>
                                 @endif
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="address">Địa chỉ</label>
-                                <input type="text" name="address" value="{{ old('address', $data->address) }}" class="form-control"
+                                <label for="address">Địa chỉ</label><span class="text-danger">*</span>
+                                <input type="text" name="address" value="{{ old('address', $data->address) }}" class="form-control {{ $errors->has('address')?"is-invalid":"" }}"
                                     id="address" placeholder="Nhập địa chỉ...">
                                      @if ($errors->has('address'))
-                                    <div class="error text-danger">{{ $errors->first('address') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('address') }}</div>
                                 @endif
                             </div>
                         </div>

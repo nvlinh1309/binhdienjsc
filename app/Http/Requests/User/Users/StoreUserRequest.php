@@ -33,12 +33,12 @@ class StoreUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Họ tên là bắt buộc.',
-            'name.max' => 'Giới hạn 100 ký tự.',
-            'email.required' => 'Email là bắt buộc.',
+            'name.required' => 'Họ tên là bắt buộc',
+            'name.max' => 'Giới hạn 100 ký tự',
+            'email.required' => 'Email là bắt buộc',
             'email.email' => 'Không đúng định dạng email',
-            'email.unique' => 'Địa chỉ email phải là duy nhất.',
-            'role.required' => 'Vai trò là bắt buộc.',
+            'email.unique' => 'Địa chỉ email phải là duy nhất',
+            'role.required' => 'Vai trò là bắt buộc'
         ];
     }
 }

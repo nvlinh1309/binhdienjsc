@@ -85,8 +85,8 @@
                                                 class="btn btn-xs btn-warning">Sửa</a>
                                         @endcan
                                         @can('customer-delete')
-                                            <span class="btn btn-xs btn-danger delete"
-                                                data-id="{{ $customer->name }}">Xoá</span>
+                                            {{-- <span class="btn btn-xs btn-danger delete"
+                                                data-id="{{ $customer->name }}">Xoá</span> --}}
                                         @endcan
                                     </form>
                                 </td>

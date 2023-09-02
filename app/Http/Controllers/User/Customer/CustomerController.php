@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Customer\StoreCustomerRequest;
+use App\Http\Requests\User\Customer\UpdateCustomerRequest;
 use App\Models\User\PriceCustomerProdManagement;
 use App\Models\User\Product;
 use Illuminate\Http\Request;
@@ -60,12 +62,15 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
         try {
-            $customer = Customer::create($request->all());
+            $data = $request->all();
+            $data['contact']['email'] = $data['contact_email'];
+            $data['contact']['phone'] = $data['contact_phone'];
+            $customer = Customer::create($data);
             if ($customer) {
                 $customerId = $customer->id;
                 // Set price for customer:
@@ -116,13 +121,17 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCustomerRequest $request, $id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         try {
             //Update customer:
             $customer = Customer::find($id);
-            $customer->update($request->all());
+            $data = $request->all();
+            $data['contact']['email'] = $data['contact_email'];
+            $data['contact']['phone'] = $data['contact_phone'];
+
+            $customer->update($data);
             $name = $customer->name;
             //Update price:
             $products = Product::get();
@@ -138,6 +147,7 @@ class CustomerController extends Controller
             }
             return redirect()->back()->with(['success' => 'Thông tin khách hàng ' . $name . ' đã được cập nhật!!!']);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->with(['error' => $message]);
         }
     }

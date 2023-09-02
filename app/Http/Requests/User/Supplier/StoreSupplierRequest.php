@@ -28,20 +28,22 @@ class StoreSupplierRequest extends FormRequest
             'name' => 'required|max:100',
             'address' => 'required|max:100',
             'tax_code' => 'required|max:100',
+            'contract_signing_date' => 'required'
         ];
     }
     public function messages(): array
     {
         return [
-            'supplier_code.required' => 'Mã nhà cung cấp là bắt buộc.',
-            'supplier_code.unique' => 'Mã nhà cung cấp phải là duy nhất.',
-            'supplier_code.max' => 'Giới hạn 100 ký tự.',
-            'name.required' => 'Tên công ty là bắt buộc.',
-            'name.max' => 'Giới hạn 100 ký tự.',
-            'address.required' => 'Địa chỉ là bắt buộc.',
-            'address.max' => 'Giới hạn 100 ký tự.',
-            'tax_code.required' => 'Mã số thuế là bắt buộc.',
-            'tax_code.max' => 'Giới hạn 100 ký tự.',
+            'supplier_code.required' => 'Mã nhà cung cấp là bắt buộc',
+            'supplier_code.unique' => 'Mã nhà cung cấp phải là duy nhất',
+            'supplier_code.max' => 'Giới hạn 100 ký tự',
+            'name.required' => 'Tên công ty là bắt buộc',
+            'name.max' => 'Giới hạn 100 ký tự',
+            'address.required' => 'Địa chỉ là bắt buộc',
+            'address.max' => 'Giới hạn 100 ký tự',
+            'tax_code.required' => 'Mã số thuế là bắt buộc',
+            'tax_code.max' => 'Giới hạn 100 ký tự',
+            'contract_signing_date.required' => 'Ngày ký hợp đồng là bắt buộc',
         ];
     }
 }

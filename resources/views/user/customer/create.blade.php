@@ -43,53 +43,82 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="code">Mã khách hàng</label>
-                                <input type="text" name="code" class="form-control" id="code"
+                                <label for="code">Mã khách hàng</label><span class="text-danger">*</span>
+                                <input type="text" name="code" value="{{ old('code') }}"
+                                    class="form-control {{ $errors->has('code') ? 'is-invalid' : '' }}" id="code"
                                     placeholder="Nhập mã khách hàng...">
+                                @if ($errors->has('code'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('code') }}</div>
+                                @endif
                             </div>
 
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="name">Tên khách hàng</label>
-                                <input type="text" name="name" class="form-control" id="name"
+                                <label for="name">Tên khách hàng</label><span class="text-danger">*</span>
+                                <input type="text" name="name" value="{{ old('name') }}"
+                                    class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" id="name"
                                     placeholder="Nhập tên khách hàng...">
+                                @if ($errors->has('name'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('name') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="tax_code">Mã số thuế</label>
-                                <input type="text" name="tax_code" class="form-control" id="tax_code"
+                                <label for="tax_code">Mã số thuế</label><span class="text-danger">*</span>
+                                <input type="text" name="tax_code" value="{{ old('tax_code') }}"
+                                    class="form-control {{ $errors->has('tax_code') ? 'is-invalid' : '' }}" id="tax_code"
                                     placeholder="Nhập mã số thuế...">
+                                @if ($errors->has('tax_code'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('tax_code') }}</div>
+                                @endif
                             </div>
                         </div>
 
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="natax_codeme">Thuế suất</label>
-                                <input type="number" min="0" max="100" name="tax_code" class="form-control"
-                                    id="tax_code" placeholder="Nhập thuế suất...">
+                                <label for="tax">Thuế suất</label><span class="text-danger">*</span>
+                                <input type="number" min="0" max="100" name="tax" value="{{ old('tax') }}"
+                                    class="form-control {{ $errors->has('tax') ? 'is-invalid' : '' }}" id="tax"
+                                    placeholder="Nhập thuế suất...">
+                                @if ($errors->has('tax'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('tax') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="address">Địa chỉ</label>
-                                <input type="text" name="address" class="form-control" id="address"
+                                <label for="address">Địa chỉ</label><span class="text-danger">*</span>
+                                <input type="text" name="address" value="{{ old('address') }}"
+                                    class="form-control {{ $errors->has('address') ? 'is-invalid' : '' }}" id="address"
                                     placeholder="Nhập địa chỉ...">
+                                @if ($errors->has('address'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('address') }}</div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="text" name="contact[email]" class="form-control" id="email"
-                                    placeholder="Nhập email...">
+                                <label for="email">Email</label><span class="text-danger">*</span>
+                                <input type="text" name="contact_email" value="{{ old('contact_email') }}"
+                                    class="form-control {{ $errors->has('contact_email') ? 'is-invalid' : '' }}"
+                                    id="email" placeholder="Nhập email...">
+                                @if ($errors->has('contact_email'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('contact_email') }}</div>
+                                @endif
                             </div>
                         </div>
+                     
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="phone">Điện thoại</label>
-                                <input type="text" name="contact[phone]" class="form-control" id="phone"
-                                    placeholder="Nhập số điện thoại...">
+                                <label for="phone">Điện thoại</label><span class="text-danger">*</span>
+                                <input type="text" name="contact_phone" value="{{ old('contact_phone') }}"
+                                    class="form-control {{ $errors->has('contact_phone') ? 'is-invalid' : '' }}"
+                                    id="phone" placeholder="Nhập số điện thoại...">
+                                @if ($errors->has('contact_phone'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('contact_phone') }}</div>
+                                @endif
                             </div>
                         </div>
                     </div>

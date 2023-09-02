@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Product\UpdateProductRequest;
 use App\Models\User\Customer;
 use App\Models\User\PriceCustomerProdManagement;
 use App\Models\User\ProductHistory;
@@ -79,7 +80,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
@@ -177,7 +178,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();

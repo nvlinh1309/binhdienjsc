@@ -83,8 +83,8 @@
                                                 class="btn btn-xs btn-warning">Xem</a>
                                         @endcan
                                         @can('product-delete')
-                                            <span class="btn btn-xs btn-danger delete"
-                                                data-id="{{ $value->name }}">Xoá</span>
+                                            {{-- <span class="btn btn-xs btn-danger delete"
+                                                data-id="{{ $value->name }}">Xoá</span> --}}
                                         @endcan
                                     </form>
                                 </td>

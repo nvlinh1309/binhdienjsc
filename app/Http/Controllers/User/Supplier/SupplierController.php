@@ -100,7 +100,7 @@ class SupplierController extends Controller
             \DB::commit();
             return redirect()->route('supplier.index')->with(['success' => 'Nhà cung cấp ' . $supplier->name . ' đã được tạo mới!!!']);
         } catch (\Exception $e) {
-
+            dd($e->getMessage());
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
         }

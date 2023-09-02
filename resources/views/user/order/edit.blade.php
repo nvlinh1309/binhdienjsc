@@ -50,7 +50,7 @@
                                     value="{{ old('order_code', $order->order_code) }}" id="order_code"
                                     placeholder="Nhập mã đơn hàng...">
                                 @if ($errors->has('order_code'))
-                                    <div class="error text-danger">{{ $errors->first('order_code') }}</div>
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('order_code') }}</div>
                                 @endif
                             </div>
 
