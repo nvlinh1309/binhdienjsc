@@ -6,17 +6,21 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 
 class OrderBuyer extends Model
 {
+    use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
     use HasFactory;
     use SoftDeletes;
     protected $table = 'order_buyer';
 
     protected $fillable = [
         'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by', 'order_approver'
+    ];
+
+    protected $casts = [
+        'products' => 'json',
     ];
 
     public function supplier()
@@ -42,6 +46,11 @@ class OrderBuyer extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function product()
+    {
+        return $this->hasManyJson(Product::class, 'products[]->product_id');
     }
 
 }

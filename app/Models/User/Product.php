@@ -11,6 +11,7 @@ use App\Models\User\PriceCustomerProdManagement;
 
 class Product extends Model
 {
+    use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
     use HasFactory;
     use SoftDeletes;
     protected $table = 'products';
@@ -28,4 +29,9 @@ class Product extends Model
     {
         return $this->hasMany(PriceCustomerProdManagement::class, 'product_id', 'id');
     }
+
+    // public function orderbuyer()
+    // {
+    //    return $this->hasManyJson(OrderBuyer::class, 'products->product[]->product_id');
+    // }
 }

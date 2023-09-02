@@ -175,18 +175,21 @@
                 <th style="width: 50px">Quy cách bao bì</th>
                 <th style="width: 70px">SỐ LƯỢNG (KG)</th>
                 <th style="width: 70px">ĐƠN GIÁ (vnđ/kg)</th>
-                <th style="width: 80px">THÀNH TIỀN (vnđ)</th>
+                <th style="width: 80px">THÀNH TIỀN<br> (vnđ)</th>
                 <th style="width: 100px">GHI CHÚ</th>
             </tr>
-            <tr>
-                <td style="text-align: center">1</td>
-                <td>Gạo 25% tấm</td>
-                <td>25 kg</td>
-                <td style="text-align: center">{{ number_format(15000, 0, ',', '.')}}</td>
-                <td style="text-align: center">{{ number_format(9000, 0, ',', '.')}}</td>
-                <td style="text-align: center">{{ number_format(135000000, 0, ',', '.')}}</td>
-                <td></td>
-            </tr>
+
+            @foreach ($products as $key=>$product)
+                <tr>
+                    <td style="text-align: center">{{ $key+1 }}</td>
+                    <td>{{ $product['name'] }}</td>
+                    <td>25 kg</td>
+                    <td style="text-align: center">{{ number_format($product['quantity'], 0, ',', '.')}}</td>
+                    <td style="text-align: center">{{ number_format($product['price'], 0, ',', '.')}}</td>
+                    <td style="text-align: center">{{ number_format($product['quantity']*$product['price'], 0, ',', '.')}}</td>
+                    <td></td>
+                </tr>
+            @endforeach
             <tr>
                 <th colspan="3">Tổng cộng:</th>
                 <th>{{ number_format(15000, 0, ',', '.')}}</th>
@@ -210,6 +213,7 @@
 
         <div style="width:40%; font-weight:bold" class="header">
             ĐƠN VỊ ĐẶT HÀNG
+            <br>
             <br>
             <br>
             <br>

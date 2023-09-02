@@ -89,23 +89,77 @@ class OrderBuyerController extends Controller
 
             $statusList = config('constants.status_receipt_list');
             $order_info = json_decode($data->order_info);
+            $product_info = ($data->products===null)?[]:$data->products;
 
+            $product_ids = $this->getProductIds($product_info);
+            $products = Product::whereNotIn('id', $product_ids)->get();
 
-            // if ($data->status === 1) {
-            //     return redirect()->route('order-buyer.show', $id);
-            // }
-
-            // $goodReceiptManagement = GoodsReceiptManagement::with('approvalUser', 'receiveUser', 'whUser', 'saleUser')->find($id);
-            // if (!$goodReceiptManagement) {
-            //     $message = 'Đơn hàng không tồn tại.';
-            //     return redirect()->route('stock-in.index')->with(['error' => $message]);
-            // }
-            // $productsGoodReceipt = ProductGoodsReceiptManagement::with('product')->where('goods_receipt_id', '=', $goodReceiptManagement->id)->get();
-            // $customers = Customer::get();
-            // //
-            // $statusList = config('constants.status_receipt_list');
             DB::commit();
-            return view('user.order.order-buyer.show', compact('data', 'statusList', 'order_info'));
+            return view('user.order.order-buyer.show', compact('data', 'statusList', 'order_info', 'products', 'product_info'));
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    private function getProductIds($products)
+    {
+        $data = [];
+        foreach ($products as $key => $value) {
+            $data[] = $value['product_id'];
+        }
+        return $data;
+    }
+
+    public function addProduct(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = OrderBuyer::find($id);
+            $product_info = $data->products;
+            $products = [];
+            $product = $request->except('_token');
+            $getProduct = Product::find($request->product_id);
+            $product['name'] = $getProduct->name;
+            $product['price'] = $getProduct->price;
+            if ($product_info == null) {
+                $products[] = $product;
+                $data->products = $products;
+            } else {
+                $product_info[] = $product;
+                $data->products = $product_info;
+            }
+            $data->save();
+            DB::commit();
+            return redirect()->route("order-buyer.show", $id);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
+        }
+
+
+    }
+
+    public function deleteProduct($product_id, $order_id)
+    {
+
+        DB::beginTransaction();
+        try {
+            $data = OrderBuyer::find($order_id);
+            $product_info = $data->products;
+            $products = null;
+
+            foreach ($product_info as $key => $value) {
+                if ($value['product_id'] != $product_id) {
+                    $products[] = $value;
+                }
+            }
+            $data->products = $products;
+            $data->save();
+            DB::commit();
+            return redirect()->route("order-buyer.show", $order_id);
+
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
@@ -121,15 +175,9 @@ class OrderBuyerController extends Controller
                 return redirect('/');
             }
             $order_info = json_decode($data->order_info);
-            // dd($order_info);
-            // Get info:
-            // $goodReceiptManagement = GoodsReceiptManagement::with('productGood', 'supplier', 'storage', 'productGood.product', 'approvalUser', 'receiveUser', 'whUser', 'saleUser')->find($id);
-            // $statusList = config('constants.status_receipt_list');
-            // // return view('user.order.stock-in.exportStockPDF', compact('goodReceiptManagement'));
+            $products = $data->products;
 
-            // return view('components.layouts.purchase-order-export', compact('data', 'order_info'));
-
-            $pdf = PDF::loadView('components.layouts.purchase-order-export', compact('data','order_info'));
+            $pdf = PDF::loadView('components.layouts.purchase-order-export', compact('data','order_info','products'));
             return $pdf->download('purchase-order-export' . date('YmdHms') . '.pdf');
 
         } catch (\Exception $e) {

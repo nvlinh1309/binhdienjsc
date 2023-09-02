@@ -55,6 +55,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('order-buyer', OrderBuyerController::class);
     Route::get('order-buyer/export/{id}', [OrderBuyerController::class, 'purchaseOrderExport'])->name('order-buyer.purchase-order-export');
+    Route::post('order-buyer/add-product/{id}', [OrderBuyerController::class, 'addProduct'])->name('order-buyer.add-product');
+    Route::get('order-buyer/delete-product/{product_id}/{order_id}', [OrderBuyerController::class, 'deleteProduct'])->name('order-buyer.delete-product');
     // Route::get('product/create/step-2/{id}', [OrderBuyerController::class, 'createStep2'])->name('order-buyer.create-step-2');
 
     Route::resource('order-seller', OrderSellerController::class);
