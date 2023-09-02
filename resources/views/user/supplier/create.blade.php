@@ -27,7 +27,7 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="supplier_code">Mã nhà cung cấp</label><span class="text-danger">*</span>
                                 <input type="text" name="supplier_code"  class="form-control" value="{{ old('supplier_code') }}"
@@ -37,7 +37,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="name">Tên công ty</label><span class="text-danger">*</span>
                                 <input type="text" name="name" class="form-control" id="name" value="{{ old('name') }}"
@@ -46,7 +46,15 @@
                                     <div class="error text-danger">{{ $errors->first('name') }}</div>
                                 @endif
                             </div>
+                        </div>
 
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="contract_signing_date">Ngày ký hợp đồng<span class="text-danger">*</span></label>
+                                <input value="{{ old('contract_signing_date') }}" type="date"
+                                    class="form-control datepicker" name="contract_signing_date" id="contract_signing_date"
+                                     placeholder="dd-mm-yyyy">
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">

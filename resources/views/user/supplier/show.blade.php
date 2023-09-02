@@ -35,6 +35,7 @@
             <div><b>Tên công ty:</b> {{ $data->name }}</div>
             <div><b>Địa chỉ:</b> {{ $data->address }}</div>
             <div><b>Mã số thuế:</b> {{ $data->tax_code }}</div>
+            <div><b>Ngày ký hợp đồng:</b> {{ $data->contract_signing_date }}</div>
             <div><b>Ngày tạo:</b> {{ $data->created_at }}</div>
             <div><b>Ngày cập nhật cuối cùng:</b> {{ $data->updated_at ?? $data->created_at }}</div>
             <br>

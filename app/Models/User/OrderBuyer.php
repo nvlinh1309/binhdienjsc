@@ -16,7 +16,7 @@ class OrderBuyer extends Model
     protected $table = 'order_buyer';
 
     protected $fillable = [
-        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by'
+        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by', 'order_approver'
     ];
 
     public function supplier()
@@ -32,6 +32,11 @@ class OrderBuyer extends Model
     public function user_assignee()
     {
         return $this->belongsTo(User::class, 'assignee', 'id');
+    }
+
+    public function user_order_approver()
+    {
+        return $this->belongsTo(User::class, 'order_approver', 'id');
     }
 
     public function createdBy()

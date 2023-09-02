@@ -34,8 +34,10 @@ class OrderBuyerController extends Controller
         $products = Product::get();
         $statusList = config('constants.status_receipt_list');
         $companyInfo= config('companyInfo');
-        $dataUser = User::with('roles')->orderBy('id', 'DESC')->get();
-        return view('user.order.order-buyer.create', compact('suppliers', 'wareHouses', 'products', 'dataUser', 'statusList', 'companyInfo'));
+        $users = User::orderBy('id', 'DESC')->get()->filter(
+            fn ($user) => $user->roles->where('name','<>', 'admin')->toArray()
+        );
+        return view('user.order.order-buyer.create', compact('suppliers', 'wareHouses', 'products', 'users', 'statusList', 'companyInfo'));
     }
 
     public function store(OrderBuyerStoreRequest $request)
@@ -53,8 +55,9 @@ class OrderBuyerController extends Controller
                 'buyer_address'             => $request->buyer_address,
                 'buyer_tax_code'            => $request->buyer_tax_code
             ]);
-            $data['created_by']     =   Auth::user()->id;
-            $data['assignee']     =   Auth::user()->id;
+            $data['created_by']         =   Auth::user()->id;
+            $data['assignee']           =   Auth::user()->id;
+            $data['order_approver']     =   $request->order_approver;
             $order = OrderBuyer::create($data);
             DB::commit();
             return redirect()->route('order-buyer.show', $order->id);
@@ -123,12 +126,15 @@ class OrderBuyerController extends Controller
             // $goodReceiptManagement = GoodsReceiptManagement::with('productGood', 'supplier', 'storage', 'productGood.product', 'approvalUser', 'receiveUser', 'whUser', 'saleUser')->find($id);
             // $statusList = config('constants.status_receipt_list');
             // // return view('user.order.stock-in.exportStockPDF', compact('goodReceiptManagement'));
+
+            // return view('components.layouts.purchase-order-export', compact('data', 'order_info'));
+
             $pdf = PDF::loadView('components.layouts.purchase-order-export', compact('data','order_info'));
             return $pdf->download('purchase-order-export' . date('YmdHms') . '.pdf');
+
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
         }
     }
-
 
 }

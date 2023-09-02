@@ -93,13 +93,14 @@ class SupplierController extends Controller
             $his->address = $supplier->address;
             $his->tax_code = $supplier->tax_code;
             $his->supplier_code = $supplier->supplier_code;
+            $his->contract_signing_date = $supplier->contract_signing_date;
             $his->created_by = \Auth::user()->id;
             // $his->updated_by = \Auth::user()->id;
             $his->save();
             \DB::commit();
             return redirect()->route('supplier.index')->with(['success' => 'Nhà cung cấp ' . $supplier->name . ' đã được tạo mới!!!']);
         } catch (\Exception $e) {
-    
+
             \DB::rollback();
             return redirect()->back()->with(['error' => $message])->withInput();
         }
@@ -154,6 +155,7 @@ class SupplierController extends Controller
             $his->address = $data->address;
             $his->tax_code = $data->tax_code;
             $his->supplier_code = $data->supplier_code;
+            $his->contract_signing_date = $data->contract_signing_date;
             $his->updated_by = \Auth::user()->id;
             // $his->updated_by = \Auth::user()->id;
             $his->save();

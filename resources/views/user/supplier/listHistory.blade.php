@@ -25,7 +25,7 @@
             </div>
         @endif
     </div>
-   
+
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
@@ -47,8 +47,7 @@
                             <th>Tên công ty</th>
                             <th>Địa chỉ</th>
                             <th>Mã số thuế</th>
-                            <th>Ngày tạo</th>
-                            <th>Người tạo</th>
+                            <th>Ngày ký HĐ</th>
                             <th>Ngày cập nhật</th>
                             <th>Người cập nhật</th>
                         </tr>
@@ -61,8 +60,7 @@
                                 <td>{{ $storageDetail->name }}</td>
                                 <td>{{ $storageDetail->address }}</td>
                                 <td>{{ $storageDetail->tax_code }}</td>
-                                <td>{{ $storageDetail->created_at }}</td>
-                                <td>{{ $storageDetail->user_created ? $storageDetail->user_created->name : '' }}</td>
+                                <td>{{ $storageDetail->contract_signing_date }}</td>
                                 <td>
                                     {{ $storageDetail->updated_at }}
                                 </td>

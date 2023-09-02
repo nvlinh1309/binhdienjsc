@@ -42,7 +42,7 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="code">Mã đặt hàng<span class="text-danger">*</span></label>
                                 <input value="{{ old('code') }}" type="text" name="code"
@@ -53,7 +53,21 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Người duyệt đơn đặt hàng<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="order_approver" id="order_approver"
+                                    style="width: 100%;">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}"
+                                            {{ $user->id == old('order_approver') ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Chọn nhà cung cấp<span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="supplier_id" id="supplier_id"

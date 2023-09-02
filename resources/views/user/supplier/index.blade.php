@@ -59,6 +59,7 @@
                             <th>Tên công ty</th>
                             <th>Địa chỉ</th>
                             <th>Mã số thuế</th>
+                            <th>Ngày ký HĐ</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
                     </thead>
@@ -70,6 +71,7 @@
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->address }}</td>
                                 <td>{{ $value->tax_code }}</td>
+                                <td>{{ $value->contract_signing_date }}</td>
                                 <td>
                                     <form method="POST" action="{{ route('supplier.destroy', $value->id) }}">
                                         {{ csrf_field() }}
