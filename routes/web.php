@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('order-buyer/delete-product/{product_id}/{order_id}', [OrderBuyerController::class, 'deleteProduct'])->name('order-buyer.delete-product');
     Route::get('order-buyer/update-status/{order_id}/{status_id}', [OrderBuyerController::class, 'updateStatus'])->name('order-buyer.update-status');
     Route::post('order-buyer/add-warehouse_recript/{id}', [OrderBuyerController::class, 'addWareHouseRecript'])->name('order-buyer.add-warehouse_recript');
+    Route::get('order-buyer/cancel', [OrderBuyerController::class, 'orderCancel'])->name('order-buyer.cancel');
     // Route::get('product/create/step-2/{id}', [OrderBuyerController::class, 'createStep2'])->name('order-buyer.create-step-2');
 
     Route::resource('order-seller', OrderSellerController::class);

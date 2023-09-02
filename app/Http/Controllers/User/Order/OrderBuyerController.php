@@ -23,9 +23,23 @@ class OrderBuyerController extends Controller
     {
         //Get status
         $statusList = config('constants.status_receipt_list');
-        $data = OrderBuyer::with('supplier', 'storage')->where('status','<>',0)->orderBy('id', 'DESC');
+        $data = OrderBuyer::with('supplier', 'storage')
+            ->where('status','<>',0)
+            ->where('assignee',auth()->user()->id)
+            ->where('status','<>',7)
+            ->orderBy('id', 'DESC');
         $data = $data->paginate(5);
         return view('user.order.order-buyer.index', compact('data', 'statusList'));
+    }
+
+    public function orderCancel(Request $request)
+    {
+        dd(1);
+        // //Get status
+        // $statusList = config('constants.status_receipt_list');
+        // $data = OrderBuyer::onlyTrashed()->get();
+        // $data = $data->paginate(5);
+        // return view('user.order.order-buyer.cancel', compact('data', 'statusList'));
     }
 
     public function create()
@@ -195,10 +209,10 @@ class OrderBuyerController extends Controller
                     StorageProduct::create([
                         'storage_id'        =>  $data->storage_id,
                         'product_id'        =>  $value['product_id'],
-                        'quantity_plus'     =>  $value['quantity'],
-                        'quantity_mins'     =>  $value['quantity'],
-                        'in_stock'          =>  $value['quantity'],
-                        'sold'              =>  $value['quantity'],
+                        'quantity_plus'     =>  $value['quantity']/$value['specification'],
+                        'quantity_mins'     =>  $value['quantity']/$value['specification'],
+                        'in_stock'          =>  $value['quantity']/$value['specification'],
+                        'sold'              =>  $value['quantity']/$value['specification'],
                         'order_buyer_id'    =>  $order_id,
                         'product_info'      =>  json_encode($value),
                     ]);

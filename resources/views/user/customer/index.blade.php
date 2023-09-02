@@ -75,14 +75,14 @@
                                 <td>{{ $customer->address }}</td>
                                 <td>{{ $customer->contact['email'] }} <br> {{ $customer->contact['phone'] }}</td>
                                 <td>{{ $customer->tax }}</td>
-                                <td><button class="btn btn-xs btn-info">Xem</button></td>
+                                <td><button class="btn btn-xs btn-info">Chi tiết</button></td>
                                 <td>
                                     <form method="POST" action="{{ route('customer.destroy', $customer->id) }}">
                                         {{ csrf_field() }}
                                         {{ method_field('DELETE') }}
                                         @can('customer-edit')
                                             <a href="{{ route('customer.edit', $customer->id) }}"
-                                                class="btn btn-xs btn-warning">Sửa</a>
+                                                class="btn btn-xs btn-warning">Xem</a>
                                         @endcan
                                         @can('customer-delete')
                                             {{-- <span class="btn btn-xs btn-danger delete"

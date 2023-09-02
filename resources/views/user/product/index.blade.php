@@ -73,7 +73,7 @@
                                 <td>{{ $value->brand->name }}</td>
                                 <td>{{ $value->specification }} </td>
                                 <td>{{ number_format($value->price) }} </td>
-                                <td>{{ $value->unit }} </td>
+                                <td>{{ strtoupper($value->unit) }} </td>
                                 <td>
                                     <form method="POST" action="{{ route('product.destroy', $value->id) }}">
                                         {{ csrf_field() }}

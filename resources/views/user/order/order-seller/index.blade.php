@@ -4,12 +4,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Đơn mua (Nhập kho)</h1>
+                        <h1 class="m-0">Đơn bán (Xuất kho)</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             {{-- <li class="breadcrumb-item"><a href="{{ route('brand.index') }}">Thương hiệu</a></li> --}}
-                            <li class="breadcrumb-item active">Danh sách đơn mua (Nhập kho)</li>
+                            <li class="breadcrumb-item active">Danh sách</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -34,10 +34,10 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('order-buyer.create') }}">
+                    <a href="{{ route('order-seller.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
-                    <a href="{{ route('order-buyer.cancel') }}">
+                    <a href="{{ route('order-seller.cancel') }}">
                         <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
                     </a>
 
@@ -48,7 +48,7 @@
                     </a> --}}
                 </h3>
 
-                <div class="card-tools">
+                {{-- <div class="card-tools">
                     <ul class="nav nav-pills ml-auto">
                         <li class="nav-item">
                             <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
@@ -57,7 +57,7 @@
                             <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
                         </li>
                     </ul>
-                </div>
+                </div> --}}
 
                 <div class="card-tools">
                     {{ $data->links('vendor.pagination.default') }}
@@ -69,9 +69,8 @@
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>Mã Nhập kho</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Kho hàng</th>
+                            <th>Mã ĐH</th>
+                            <th>Khách hàng</th>
                             <th>Ngày tạo đơn</th>
                             <th>Trạng thái</th>
                             <th style="width: 100px">Thao tác</th>
@@ -86,12 +85,12 @@
                             <tr>
                                 <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->code }}</td>
-                                <td>{{ $value->supplier->name }}</td>
+                                <td>{{ $value->customer->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
                                 <td>{{ $order_info->receipt_date }}</td>
                                 <td><i>{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
-                                    <a href="{{ route('order-buyer.show', $value->id) }}"
+                                    <a href="{{ route('order-seller.show', $value->id) }}"
                                         class="btn btn-xs btn-success">Chi tiết</a>
                                 </td>
                             </tr>

@@ -66,7 +66,7 @@
                             <th>Tên Sản phẩm</th>
                             <th>Thương hiệu</th>
                             <th>Tồn kho</th>
-                            <th style="width: 120px">Thao tác</th>
+                            {{-- <th style="width: 120px">Thao tác</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -76,10 +76,10 @@
                                 <td>{{ $value->product->barcode }}</td>
                                 <td>{{ $value->product->name }}</td>
                                 <td>{{ $value->product->brand->name }}</td>
-                                <td>{{ $value->quantity_plus - $value->quantity_mins }}</td>
-                                <td>
+                                <td>{{ $value->in_stock }}</td>
+                                {{-- <td>
                                     <a href="http://127.0.0.1:8000/store/1" class="btn btn-xs btn-warning">Chi tiêt</a>
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>

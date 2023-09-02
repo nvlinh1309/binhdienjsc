@@ -4,12 +4,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Đơn mua (Nhập kho)</h1>
+                        <h1 class="m-0">Đơn mua (Nhập kho) <i class="text-danger">(Đã huỷ))</i></h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            {{-- <li class="breadcrumb-item"><a href="{{ route('brand.index') }}">Thương hiệu</a></li> --}}
-                            <li class="breadcrumb-item active">Danh sách đơn mua (Nhập kho)</li>
+                            <li class="breadcrumb-item"><a href="{{ route('order-buyer.index') }}">Danh sách đơn mua (Nhập kho)</a></li>
+                            <li class="breadcrumb-item active">Đơn đã huỷ</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -34,12 +34,13 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="{{ route('order-buyer.create') }}">
-                        <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
+                    <a href="{{ route('order-buyer.index') }}">
+                        <button class=" btn btn-sm btn-primary">Quay lại</button>
                     </a>
                     <a href="{{ route('order-buyer.cancel') }}">
-                        <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
+                        <button class=" btn btn-sm btn-success">Đơn đã nhập kho</button>
                     </a>
+                    <hr>
 
 
 
@@ -104,16 +105,4 @@
             <!-- /.card-body -->
         </div>
     </div>
-
-    <script>
-        $(document).ready(function() {
-            $('.delete').on('click', function(e) {
-                var order_code = $(this).attr('data-id');
-                e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng ' + order_code + '?')) {
-                    $(e.target).closest('form').submit()
-                }
-            });
-        });
-    </script>
 </x-layouts.main>
