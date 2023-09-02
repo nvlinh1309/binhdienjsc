@@ -36,7 +36,7 @@
                 <form action="{{ route('reset.password.post') }}" method="post">
                     @csrf
                     <input type="hidden" name="token" value="{{ $token }}">
-                    <div class="input-group mb-3">
+                    {{-- <div class="input-group mb-3">
                         <input name="email" value="{{ old('email') }}" type="text" class="form-control"
                             placeholder="Nhập địa chỉ email...">
                         <div class="input-group-append">
@@ -44,7 +44,7 @@
                                 <span class="fas fa-envelope"></span>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     @if ($errors->has('email'))
                         <div class="input-group-append  mb-3">
                             <div class="input-group-text">
@@ -54,7 +54,7 @@
                     @endif
                     <div class="input-group mb-3">
                         <input name="password" type="password" value="{{ old('password') }}" class="form-control"
-                            placeholder="Nhập mật khẩu..">
+                            placeholder="Nhập mật khẩu mới..">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>

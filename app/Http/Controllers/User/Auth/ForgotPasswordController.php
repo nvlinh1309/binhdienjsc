@@ -45,7 +45,8 @@ class ForgotPasswordController extends Controller
               'created_at' => Carbon::now()
             ]);
   
-          Mail::send('email.forgetPassword', ['token' => $token], function($message) use($request){
+          $user = User::where('email', $request->email)->first();
+          Mail::send('email.forgetPassword', ['token' => $token, 'name' => $user->name], function($message) use($request){
               $message->to($request->email);
               $message->subject('Reset Password');
           });
@@ -69,11 +70,11 @@ class ForgotPasswordController extends Controller
       public function submitResetPasswordForm(Request $request)
       {
           $request->validate([
-              'email' => 'required|email|exists:users',
+              // 'email' => 'required|email|exists:users',
               'password' => 'required|string|min:6|confirmed',
               'password_confirmation' => 'required'
           ], [
-            'email.required' => 'Địa chỉ email là bắt buộc.',
+            // 'email.required' => 'Địa chỉ email là bắt buộc.',
             'password.required' => 'Mật khẩu là bắt buộc.',
             'password_confirmation.required' => 'Nhập lại mật khẩu là bắt buộc.',
             'email.email' => 'Email phải là một địa chỉ email hợp lệ.',
@@ -83,16 +84,17 @@ class ForgotPasswordController extends Controller
           ]);
           $updatePassword = DB::table('password_resets')
                               ->where([
-                                'email' => $request->email, 
+                                // 'email' => $request->email, 
                                 'token' => $request->token
                               ])
                               ->first();
+
   
           if(!$updatePassword){
               return back()->withInput()->with('error', 'Mã không hợp lệ!');
           }
   
-          $user = User::where('email', $request->email)
+          $user = User::where('email', $updatePassword->email)
                       ->update(['password' => Hash::make($request->password)]);
  
           DB::table('password_resets')->where(['email'=> $request->email])->delete();

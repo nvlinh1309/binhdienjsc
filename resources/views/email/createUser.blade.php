@@ -5,4 +5,4 @@
 <p>- Email đăng nhập: {{$data['email']}} </p>
 <p>- Mật khẩu: {{$data['password']}} </p>
 <p>- Vai trò: {{$data['role']}} </p>
-<p>- Link truy cập: <a href="{{ route('reset.password.get', $data['token']) }}">Reset Password</a> </p>
+<p>- Link truy cập: <a href="{{ route('login.index') }}">Reset Password</a> </p>
