@@ -34,7 +34,7 @@
         {{-- <div class="card"> --}}
 
         <div class="callout callout-info">
-            <div class="card-header pl-0">
+            <div class="pl-0">
                 {{-- <h3 class="card-title"> --}}
                     <a style="text-decoration: none;" href="{{ route('order-buyer.purchase-order-export', $data->id) }}">
                         <button class=" btn btn-sm btn-primary" >Xuất đơn đặt hàng</button>
@@ -46,6 +46,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <hr>
                     <h5><i class="fas fa-info"></i> Thông tin</h5>
                 </div>
                 <div class="col-md-6">
@@ -55,13 +56,42 @@
                     <b>Assignee:</b> {{ $data->user_assignee->name }}
                 </div>
                 <div class="col-md-6">
-                    <b>Nhà cung cấp:</b> <a href="{{ route('supplier.show', $data->supplier->id) }}">{{ $data->supplier->name }}</a>
+                    <b>Nhà cung cấp:</b> <a target="_blank" href="{{ route('supplier.show', $data->supplier->id) }}">{{ $data->supplier->name }}</a>
                 </div>
                 <div class="col-md-6">
-                    <b>Kho:</b> <a href="{{ route('store.show', $data->storage->id) }}">{{ $data->storage->name }}</a>
+                    <b>Kho:</b> <a target="_blank" href="{{ route('store.show', $data->storage->id) }}">{{ $data->storage->name }}</a>
                 </div>
                 <div class="col-md-6">
                     <b>Ngày tạo đơn:</b> {{ $order_info->receipt_date }}
+                </div>
+                <div class="col-md-6">
+                    <b>Người duyệt đơn đặt hàng: </b> {{ $data->user_order_approver->name }}
+                </div>
+
+                <div class="col-md-12">
+                    <hr>
+                    <h5><i class="fas fa-cube"></i> Sản phẩm</h5>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tên SP</th>
+                                <th>Số lượng</th>
+                                <th>NSX</th>
+                                <th>HSD</th>
+                                <th>Xoá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
