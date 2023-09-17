@@ -58,6 +58,7 @@
                             <th>Tên</th>
                             <th>Số lượng</th>
                             <th>Tồn kho</th>
+                            <th>Ngày tạo</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -68,6 +69,7 @@
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->getDetail->sum('quantity') }}</td>
                             <td>{{ $value->getDetail->sum('in_stock') }}</td>
+                            <td>{{ $value->created_at }}</td>
                             <td>
                                 <a href="{{ route('packaging.show', $value->id) }}">Chi tiết</a>
                             </td>

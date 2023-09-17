@@ -13,6 +13,7 @@ use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\User\Packaging\UpdatePackagingRequest;
 use App\Models\User\Storage;
+use PDF;
 
 class PackagingController extends Controller
 {
@@ -23,7 +24,7 @@ class PackagingController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Packaging::Where('name', 'LIKE', "%{$request->search}%")->paginate(5);
+        $data = Packaging::Where('name', 'LIKE', "%{$request->search}%")->orderBy('id','DESC')->paginate(5);
         return view('user.packaging.index', compact('data'));
     }
 
@@ -130,12 +131,32 @@ class PackagingController extends Controller
         try {
             $data = $request->all();
             $data['in_stock'] = $request->quantity;
-            $data['lot'] = "IN".date('YmdHis');
+            $data['lot'] = "IN".date('ymdHis');
             PackagingStorage::create($data);
             DB::commit();
-            return redirect()->route('packaging.index')->with(['success' => 'Nhập kho thành công']);
+            return redirect()->route('packaging.show', $id)->with(['success' => 'Nhập kho thành công']);
         } catch (\Exception $e) {
             DB::rollback();
+            return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+
+    public function exportPDF($id)
+    {
+
+
+        try {
+            $data = PackagingStorage::find($id);
+            if (!$data) {
+                return redirect()->route('packaging.index');
+            }
+
+            // return view('user.packaging.export-warehouse-receipt', compact('data'));
+            $pdf = PDF::loadView('user.packaging.export-warehouse-receipt', compact('data'));
+            return $pdf->download('export-warehouse-receipt' . date('YmdHms') . '.pdf');
+
+        } catch (\Exception $e) {
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
         }
     }

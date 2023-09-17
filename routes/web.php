@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('packaging', PackagingController::class);
     Route::get('packaging/to-receive-create/{packaging_id}', [PackagingController::class, 'getInput'])->name('packaging.get-input');
     Route::post('packaging/to-receive-store/{packaging_id}', [PackagingController::class, 'postInput'])->name('packaging.post-input');
+    Route::get('packaging/export-warehouse-receipt/{packaging_storage_id}', [PackagingController::class, 'exportPDF'])->name('packaging.export-warehouse-receipt');
 
 
     Route::resource('order-seller', OrderSellerController::class);

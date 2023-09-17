@@ -79,7 +79,7 @@
                                     <td>{{ $value->quantity }}</td>
                                     <td>{{ $value->in_stock }}</td>
                                     <td><a href="#">Xem</a></td>
-                                    <td><button class="btn btn-sm btn-warning"><i class="fas fa-print"></i></button></td>
+                                    <td><a href="{{ route('packaging.export-warehouse-receipt', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-print"></i></a></td>
                                 </tr>
                             @endforeach
 
