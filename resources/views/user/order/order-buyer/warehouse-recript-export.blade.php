@@ -107,7 +107,7 @@
             <label style="width: 500px">{{ $data->storage->name }}.</label>
 
             <strong  style="width: 100px">     Địa chỉ:</strong>
-            {{ $data->storage->name }}
+            {{ $data->storage->address }}
         </div>
 
         <div>
@@ -142,12 +142,12 @@
                 <tr>
                     <td style="text-align: center">{{ $key+1 }}</td>
                     <td>{{ $product['name'] }}</td>
-                    <td>{{ $product['specification'] }}</td>
+                    <td style="text-align: center">{{ $product['specification'] }}</td>
                     <td style="text-align: center">{{ strtoupper($product['unit']) }}</td>
                     <td style="text-align: center">{{ date('dmY',strtotime($warehouse_recript->date_input)) }}</td>
                     <td style="text-align: center">{{ date('d/m/Y',strtotime($product['exp'])) }}</td>
                     <td style="text-align: center">{{ number_format($product['quantity'], 0, ',', '.')}}</td>
-                    <td>{{ number_format($product['quantity']/$product['specification'], 0, ',', '.')}}</td>
+                    <td style="text-align: center">{{ number_format($product['quantity']/$product['specification'], 0, ',', '.')}}</td>
                     <td>{{ $product['note'] }}</td>
                 </tr>
             @endforeach

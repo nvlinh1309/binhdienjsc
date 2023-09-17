@@ -5,18 +5,16 @@ namespace App\Models\User;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class OrderSeller extends Model
 {
-    use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
     use HasFactory;
-    use SoftDeletes;
+
     protected $table = 'order_seller';
 
     protected $fillable = [
-        'code', 'order_info', 'products', 'warehouse_recript', 'supplier_id', 'storage_id','status', 'assignee','created_by', 'order_approver', 'warehouse_keeper'
+        'customer_id', 'to_deliver_code', 'to_deliver_date', 'storage_id', 'to_deliver_info', 'to_deliver_transport','products', 'status','assignee', 'order_approver', 'created_by','warehouse_keeper'
     ];
 
     protected $casts = [
@@ -25,7 +23,7 @@ class OrderSeller extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Supplier::class, 'customer_id', 'id');
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     public function storage()
@@ -48,10 +46,6 @@ class OrderSeller extends Model
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
-    public function product()
-    {
-        return $this->hasManyJson(Product::class, 'products[]->product_id');
-    }
     public function warehouseKeeper()
     {
         return $this->belongsTo(User::class, 'warehouse_keeper', 'id');

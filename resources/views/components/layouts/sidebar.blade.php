@@ -67,6 +67,42 @@
               </li>
             </ul>
           </li>
+
+          {{-- <li class="nav-item {{ request()->is('packaging*') || request()->is('packaging*') ? 'menu-open' : '' }}">
+            <a href="#" class="nav-link {{ request()->is('packaging*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-file-alt"></i>
+              <p>
+                Bao bì
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('packaging.index') }}" class="nav-link {{ request()->is('input*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nhập kho</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('packaging.index') }}" class="nav-link {{ request()->is('output*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Xuất kho</p>
+                </a>
+              </li>
+            </ul>
+          </li> --}}
+
+
+          <li class="nav-item">
+            <a href="{{ route('packaging.index') }}" class="nav-link {{ request()->is('packaging*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-solid fa-dolly"></i>
+              {{-- <i class=""></i> --}}
+              <p>
+                Bao bì
+              </p>
+            </a>
+          </li>
+
           @canany(['product-view', 'product-create', 'product-edit', 'product-delete'])
           <li class="nav-item">
             <a href="{{ route('product.index') }}" class="nav-link {{ request()->is('product*') ? 'active' : '' }}">

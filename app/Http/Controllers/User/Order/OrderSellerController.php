@@ -5,11 +5,12 @@ namespace App\Http\Controllers\User\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\user\OrderSeller\OrderSellerStoreRequest;
 use App\Models\User;
+use App\Models\User\Customer;
 use App\Models\User\OrderSeller;
 use App\Models\User\Product;
 use App\Models\User\Storage;
 use App\Models\User\StorageProduct;
-use App\Models\User\Supplier;
+// use App\Models\User\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,11 +23,10 @@ class OrderSellerController extends Controller
     public function index(Request $request)
     {
         //Get status
-        $statusList = config('constants.status_receipt_list');
-        $data = OrderSeller::with('supplier', 'storage')
-            ->where('status','<>',0)
+        $statusList = config('constants.status_order_seller');
+        $data = OrderSeller::where('status','<>',0)
             ->where('assignee',auth()->user()->id)
-            ->where('status','<>',7)
+            ->where('status','<>',6)
             ->orderBy('id', 'DESC');
         $data = $data->paginate(5);
         return view('user.order.order-seller.index', compact('data', 'statusList'));
@@ -44,36 +44,21 @@ class OrderSellerController extends Controller
 
     public function create()
     {
-        $suppliers = Supplier::get();
-        $wareHouses = Storage::get();
-        $products = Product::get();
-        $statusList = config('constants.status_receipt_list');
-        $companyInfo= config('companyInfo');
+        $customers = Customer::get();
         $users = User::orderBy('id', 'DESC')->get()->filter(
             fn ($user) => $user->roles->where('name','<>', 'admin')->toArray()
         );
-        return view('user.order.order-seller.create', compact('suppliers', 'wareHouses', 'products', 'users', 'statusList', 'companyInfo'));
+        $storages = Storage::get();
+        return view('user.order.order-seller.create', compact('customers', 'users', 'storages'));
     }
 
     public function store(OrderSellerStoreRequest $request)
     {
         DB::beginTransaction();
         try {
-            $data = [];
-            $data['code']           = $request->code;
-            $data['supplier_id']    = $request->supplier_id;
-            $data['storage_id']     = $request->storage_id;
-            $data['order_info'] = json_encode([
-                'estimate_delivery_time'    => $request->estimate_delivery_time,
-                'receipt_date'              => $request->receipt_date,
-                'buyer_name'                => $request->buyer_name,
-                'buyer_address'             => $request->buyer_address,
-                'buyer_tax_code'            => $request->buyer_tax_code
-            ]);
+
+            $data = $request->all();
             $data['created_by']         =   Auth::user()->id;
-            $data['assignee']           =   Auth::user()->id;
-            $data['order_approver']     =   $request->order_approver;
-            $data['warehouse_keeper']     =   $request->warehouse_keeper;
             $order = OrderSeller::create($data);
             DB::commit();
             return redirect()->route('order-seller.show', $order->id);
@@ -87,21 +72,20 @@ class OrderSellerController extends Controller
     {
         DB::beginTransaction();
         try {
+
             $data = OrderSeller::find($id);
             if (!$data) {
                 return redirect('/');
             }
-
-            $statusList = config('constants.status_receipt_list');
-            $order_info = json_decode($data->order_info);
-            $warehouse_recript = json_decode($data->warehouse_recript);
+            $statusList = config('constants.status_order_seller');
             $product_info = ($data->products===null)?[]:$data->products;
-
             $product_ids = $this->getProductIds($product_info);
-            $products = Product::whereNotIn('id', $product_ids)->get();
-
+            // $products = Product::whereNotIn('id', $product_ids)->get();
+            $storage = Storage::find($data->storage_id); // lấy kho
+            $products = $storage->storage_product; // lấy sp trong kho
+            $products = $products->whereNotIn('product_id', $product_ids); // loại bỏ sản phẩm đã add
             DB::commit();
-            return view('user.order.order-seller.show', compact('data', 'statusList', 'order_info', 'products', 'product_info', 'warehouse_recript'));
+            return view('user.order.order-seller.show', compact('data', 'statusList', 'products', 'product_info'));
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
@@ -125,9 +109,10 @@ class OrderSellerController extends Controller
             $product_info = $data->products;
             $products = [];
             $product = $request->except('_token');
-            $getProduct = Product::find($request->product_id);
+            $getProduct = Product::find($request->product_id); dd();
+
             $product['name'] = $getProduct->name;
-            $product['price'] = $getProduct->price;
+            $product['price'] = $getProduct->price_customer->where('customer_id', $data->customer_id)[0]->price;
             $product['unit'] = $getProduct->unit;
             $product['specification'] = $getProduct->specification;
             if ($product_info == null) {
@@ -200,7 +185,7 @@ class OrderSellerController extends Controller
                 return redirect()->back()->with(['error' => "Bạn không được phép thực hiện thao tác này"])->withInput();
             }
             $data->status = $status_id;
-            $data->assignee = ($status_id < 3 || $status_id == 4 || $status_id == 7) ? $data->created_by : (($status_id == 3 || $status_id == 5) ? $data->order_approver : $data->warehouse_keeper);
+            $data->assignee = ($status_id < 3 || $status_id == 5 || $status_id == 6) ? $data->created_by : ($status_id == 3 ? $data->order_approver : $data->warehouse_keeper);
             $data->save();
 
             if ($status_id == 7) {
@@ -228,17 +213,16 @@ class OrderSellerController extends Controller
     }
 
 
-    public function purchaseOrderExport($id)
+    public function toDeliverExport($id)
     {
         try {
             $data = OrderSeller::find($id);
             if (!$data) {
                 return redirect('/');
             }
-            $order_info = json_decode($data->order_info);
             $products = $data->products;
 
-            $pdf = PDF::loadView('user.order.order-seller.purchase-order-export', compact('data','order_info','products'));
+            $pdf = PDF::loadView('user.order.order-seller.to-deliver-export', compact('data','products'));
             return $pdf->download('purchase-order-export' . date('YmdHms') . '.pdf');
 
         } catch (\Exception $e) {
@@ -246,19 +230,17 @@ class OrderSellerController extends Controller
         }
     }
 
-    public function wareHouseRecript($id)
+    public function invoiceRequestForm($id)
     {
         try {
             $data = OrderSeller::find($id);
             if (!$data) {
                 return redirect('/');
             }
-            $order_info = json_decode($data->order_info);
             $products = $data->products;
 
-            $warehouse_recript = json_decode($data->warehouse_recript);
             // return view('user.order.order-seller.warehouse-recript-export', compact('data','order_info','products','warehouse_recript'));
-            $pdf = PDF::loadView('user.order.order-seller.warehouse-recript-export', compact('data','order_info','products','warehouse_recript'));
+            $pdf = PDF::loadView('user.order.order-seller.invoice-request-form', compact('data','products'));
             return $pdf->download('purchase-order-export' . date('YmdHms') . '.pdf');
 
         } catch (\Exception $e) {
@@ -269,8 +251,9 @@ class OrderSellerController extends Controller
     public function destroy($id)
     {
         $data = OrderSeller::find($id);
-        $code = $data->code;
-        $data->delete();
+        $data->status = 0;
+        $code = $data->to_deliver_code;
+        $data->save();
         return redirect()->route('order-seller.index')->with(['success' => 'Đã huỷ đơn hàng ' . $code]);
     }
 

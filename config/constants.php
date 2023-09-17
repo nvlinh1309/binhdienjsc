@@ -10,6 +10,15 @@ return [
         6 => 'Chờ nhập kho',
         7 => 'Đã nhập kho'
     ],
+    'status_order_seller' => [
+        0 => 'Đã huỷ',
+        1 => 'Đang tạo đơn',
+        2 => 'Đang xử lý do bị từ chối',
+        3 => 'Chờ duyệt',
+        4 => 'Đã duyệt chờ xuất kho',
+        5 => 'Đã xuất kho. Chờ thanh toán',
+        6 => 'Đã thanh toán'
+    ],
     'payment_method_list' => [
         1 => 'Chuyển khoản',
         2 => 'Tiền mặt'

@@ -37,9 +37,9 @@
                     <a href="{{ route('order-buyer.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
-                    <a href="{{ route('order-buyer.cancel') }}">
+                    {{-- <a href="{{ route('order-buyer.cancel') }}">
                         <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
-                    </a>
+                    </a> --}}
 
 
 
@@ -48,7 +48,7 @@
                     </a> --}}
                 </h3>
 
-                <div class="card-tools">
+                {{-- <div class="card-tools">
                     <ul class="nav nav-pills ml-auto">
                         <li class="nav-item">
                             <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
@@ -57,7 +57,7 @@
                             <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
                         </li>
                     </ul>
-                </div>
+                </div> --}}
 
                 <div class="card-tools">
                     {{ $data->links('vendor.pagination.default') }}

@@ -76,10 +76,10 @@
     <div>
         <div style="width:40%" class="header"><strong>CÔNG TY CỔ PHẦN BÌNH ĐIỀN</strong></div>
         <div style="width: 40%" class="header">
-            <div class="title">PHIẾU NHẬP KHO<br>
+            <div class="title">PHIẾU XUẤT KHO<br>
                 <label style="font-size: 16px; font-weight:normal; line-height: 0.8 !important;">
-                Số: {{ $warehouse_recript->code }}<br>
-                Ngày {{ date('d',strtotime($warehouse_recript->date_input)) }} tháng {{ date('m',strtotime($warehouse_recript->date_input)) }} năm {{ date('Y',strtotime($warehouse_recript->date_input)) }}
+                Số: {{ $data->to_deliver_code }}<br>
+                Ngày {{ date('d',strtotime($data->to_deliver_date)) }} tháng {{ date('m',strtotime($data->to_deliver_date)) }} năm {{ date('Y',strtotime($data->to_deliver_date)) }}
             </label>
             </div>
         </div>
@@ -94,12 +94,12 @@
     <div class="content">
 
         <div>
-            <strong  style="width: 200px">Nhà cung cấp:</strong>
-            {{ $data->supplier->name }}
+            <strong  style="width: 200px">Đơn vị nhận hàng:</strong>
+            {{ $data->customer->name }}
         </div>
         <div>
             <strong  style="width: 200px">Theo chứng từ:</strong>
-            <strong>HĐ: {{ $data->supplier->supplier_code }}</strong>
+            <strong>HĐ: {{ $data->customer->code }}</strong>
         </div>
 
         <div>
@@ -107,15 +107,15 @@
             <label style="width: 500px">{{ $data->storage->name }}.</label>
 
             <strong  style="width: 100px">     Địa chỉ:</strong>
-            {{ $data->storage->name }}
+            {{ $data->storage->address }}
         </div>
 
         <div>
             <strong  style="width: 200px">Thông tin giao nhận:</strong>
-            {{ $warehouse_recript->info??"..................................................." }}
+            {{ $data->to_deliver_info??"..................................................." }}
 
             <strong  style="width: 100px">Xe/Cont:</strong>
-            {{ $warehouse_recript->transport??"..................................." }}
+            {{ $data->to_deliver_transport??"..................................." }}
         </div>
         <br>
         <table>
@@ -137,24 +137,24 @@
             @foreach ($products as $key=>$product)
                 @php
                     $quantity += $product['quantity'];
-                    $bag_quantity += $product['quantity']/$product['specification'];
+                    $bag_quantity += $product['quantity']*$product['specification'];
                 @endphp
                 <tr>
                     <td style="text-align: center">{{ $key+1 }}</td>
                     <td>{{ $product['name'] }}</td>
-                    <td>{{ $product['specification'] }}</td>
+                    <td style="text-align: center">{{ $product['specification'] }}</td>
                     <td style="text-align: center">{{ strtoupper($product['unit']) }}</td>
-                    <td style="text-align: center">{{ date('dmY',strtotime($warehouse_recript->date_input)) }}</td>
-                    <td style="text-align: center">{{ date('d/m/Y',strtotime($product['exp'])) }}</td>
+                    <td style="text-align: center">{{ date('dmY',strtotime($data->to_deliver_date)) }}</td>
+                    <td style="text-align: center">{{ date('d/m/Y',strtotime($data->to_deliver_date)) }}</td>
+                    <td style="text-align: center">{{ number_format($product['quantity']*$product['specification'], 0, ',', '.')}}</td>
                     <td style="text-align: center">{{ number_format($product['quantity'], 0, ',', '.')}}</td>
-                    <td>{{ number_format($product['quantity']/$product['specification'], 0, ',', '.')}}</td>
                     <td>{{ $product['note'] }}</td>
                 </tr>
             @endforeach
             <tr>
                 <th colspan="6">Tổng cộng:</th>
-                <th>{{ number_format($quantity, 0, ',', '.')}}</th>
                 <th>{{ number_format($bag_quantity, 0, ',', '.')}}</th>
+                <th>{{ number_format($quantity, 0, ',', '.')}}</th>
                 <th></th>
             </tr>
         </table>
@@ -187,7 +187,7 @@
             <br>
             <br>
             <br>
-            {{ $data->warehouseKeeper->name}}
+            {{ $data->warehouseKeeper->name }}
         </div>
 
         <div style="width:25%; float: left;font-weight:bold">
@@ -197,7 +197,17 @@
             <br>
             <br>
             <br>
-            {{ $data->user_order_approver->name}}
+            {{ $data->user_order_approver->name }}
+        </div>
+
+        <div style="font-weight:bold">
+            Người nhận hàng
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            Thời gian nhận hàng:.............................
         </div>
     </div>
 

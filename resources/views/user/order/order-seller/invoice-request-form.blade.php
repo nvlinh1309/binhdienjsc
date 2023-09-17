@@ -127,11 +127,12 @@
         .header {
             text-align: center;
             float: left;
+            font-size: 18px;
         }
 
         .title {
             width: 100%;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             text-align: center;
             padding-top: 60px;
@@ -147,36 +148,40 @@
 </head>
 
 <body>
-    <div style="width:40%" class="header"><strong>CÔNG TY CỔ PHẦN BÌNH ĐIỀN</strong><br> *****</div>
-    <div style="width: 60%" class="header"><strong>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>Độc lập - Tự do - Hạnh
+    <div style="width: 100%" class="header"><strong>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>Độc lập - Tự do - Hạnh
         phúc<br>*****</div>
     <br>
     <div class="title">
-        ĐƠN ĐẶT HÀNG
-        <br>
-        <label style="font-size: 18px">Số: {{ $data->code }}</label>
+        GIẤY ĐỀ NGHỊ XUẤT HOÁ ĐƠN
     </div>
-    <div style="padding-left: 20%; padding-bottom:20px">
-        Kính gửi: <strong>{{ $data->supplier->name }}</strong><br>
-        Địa chỉ: {{ $data->supplier->address }}
+    <div style="padding:0px 20px 0px 20px ; font-size:18px; text-align:center">
+        <strong>Kính gửi: Phòng Tài Chính Kế Toán - Công ty cổ phần Bình Điền</strong><br>
+    </div>
+
+    <div style="padding: 20px;">
+        - Căn cứ Hợp đồng nguyên tắc số: 04/HĐNT/2022 ngày 03 tháng 01 năm 2023 giữa Công ty cổ phần Bình Điền và {{ $data->customer->name }}
     </div>
 
     <div class="content">
-        <div><strong>Đơn vị mua hàng:</strong> {{ $order_info->buyer_name }}</div>
-        <div>Địa chỉ: {{ $order_info->buyer_address }}</div>
-        <div>Mã số thuế: {{ $order_info->buyer_tax_code }}</div><br>
-        <div>Nội dung đơn hàng:</div>
-        <strong>1. MẶT HÀNG - SỐ LƯỢNG - ĐƠN GIÁ</strong>
+        <div>Tổ Kinh Doanh Gạo - Công ty cổ phần Bình Điền làm giấy đề nghị xuất hoá đơn cho đơn hàng xuất kho ngày {{ date('d',strtotime($data->to_deliver_date)) }} tháng {{ date('m',strtotime($data->to_deliver_date)) }} năm {{ date('Y',strtotime($data->to_deliver_date)) }} với thông tin như sau:</div>
+        <div style="padding: 0 20px">
+            * Thông tin xuất hoá đơn:<br>
+            - Tên Công ty: <strong>{{ $data->customer->name }}</strong><br>
+            - Địa chỉ: {{ $data->customer->address }}<br>
+            - Mã số thuế: {{ $data->customer->tax_code }}<br>
+            - Ngày xuất hoá đơn: ........................................<br><br>
+        </div>
 
         <table>
             <tr>
                 <th style="width: 30px">STT</th>
-                <th style="">MẶT HÀNG</th>
-                <th style="width: 50px">Quy cách bao bì</th>
-                <th style="width: 70px">SỐ LƯỢNG (KG)</th>
-                <th style="width: 70px">ĐƠN GIÁ (vnđ/kg)</th>
-                <th style="width: 80px">THÀNH TIỀN<br> (vnđ)</th>
-                <th style="width: 100px">GHI CHÚ</th>
+                <th style="">Nội dung</th>
+                <th style="width: 50px">Thương hiệu</th>
+                <th style="width: 70px">Lô nhập</th>
+                <th style="width: 50px">Quy các đóng gói</th>
+                <th style="width: 50px">Số lượng bao</th>
+                <th style="width: 90px">Đơn giá bao</th>
+                <th style="width: 90px">Thành tiền</th>
             </tr>
             @php
                 $quantity = 0;
@@ -184,42 +189,33 @@
             @endphp
             @foreach ($products as $key=>$product)
             @php
-                $quantity += $product['quantity'];
                 $price += $product['quantity']*$product['price'];
             @endphp
                 <tr>
                     <td style="text-align: center">{{ $key+1 }}</td>
                     <td>{{ $product['name'] }}</td>
-                    <td>{{ $product['specification'].strtoupper($product['unit'])  }}</td>
+                    <td>Quang Phát</td>
+                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data->to_deliver_date)) }}</td>
+                    <td style="text-align: center">{{ $product['specification'].strtoupper($product['unit'])  }}</td>
                     <td style="text-align: center">{{ number_format($product['quantity'], 0, ',', '.')}}</td>
                     <td style="text-align: center">{{ number_format($product['price'], 0, ',', '.')}}</td>
-                    <td style="text-align: center">{{ number_format($product['quantity']*$product['price'], 0, ',', '.')}}</td>
-                    <td></td>
+                    <td style="text-align: center">{{ number_format($product['price']*$product['quantity'], 0, ',', '.')}}</td>
                 </tr>
             @endforeach
             <tr>
-                <th colspan="3">Tổng cộng:</th>
-                <th>{{ number_format($quantity, 0, ',', '.')}}</th>
-                <th></th>
+                <th colspan="7">Tổng:</th>
                 <th>{{ number_format($price, 0, ',', '.')}}</th>
-                <th></th>
             </tr>
         </table>
         <br>
-        <div><strong>Bằng chữ: </strong>{{numberInVietnameseCurrency(135000000)}}./.</div>
-        <div>Đơn hàng trên chưa bao gồm phí vận chuyển nếu nhận hàng tại kho {{$data->storage->name}}.</div>
-        <div>- Giá trên được căn cứ vào Hợp đồng số {{ $data->supplier->supplier_code }} ngày {{ date('d/m/Y', strtotime($data->supplier->contract_signing_date)) }}</div>
-
-        <strong>2. KẾ HOẠCH VÀ NƠI NHẬN HÀNG</strong>
-        <div>- Thời gian dự kiến giao hàng: {{ $order_info->estimate_delivery_time }}</div>
-        <div>Rất mong Quý Công ty xem xét và trả lời sớm.</div>
-        <div>Trân trọng./.</div>
+        <div>Tổng giá trị hoá đơn số tiền: <strong>{{ number_format($price, 0, ',', '.')}}</strong> ({{numberInVietnameseCurrency($price)}}./.)</div>
+        <div>* Địa chỉ nhận hoá đơn điện tử: <strong>{{ $data->customer->contact['email'] }}</strong></div>
         <br>
 
-        <div style="width:60%" class="header"></div>
+        <div style="width:30%" class="header"></div>
 
-        <div style="width:40%; font-weight:bold" class="header">
-            ĐƠN VỊ ĐẶT HÀNG
+        <div style="width:60%; font-weight:bold" class="header">
+            TỔ TRƯỞNG TỔ KINH DOANH GẠO
             <br>
             <br>
             <br>

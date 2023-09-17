@@ -37,9 +37,9 @@
                     <a href="{{ route('order-seller.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Tạo đơn hàng">Tạo đơn hàng</button>
                     </a>
-                    <a href="{{ route('order-seller.cancel') }}">
+                    {{-- <a href="{{ route('order-seller.cancel') }}">
                         <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
-                    </a>
+                    </a> --}}
 
 
 
@@ -71,7 +71,7 @@
                             <th style="width: 10px">#</th>
                             <th>Mã ĐH</th>
                             <th>Khách hàng</th>
-                            <th>Ngày tạo đơn</th>
+                            <th>Ngày xuất kho</th>
                             <th>Trạng thái</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
@@ -84,10 +84,9 @@
                             @endphp
                             <tr>
                                 <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
-                                <td>{{ $value->code }}</td>
+                                <td>{{ $value->to_deliver_code }}</td>
                                 <td>{{ $value->customer->name }}</td>
-                                <td>{{ $value->storage->name }}</td>
-                                <td>{{ $order_info->receipt_date }}</td>
+                                <td>{{ $value->to_deliver_date }}</td>
                                 <td><i>{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
                                     <a href="{{ route('order-seller.show', $value->id) }}"

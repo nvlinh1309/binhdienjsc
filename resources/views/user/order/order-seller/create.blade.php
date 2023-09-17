@@ -8,7 +8,7 @@
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('stock-in.index') }}">Đơn mua (Nhập kho)</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('order-seller.index') }}">Đơn mua (Nhập kho)</a></li>
                             <li class="breadcrumb-item active">Tạo đơn hàng</li>
                         </ol>
                     </div><!-- /.col -->
@@ -38,36 +38,76 @@
                 <h3 class="card-title">Khởi tạo đơn hàng</h3>
             </div>
 
-            <form id="quickForm" action="{{ route('order-buyer.store') }}" method="POST">
+            <form id="quickForm" action="{{ route('order-seller.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-4">
+
+                        <input value="{{ auth()->user()->id }}" type="hidden" name="assignee">
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                <label for="code">Mã đặt hàng<span class="text-danger">*</span></label>
-                                <input value="{{ old('code') }}" type="text" name="code"
-                                    class="form-control {{ $errors->has('code')?"is-invalid":"" }}" id="code" placeholder="Nhập mã đặt hàng..." {{ $errors->has('code')?'aria-describedby="order_code-error" aria-invalid="true"':''}}>
-                                    @if ($errors->has('code'))
-                                        <span id="code-error" class="error invalid-feedback">{{ $errors->first('code') }}</span>
-                                    @endif
+                                <label for="to_deliver_code">Mã phiếu xuất kho<span class="text-danger">*</span></label>
+                                <input value="{{ old('to_deliver_code') }}" type="text"
+                                    name="to_deliver_code" class="form-control" id="to_deliver_code"
+                                    placeholder="Nhập mã phiếu xuất kho...">
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
                             <div class="form-group">
-                                <label>Người duyệt đơn đặt hàng<span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="order_approver" id="order_approver"
+                                <label for="to_deliver_date">Ngày xuất kho<span class="text-danger">*</span></label>
+                                <input value="{{ old('to_deliver_date', now()->format('d-m-Y')) }}" type="text"
+                                    class="form-control datepicker" name="to_deliver_date" id="to_deliver_date"
+                                    data-provide="datepicker" placeholder="dd-mm-yyyy">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="storage_id">Chọn kho<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="storage_id" id="storage_id"
                                     style="width: 100%;">
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ $user->id == old('order_approver') ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                    @foreach ($storages as $storage)
+                                        <option value="{{ $storage->id }}"
+                                            {{ $storage->id == old('storage_id') ? 'selected' : '' }}>
+                                            {{ $storage->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="customer_id">Chọn khách hàng<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="customer_id" id="customer_id"
+                                    style="width: 100%;">
+                                    @foreach ($customers as $customers)
+                                        <option value="{{ $customers->id }}"
+                                            {{ $customers->id == old('customer_id') ? 'selected' : '' }}>
+                                            {{ $customers->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="to_deliver_info">Thông tin giao nhận</label>
+                                <input value="{{ old('to_deliver_info') }}" type="text" name="to_deliver_info" class="form-control"
+                                    id="to_deliver_info" placeholder="Nhập thông tin giao nhận...">
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="to_deliver_transport">Xe/Cont</label>
+                                <input value="{{ old('to_deliver_transport') }}" type="text" name="to_deliver_transport" class="form-control"
+                                    id="to_deliver_transport" placeholder="Nhập xe/cont...">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Chọn Thủ kho<span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="warehouse_keeper" id="warehouse_keeper"
@@ -81,139 +121,19 @@
                             </div>
                         </div>
 
-
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Chọn nhà cung cấp<span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="supplier_id" id="supplier_id"
+                                <label>Người duyệt đơn đặt hàng<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="order_approver" id="order_approver"
                                     style="width: 100%;">
-                                    @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}"
-                                            {{ $supplier->id == old('supplier_id') ? 'selected' : '' }}>
-                                            {{ $supplier->name }}</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}"
+                                            {{ $user->id == old('order_approver') ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="estimate_delivery_time">Thời gian dự kiến giao hàng<span class="text-danger">*</span></label>
-                                <input value="{{ old('estimate_delivery_time') }}" type="text"
-                                    name="estimate_delivery_time" class="form-control" id="order_contract_no"
-                                    placeholder="Nhập thời gian dự kiến giao hàng...">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="storage_id">Chọn kho nhập hàng<span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="storage_id" style="width: 100%;">
-                                    @foreach ($wareHouses as $wareHouse)
-                                        <option value="{{ $wareHouse->id }}"
-                                            {{ $wareHouse->id == old('storage_id') ? 'selected' : '' }}>
-                                            {{ $wareHouse->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="order_date_manufacture">Ngày đặt hàng<span class="text-danger">*</span></label>
-                                <input value="{{ old('receipt_date', now()->format('d-m-Y')) }}" type="text"
-                                    class="form-control datepicker" name="receipt_date" id="receipt_date"
-                                    data-provide="datepicker" placeholder="dd-mm-yyyy">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="callout callout-info">
-                                <h5><i class="fas fa-info"></i> Thông tin đơn vị mua hàng</h5>
-                                <hr>
-                                <div class="form-group">
-                                    <label for="buyer_name">Tên công ty<span class="text-danger">*</span></label>
-                                    <input value="{{ $companyInfo['name'] }}" type="text" name="buyer_name"
-                                        class="form-control" id="buyer_name" placeholder="Nhập tên công ty...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="buyer_address">Địa chỉ<span class="text-danger">*</span></label>
-                                    <input value="{{ $companyInfo['address'] }}" type="text" name="buyer_address"
-                                        class="form-control" id="buyer_address" placeholder="Nhập địa chỉ...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="buyer_tax_code">Mã số thuế<span class="text-danger">*</span></label>
-                                    <input value="{{ $companyInfo['tax_code'] }}" type="text" name="buyer_tax_code"
-                                        class="form-control" id="buyer_tax_code" placeholder="Nhập mã số thuế...">
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- <div class="col-md-12">
-                            <div class="callout callout-info">
-                                <h5><i class="fas fa-info"></i> Sản phẩm đặt hàng</h5>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="card" id="containerProduct">
-                                            <div class="form-row mr-0 ml-0 div-add-prod">
-                                                <div class="form-group col-md-8">
-                                                    <label for="order_product_1">Chọn Sản Phẩm<span class="text-danger">*</span></label>
-                                                    <select name="order_product_1" class="form-control select2">
-                                                        @foreach ($products as $product)
-                                                            <option value="{{ $product->id }}"
-                                                                {{ $product->id == old('order_product_1') ? 'selected' : '' }}>
-                                                                {{ $product->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label for="order_date_manufacture">Nhập số lượng <span class="text-danger">*</span></label>
-                                                    <input type="text" value="{{ old('order_quantity_1') }}"
-                                                        class="form-control" name="order_quantity_1"
-                                                        placeholder="Nhập số lượng...">
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label for="order_date_manufacture">Ngày Sản Xuất</label>
-                                                    <input type="text"
-                                                        value="{{ old('order_date_manufacture_1') }}"
-                                                        class="form-control datepicker"
-                                                        name="order_date_manufacture_1" data-provide="datepicker">
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label for="input_expDate">Hạn Sử Dụng</label>
-                                                    <input type="text" value="{{ old('input_expDate_1') }}"
-                                                        class="form-control datepicker" name="input_expDate_1"
-                                                        id="input_expDate" data-provide="datepicker">
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label for="note_product_1">Ghi chú</label>
-                                                    <textarea class="form-control" id="note_product_1" name="note_product_1" rows="1">{{ old('note_product_1') }}</textarea>
-                                                </div>
-                                                <div class="form-group col-md-12">
-                                                    <label class="btn btn-success btn-sm" id="add_product">Thêm</label>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <input type="hidden" name="products">
-                                                    <div></div>
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Tên sản phẩm</th>
-                                                                <th>Số lượng</th>
-                                                                <th>Ngày sản xuất</th>
-                                                                <th>Hạn sử dụng</th>
-                                                                <th>Ghi chú</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="products">
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
 
                     </div>
 
@@ -237,49 +157,37 @@
             if ($("#quickForm").length > 0) {
                 $('#quickForm').validate({
                     rules: {
-                        code: {
+                        to_deliver_code: {
                             required: true,
                         },
-                        estimate_delivery_time: {
+                        to_deliver_date: {
                             required: true
                         },
-                        receipt_date: {
+                        customer_id: {
                             required: true
                         },
-                        buyer_name: {
+                        warehouse_keeper: {
                             required: true
                         },
-                        buyer_address: {
-                            required: true
-                        },
-                        buyer_tax_code: {
-                            required: true
-                        },
-                        products: {
+                        order_approver: {
                             required: true
                         }
                     },
                     messages: {
-                        code: {
-                            required: "Vui lòng nhập mã đặt hàng"
+                        to_deliver_code: {
+                            required: "Vui lòng nhập mã phiếu xuất kho"
                         },
-                        estimate_delivery_time: {
-                            required: "Vui lòng nhập thời gian dự kiến giao hàng",
+                        to_deliver_date: {
+                            required: "Vui lòng chọn ngày xuất kho",
                         },
-                        receipt_date: {
-                            required: "Vui lòng nhập ngày đặt hàng",
+                        customer_id: {
+                            required: "Vui lòng chọn khách hàng",
                         },
-                        buyer_name: {
-                            required: "Vui lòng nhập tên công ty",
+                        warehouse_keeper: {
+                            required: "Vui lòng chọn thủ kho",
                         },
-                        buyer_address: {
-                            required: "Vui lòng nhập địa chỉ",
-                        },
-                        buyer_tax_code: {
-                            required: "Vui lòng nhập mã số thuế",
-                        },
-                        products: {
-                            required: "Vui lòng thêm ít nhất 1 sản phẩm"
+                        order_approver: {
+                            required: "Vui lòng chọn người duyệt đơn hàng",
                         }
                     },
                     errorElement: 'span',

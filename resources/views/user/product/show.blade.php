@@ -65,19 +65,20 @@
                 </div>
             </div>
             <!-- /.card-header -->
-            @if (count($data->price_customer) > 0)
-                <div class="card-body p-0">
-                    <form id="setPriceForm" action="{{ route('product.price.store') }}" method="POST">
-                        <input type="hidden" name="product_id" value="{{ $data->id }}" />
-                        <table class="table">
-                            @csrf
-                            <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Tên khách hàng</th>
-                                    <th>Giá (VNĐ)</th>
-                                </tr>
-                            </thead>
+
+            <div class="card-body p-0">
+                <form id="setPriceForm" action="{{ route('product.price.store') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ $data->id }}" />
+                    <table class="table">
+                        @csrf
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Tên khách hàng</th>
+                                <th>Giá (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        @if (count($data->price_customer) > 0)
                             <?php $num = 1; ?>
                             @foreach ($data->price_customer as $detail)
                                 @if ($detail->customer)
@@ -96,21 +97,22 @@
                                     <?php $num++; ?>
                                 @endif
                             @endforeach
-                        </table>
+                        @else
+                            <tr>
+                                <td colspan="3">Chưa có dữ liệu</td>
+                            </tr>
+                        @endif
                         @can('product-edit')
-                            <div class="callout">
-                                <button type="submit" class="btn btn-secondary">Cập nhật giá</button>
-                            </div>
+                            <tr>
+                                <td colspan="3"><button type="submit" class="btn btn-secondary">Cập nhật giá</button></td>
+
+                            </tr>
                         @endcan
-                    </form>
-                </div>
-            @else
-                <div class="card-body p-0">
-                    <div class="callout">
-                        Chưa có dữ liệu.
-                    </div>
-                </div>
-            @endif
+                    </table>
+
+                </form>
+            </div>
+
 
             <!-- /.card-body -->
         </div>

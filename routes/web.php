@@ -13,6 +13,7 @@ use App\Http\Controllers\User\Brand\BrandController;
 use App\Http\Controllers\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\User\Order\OrderBuyerController;
 use App\Http\Controllers\User\Order\OrderSellerController;
+use App\Http\Controllers\User\Packaging\PackagingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +62,22 @@ Route::middleware('auth')->group(function () {
     Route::get('order-buyer/update-status/{order_id}/{status_id}', [OrderBuyerController::class, 'updateStatus'])->name('order-buyer.update-status');
     Route::post('order-buyer/add-warehouse_recript/{id}', [OrderBuyerController::class, 'addWareHouseRecript'])->name('order-buyer.add-warehouse_recript');
     Route::get('order-buyer/cancel', [OrderBuyerController::class, 'orderCancel'])->name('order-buyer.cancel');
-    // Route::get('product/create/step-2/{id}', [OrderBuyerController::class, 'createStep2'])->name('order-buyer.create-step-2');
+
+    Route::resource('order-seller', OrderSellerController::class);
+    Route::get('order-seller/export/{id}', [OrderSellerController::class, 'toDeliverExport'])->name('order-seller.to-deliver-export');
+    Route::get('order-seller/invoice-request-form/export/{id}', [OrderSellerController::class, 'invoiceRequestForm'])->name('order-seller.invoice-request-form');
+    Route::post('order-seller/add-product/{id}', [OrderSellerController::class, 'addProduct'])->name('order-seller.add-product');
+    Route::get('order-seller/delete-product/{product_id}/{order_id}', [OrderSellerController::class, 'deleteProduct'])->name('order-seller.delete-product');
+    Route::get('order-seller/update-status/{order_id}/{status_id}', [OrderSellerController::class, 'updateStatus'])->name('order-seller.update-status');
+    Route::post('order-seller/add-warehouse_recript/{id}', [OrderSellerController::class, 'addWareHouseRecript'])->name('order-seller.add-warehouse_recript');
+    Route::get('order-seller/cancel', [OrderSellerController::class, 'orderCancel'])->name('order-seller.cancel');
+
+
+
+    Route::resource('packaging', PackagingController::class);
+    Route::get('packaging/to-receive-create/{packaging_id}', [PackagingController::class, 'getInput'])->name('packaging.get-input');
+    Route::post('packaging/to-receive-store/{packaging_id}', [PackagingController::class, 'postInput'])->name('packaging.post-input');
+
 
     Route::resource('order-seller', OrderSellerController::class);
     Route::post('/get-products', [OrderController::class, 'getProductBasedWh'])->name('order.get.product');
