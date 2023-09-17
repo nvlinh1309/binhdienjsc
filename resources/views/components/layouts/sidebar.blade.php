@@ -154,7 +154,7 @@
           </li>
           @endcanany
           @canany(['user-view', 'user-create', 'user-edit', 'user-delete', 'role-view', 'role-create', 'role-edit', 'role-delete'])
-          <li class="nav-item {{ request()->is('user*') || || request()->is('srole-and-permission*') ? 'menu-open' : '' }}">
+          <li class="nav-item {{ request()->is('user*') || request()->is('srole-and-permission*') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('user*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users-cog"></i>
               <p>
