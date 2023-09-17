@@ -102,13 +102,13 @@
             <tr>
                 <td>1</td>
                 <td>{{ $data->packaging->name }}</td>
+                <td style="text-align: center">{{ number_format($data->contract_quantity,0,',','.') }}</td>
                 <td style="text-align: center">{{ number_format($data->quantity,0,',','.') }}</td>
-                <td style="text-align: center">{{ number_format($data->quantity,0,',','.') }}</td>
-                <td></td>
+                <td>{{ $data->note }}</td>
             </tr>
             <tr>
                 <th colspan="2">Tổng:</th>
-                <th>{{ number_format($data->quantity,0,',','.') }}</th>
+                <th>{{ number_format($data->contract_quantity,0,',','.') }}</th>
                 <th>{{ number_format($data->quantity,0,',','.') }}</th>
                 <th></th>
             </tr>

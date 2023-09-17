@@ -57,11 +57,31 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="quantity">Số lượng</label><span class="text-danger">*</span>
+                                <label for="contract_quantity">Số lượng (cái) (Hợp đồng)</label><span class="text-danger">*</span>
+                                <input value="{{ old('contract_quantity') }}" type="text" name="contract_quantity" class="form-control {{ $errors->has('contract_quantity')?"is-invalid":"" }}" id="name"
+                                    placeholder="Nhập số lượng (Hợp đồng)...">
+                                     @if ($errors->has('contract_quantity'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('quantity') }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="quantity">Số lượng (cái) (Thực nhận)</label><span class="text-danger">*</span>
                                 <input value="{{ old('quantity') }}" type="text" name="quantity" class="form-control {{ $errors->has('quantity')?"is-invalid":"" }}" id="name"
-                                    placeholder="Nhập số lượng...">
+                                    placeholder="Nhập số lượng (Thực nhận)...">
                                      @if ($errors->has('quantity'))
                                     <div class="error text-danger invalid-feedback-custom">{{ $errors->first('quantity') }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="note">Ghi chú</label><span class="text-danger">*</span>
+                                <input value="{{ old('note') }}" type="text" name="note" class="form-control {{ $errors->has('note')?"is-invalid":"" }}" id="name"
+                                    placeholder="Nhập số lượng (Thực nhận)...">
+                                     @if ($errors->has('note'))
+                                    <div class="error text-danger invalid-feedback-custom">{{ $errors->first('note') }}</div>
                                 @endif
                             </div>
                         </div>
