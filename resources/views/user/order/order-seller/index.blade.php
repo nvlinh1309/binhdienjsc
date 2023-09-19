@@ -87,7 +87,7 @@
                                 <td>{{ $value->to_deliver_code }}</td>
                                 <td>{{ $value->customer->name }}</td>
                                 <td>{{ $value->to_deliver_date }}</td>
-                                <td><i>{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
+                                <td><i class="badge {{ $statusColor[$value->status] }}">{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
                                     <a href="{{ route('order-seller.show', $value->id) }}"
                                         class="btn btn-xs btn-success">Chi tiết</a>

@@ -29,6 +29,15 @@ return [
         5 => 'Đã xuất kho. Chờ thanh toán',
         6 => 'Đã thanh toán'
     ],
+    'status_order_color' => [
+        0 => 'bg-secondary',
+        1 => 'bg-primary',
+        2 => 'bg-warning',
+        3 => 'bg-info',
+        4 => 'bg-primary',
+        5 => 'bg-warning',
+        6 => 'bg-success'
+    ],
     'payment_method_list' => [
         1 => 'Chuyển khoản',
         2 => 'Tiền mặt'

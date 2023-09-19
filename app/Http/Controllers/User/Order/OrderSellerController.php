@@ -24,12 +24,13 @@ class OrderSellerController extends Controller
     {
         //Get status
         $statusList = config('constants.status_order_seller');
+        $statusColor = config('constants.status_receipt_color');
         $data = OrderSeller::where('status','<>',0)
             ->where('assignee',auth()->user()->id)
             ->where('status','<>',6)
             ->orderBy('id', 'DESC');
         $data = $data->paginate(5);
-        return view('user.order.order-seller.index', compact('data', 'statusList'));
+        return view('user.order.order-seller.index', compact('data', 'statusList','statusColor'));
     }
 
     public function orderCancel(Request $request)
@@ -78,6 +79,7 @@ class OrderSellerController extends Controller
                 return redirect('/');
             }
             $statusList = config('constants.status_order_seller');
+            $statusColor = config('constants.status_receipt_color');
             $product_info = ($data->products===null)?[]:$data->products;
             $product_ids = $this->getProductIds($product_info);
             // $products = Product::whereNotIn('id', $product_ids)->get();
@@ -85,7 +87,7 @@ class OrderSellerController extends Controller
             $products = $storage->storage_product; // lấy sp trong kho
             $products = $products->whereNotIn('product_id', $product_ids); // loại bỏ sản phẩm đã add
             DB::commit();
-            return view('user.order.order-seller.show', compact('data', 'statusList', 'products', 'product_info'));
+            return view('user.order.order-seller.show', compact('data', 'statusList', 'products', 'product_info','statusColor'));
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
@@ -109,7 +111,7 @@ class OrderSellerController extends Controller
             $product_info = $data->products;
             $products = [];
             $product = $request->except('_token');
-            $getProduct = Product::find($request->product_id); dd();
+            $getProduct = Product::find($request->product_id);
 
             $product['name'] = $getProduct->name;
             $product['price'] = $getProduct->price_customer->where('customer_id', $data->customer_id)[0]->price;

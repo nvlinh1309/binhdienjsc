@@ -86,7 +86,7 @@
                     <b>Kho xuất hàng: </b> {{ $data->storage->name }}
                 </div>
                 <div class="col-md-6">
-                    <b>Trạng thái: </b> <i>{{ $data->status ? $statusList[$data->status] : '' }}</i>
+                    <b>Trạng thái: </b><i class="badge {{ $statusColor[$data->status] }}">{{ $data->status ? $statusList[$data->status] : '' }}</i>
                 </div>
                 <div class="col-md-12 text-right">
                     @if ($data->status < 3 && $data->assignee === auth()->user()->id)
@@ -122,7 +122,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="quantity">Số lượng<span class="text-danger">*</span></label>
+                                        <label for="quantity">Số lượng (Kg)<span class="text-danger">*</span></label>
                                         <input value="" type="text" name="quantity" class="form-control"
                                             id="quantity" placeholder="Nhập số lượng...">
                                     </div>

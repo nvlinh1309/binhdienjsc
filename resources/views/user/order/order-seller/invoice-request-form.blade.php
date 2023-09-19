@@ -159,29 +159,31 @@
     </div>
 
     <div style="padding: 20px;">
-        - Căn cứ Hợp đồng nguyên tắc số: 04/HĐNT/2022 ngày 03 tháng 01 năm 2023 giữa Công ty cổ phần Bình Điền và {{ $data->customer->name }}
+        - Căn cứ theo kế hoạch bán hàng của Tổ Kinh doanh Gạo và nhu cầu mua hàng của khách hàng.
     </div>
 
     <div class="content">
-        <div>Tổ Kinh Doanh Gạo - Công ty cổ phần Bình Điền làm giấy đề nghị xuất hoá đơn cho đơn hàng xuất kho ngày {{ date('d',strtotime($data->to_deliver_date)) }} tháng {{ date('m',strtotime($data->to_deliver_date)) }} năm {{ date('Y',strtotime($data->to_deliver_date)) }} với thông tin như sau:</div>
+        <div>Tổ Kinh doanh Gạo - Công ty CP Bình Điền đề nghị Phòng Tài chính – Kế toán xuất hóa đơn cho đơn hàng với thông tin như sau:</div>
+        <div>* Thông tin xuất hoá đơn:</div>
         <div style="padding: 0 20px">
-            * Thông tin xuất hoá đơn:<br>
-            - Tên Công ty: <strong>{{ $data->customer->name }}</strong><br>
-            - Địa chỉ: {{ $data->customer->address }}<br>
+            - Tên khách hàng: <strong>{{ $data->customer->name }}</strong><br>
             - Mã số thuế: {{ $data->customer->tax_code }}<br>
+            - Địa chỉ: {{ $data->customer->address }}<br>
+            - Địa chỉ email nhận hoá đơn điện tử: <strong>{{ $data->customer->contact['email'] }}</strong><br>
             - Ngày xuất hoá đơn: ........................................<br><br>
         </div>
 
         <table>
             <tr>
                 <th style="width: 30px">STT</th>
-                <th style="">Nội dung</th>
+                <th>Tên hàng hoá, dịch vụ</th>
+                {{-- <th style="">Nội dung</th> --}}
                 <th style="width: 50px">Thương hiệu</th>
-                <th style="width: 70px">Lô nhập</th>
-                <th style="width: 50px">Quy các đóng gói</th>
+                <th style="width: 70px">ĐVT</th>
+                <th style="width: 50px">Quy cách bao</th>
                 <th style="width: 50px">Số lượng bao</th>
                 <th style="width: 90px">Đơn giá bao</th>
-                <th style="width: 90px">Thành tiền</th>
+                <th style="width: 90px">Thành tiền<br>(VNĐ)</th>
             </tr>
             @php
                 $quantity = 0;
@@ -195,8 +197,8 @@
                     <td style="text-align: center">{{ $key+1 }}</td>
                     <td>{{ $product['name'] }}</td>
                     <td>Quang Phát</td>
-                    <td style="text-align: center">{{ date('d.m.Y',strtotime($data->to_deliver_date)) }}</td>
-                    <td style="text-align: center">{{ $product['specification'].strtoupper($product['unit'])  }}</td>
+                    <td style="text-align: center">{{ strtoupper($product['unit']) }}</td>
+                    <td style="text-align: center">{{ $product['specification'] }}</td>
                     <td style="text-align: center">{{ number_format($product['quantity'], 0, ',', '.')}}</td>
                     <td style="text-align: center">{{ number_format($product['price'], 0, ',', '.')}}</td>
                     <td style="text-align: center">{{ number_format($product['price']*$product['quantity'], 0, ',', '.')}}</td>
@@ -208,8 +210,11 @@
             </tr>
         </table>
         <br>
-        <div>Tổng giá trị hoá đơn số tiền: <strong>{{ number_format($price, 0, ',', '.')}}</strong> ({{numberInVietnameseCurrency($price)}}./.)</div>
-        <div>* Địa chỉ nhận hoá đơn điện tử: <strong>{{ $data->customer->contact['email'] }}</strong></div>
+        <div>Tổng thành tiền chưa thuế: {{ number_format($price, 0, ',', '.')}} đồng.</div>
+        <div>Tổng tiền thuế (thuế suất: {{ $data->customer->tax }}%): {{ number_format(($price*$data->customer->tax)/100, 0, ',', '.')}} đồng.</div>
+        <div>Tổng thành tiền đã thuế: {{ number_format($price+(($price*$data->customer->tax)/100), 0, ',', '.') }} đồng.</div>
+        {{-- <div>* Địa chỉ nhận hoá đơn điện tử: <strong>{{ $data->customer->contact['email'] }}</strong></div> --}}
+        <div>(Bằng chữ: {{numberInVietnameseCurrency($price+(($price*$data->customer->tax)/100)) }}./.)</div>
         <br>
 
         <div style="width:30%" class="header"></div>

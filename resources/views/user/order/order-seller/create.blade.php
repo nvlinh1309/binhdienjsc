@@ -8,7 +8,8 @@
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('order-seller.index') }}">Đơn mua (Nhập kho)</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('order-seller.index') }}">Đơn mua (Nhập kho)</a>
+                            </li>
                             <li class="breadcrumb-item active">Tạo đơn hàng</li>
                         </ol>
                     </div><!-- /.col -->
@@ -47,9 +48,8 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label for="to_deliver_code">Mã phiếu xuất kho<span class="text-danger">*</span></label>
-                                <input value="{{ old('to_deliver_code') }}" type="text"
-                                    name="to_deliver_code" class="form-control" id="to_deliver_code"
-                                    placeholder="Nhập mã phiếu xuất kho...">
+                                <input value="{{ old('to_deliver_code') }}" type="text" name="to_deliver_code"
+                                    class="form-control" id="to_deliver_code" placeholder="Nhập mã phiếu xuất kho...">
                             </div>
                         </div>
 
@@ -93,8 +93,8 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="to_deliver_info">Thông tin giao nhận</label>
-                                <input value="{{ old('to_deliver_info') }}" type="text" name="to_deliver_info" class="form-control"
-                                    id="to_deliver_info" placeholder="Nhập thông tin giao nhận...">
+                                <input value="{{ old('to_deliver_info') }}" type="text" name="to_deliver_info"
+                                    class="form-control" id="to_deliver_info" placeholder="Nhập thông tin giao nhận...">
                             </div>
                         </div>
 
@@ -102,8 +102,9 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="to_deliver_transport">Xe/Cont</label>
-                                <input value="{{ old('to_deliver_transport') }}" type="text" name="to_deliver_transport" class="form-control"
-                                    id="to_deliver_transport" placeholder="Nhập xe/cont...">
+                                <input value="{{ old('to_deliver_transport') }}" type="text"
+                                    name="to_deliver_transport" class="form-control" id="to_deliver_transport"
+                                    placeholder="Nhập xe/cont...">
                             </div>
                         </div>
 
@@ -113,9 +114,11 @@
                                 <select class="form-control select2" name="warehouse_keeper" id="warehouse_keeper"
                                     style="width: 100%;">
                                     @foreach ($users as $user)
+                                    @if ($user->roles[0]->name === 'warehouse_keeper')
                                         <option value="{{ $user->id }}"
                                             {{ $user->id == old('warehouse_keeper') ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                            {{ $user->name }}</option>
+                                            @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -127,9 +130,11 @@
                                 <select class="form-control select2" name="order_approver" id="order_approver"
                                     style="width: 100%;">
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ $user->id == old('order_approver') ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                        @if ($user->roles[0]->name === 'manager')
+                                            <option value="{{ $user->id }}"
+                                                {{ $user->id == old('order_approver') ? 'selected' : '' }}>
+                                                {{ $user->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -151,7 +156,7 @@
 
     <script>
         $(function() {
-            $("#add_product").click(function(){
+            $("#add_product").click(function() {
                 alert(1);
             })
             if ($("#quickForm").length > 0) {
