@@ -4,12 +4,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Bao bì</h1>
+                        <h1 class="m-0">Phiếu nhập kho</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            {{-- <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Sản phẩm</a></li> --}}
-                            <li class="breadcrumb-item active">Danh sách</li>
+                            <li class="breadcrumb-item"><a href="{{ route('packaging.index') }}">Danh sách bao bì</a></li>
+                            <li class="breadcrumb-item active">Danh sách phiếu nhập kho</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -35,12 +35,8 @@
             <div class="card-header">
                 <h3 class="card-title">
                     @can('product-create')
-                        <a href="{{ route('packaging.create') }}">
+                        <a href="{{ route('warehouse-receipt.create') }}">
                             <button class=" btn btn-sm btn-primary" title="Thêm mới"><i class="fas fa-plus"></i></button>
-                        </a>
-
-                        <a href="{{ route('warehouse-receipt.index') }}">
-                            <button class=" btn btn-sm btn-success" title="Nhập kho">Nhập kho bao bì</button>
                         </a>
                     @endcan
                     {{-- <a href="{{ route('packaging.index') }}">
@@ -59,23 +55,27 @@
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>Tên</th>
-                            <th>Số lượng</th>
-                            <th>Tồn kho</th>
+                            <th>Mã nhập kho</th>
                             <th>Ngày tạo</th>
-                            <th>Thao tác</th>
+                            <th>Trạng thái</th>
+                            <th>Chi tiết</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data as $key => $value)
                         <tr>
                             <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
-                            <td>{{ $value->name }}</td>
-                            <td>{{ $value->getDetail->sum('quantity') }}</td>
-                            <td>{{ $value->getDetail->sum('in_stock') }}</td>
+                            <td>{{ $value->lot }}</td>
                             <td>{{ $value->created_at }}</td>
                             <td>
-                                <a href="{{ route('packaging.show', $value->id) }}">Chi tiết</a>
+                                @if ($value->status == true)
+                                    <span class="badge badge-success">Đã nhập kho</span>
+                                @else
+                                    <span class="badge badge-danger">Chờ nhập kho</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('warehouse-receipt.show', $value->lot) }}">Xem</a>
                             </td>
                         </tr>
                         @endforeach

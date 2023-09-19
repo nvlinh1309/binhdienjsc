@@ -14,7 +14,7 @@ class PackagingStorage extends Model
     protected $table = 'packaging_storage';
 
     protected $fillable = [
-        'packaging_id', 'storage_id', 'quantity', 'lot', 'in_stock','contract_quantity','note'
+        'packaging_id', 'storage_id', 'quantity', 'lot', 'in_stock','contract_quantity','note', 'status'
     ];
 
 

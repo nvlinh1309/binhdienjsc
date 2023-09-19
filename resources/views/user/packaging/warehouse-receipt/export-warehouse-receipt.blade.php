@@ -85,6 +85,7 @@
     </div>
     <div class="title">
         PHIẾU NHẬP KHO BAO BÌ
+        <br> <small>Số: {{ $info->lot }}</small>
     </div>
 
     <div class="content">
@@ -99,17 +100,28 @@
                 <th style="">Số lượng (cái)<br>(Thực nhận)</th>
                 <th style="">Ghi chú</th>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>{{ $data->packaging->name }}</td>
-                <td style="text-align: center">{{ number_format($data->contract_quantity,0,',','.') }}</td>
-                <td style="text-align: center">{{ number_format($data->quantity,0,',','.') }}</td>
-                <td>{{ $data->note }}</td>
-            </tr>
+            @php
+                $sum_quantity = 0;
+                $sum_contract_quantity = 0;
+            @endphp
+            @foreach ($data as $key=>$value)
+                @php
+                    $sum_quantity += $value->quantity;
+                    $sum_contract_quantity += $value->contract_quantity;
+                @endphp
+                <tr>
+                    <td>{{ $key+1 }}</td>
+                    <td>{{ $value->packaging->name }}</td>
+                    <td style="text-align: center">{{ number_format($value->contract_quantity,0,',','.') }}</td>
+                    <td style="text-align: center">{{ number_format($value->quantity,0,',','.') }}</td>
+                    <td>{{ $value->note }}</td>
+                </tr>
+            @endforeach
+
             <tr>
                 <th colspan="2">Tổng:</th>
-                <th>{{ number_format($data->contract_quantity,0,',','.') }}</th>
-                <th>{{ number_format($data->quantity,0,',','.') }}</th>
+                <th>{{ number_format($sum_contract_quantity,0,',','.') }}</th>
+                <th>{{ number_format($sum_quantity,0,',','.') }}</th>
                 <th></th>
             </tr>
         </table>
@@ -118,7 +130,7 @@
         <div style="width:50%" class="header"></div>
 
         <div style="width:50%;" class="header">
-            Thốt Nốt, ngày 19 tháng 09 năm 2023
+            Thốt Nốt, ngày {{ date('d')}} tháng {{ date('m') }} năm {{ date('Y') }}
             <div style="font-weight:bold">Lập phiếu</div>
             <br>
             <br>

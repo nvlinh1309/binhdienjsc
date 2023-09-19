@@ -142,18 +142,18 @@ class PackagingController extends Controller
     }
 
 
-    public function exportPDF($id)
+    public function exportPDF($lot)
     {
 
 
         try {
-            $data = PackagingStorage::find($id);
-            if (!$data) {
+            $data = PackagingStorage::where($lot)->get();
+            if (count($data) == 0) {
                 return redirect()->route('packaging.index');
             }
-
+dd($data[0]);
             // return view('user.packaging.export-warehouse-receipt', compact('data'));
-            $pdf = PDF::loadView('user.packaging.export-warehouse-receipt', compact('data'));
+            $pdf = PDF::loadView('user.packaging.export-warehouse-receipt', compact('data', 'lot'));
             return $pdf->download('export-warehouse-receipt' . date('YmdHms') . '.pdf');
 
         } catch (\Exception $e) {
@@ -161,14 +161,9 @@ class PackagingController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+
+    public function wareHouseReceipt(Request $request) //Danh sach phieu nhap kho
     {
-        //
+        return "dfds";
     }
 }

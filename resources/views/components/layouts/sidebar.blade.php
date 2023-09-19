@@ -94,7 +94,7 @@
 
 
           <li class="nav-item">
-            <a href="{{ route('packaging.index') }}" class="nav-link {{ request()->is('packaging*') ? 'active' : '' }}">
+            <a href="{{ route('packaging.index') }}" class="nav-link {{ request()->is('packaging*') || request()->is('warehouse-receipt*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-solid fa-dolly"></i>
               {{-- <i class=""></i> --}}
               <p>

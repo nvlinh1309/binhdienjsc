@@ -14,6 +14,7 @@ use App\Http\Controllers\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\User\Order\OrderBuyerController;
 use App\Http\Controllers\User\Order\OrderSellerController;
 use App\Http\Controllers\User\Packaging\PackagingController;
+use App\Http\Controllers\User\Packaging\WareHouseReceiptController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,11 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('packaging', PackagingController::class);
+
+
+    Route::resource('warehouse-receipt', WareHouseReceiptController::class);
+    Route::get('warehouse-receipt/export/{lot}', [WareHouseReceiptController::class, 'exportPDF'])->name('warehouse-receipt.export');
+
     Route::get('packaging/to-receive-create/{packaging_id}', [PackagingController::class, 'getInput'])->name('packaging.get-input');
     Route::post('packaging/to-receive-store/{packaging_id}', [PackagingController::class, 'postInput'])->name('packaging.post-input');
     Route::get('packaging/export-warehouse-receipt/{packaging_storage_id}', [PackagingController::class, 'exportPDF'])->name('packaging.export-warehouse-receipt');

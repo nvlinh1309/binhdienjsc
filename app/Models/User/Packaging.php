@@ -19,6 +19,6 @@ class Packaging extends Model
 
     public function getDetail(): HasMany
     {
-        return $this->hasMany(PackagingStorage::class)->orderBy('id', 'desc');
+        return $this->hasMany(PackagingStorage::class)->orderBy('id', 'desc')->where('status', true);
     }
 }
