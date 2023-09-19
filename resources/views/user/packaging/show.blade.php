@@ -53,9 +53,9 @@
                     Chi tiết
                 </h3>
 
-                <div class="card-tools">
+                {{-- <div class="card-tools">
                     <a href="{{ route('packaging.get-input', $data->id) }}" class="btn btn-sm btn-primary">Nhập kho</a>
-                </div>
+                </div> --}}
             </div>
             <!-- /.card-header -->
 
