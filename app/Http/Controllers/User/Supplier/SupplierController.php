@@ -82,6 +82,7 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
+        // dd($request->all());
         $message = 'Đã có lỗi xảy ra. Vui lòng reload lại trang.';
         \DB::beginTransaction();
         try {

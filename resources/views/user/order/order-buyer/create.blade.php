@@ -46,10 +46,13 @@
                             <div class="form-group">
                                 <label for="code">Mã đặt hàng<span class="text-danger">*</span></label>
                                 <input value="{{ old('code') }}" type="text" name="code"
-                                    class="form-control {{ $errors->has('code')?"is-invalid":"" }}" id="code" placeholder="Nhập mã đặt hàng..." {{ $errors->has('code')?'aria-describedby="order_code-error" aria-invalid="true"':''}}>
-                                    @if ($errors->has('code'))
-                                        <span id="code-error" class="error invalid-feedback">{{ $errors->first('code') }}</span>
-                                    @endif
+                                    class="form-control {{ $errors->has('code') ? 'is-invalid' : '' }}" id="code"
+                                    placeholder="Nhập mã đặt hàng..."
+                                    {{ $errors->has('code') ? 'aria-describedby="order_code-error" aria-invalid="true"' : '' }}>
+                                @if ($errors->has('code'))
+                                    <span id="code-error"
+                                        class="error invalid-feedback">{{ $errors->first('code') }}</span>
+                                @endif
                             </div>
                         </div>
 
@@ -59,9 +62,11 @@
                                 <select class="form-control select2" name="order_approver" id="order_approver"
                                     style="width: 100%;">
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ $user->id == old('order_approver') ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                        @if ($user->roles[0]->name === 'manager')
+                                            <option value="{{ $user->id }}"
+                                                {{ $user->id == old('order_approver') ? 'selected' : '' }}>
+                                                {{ $user->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -73,9 +78,11 @@
                                 <select class="form-control select2" name="warehouse_keeper" id="warehouse_keeper"
                                     style="width: 100%;">
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}"
-                                            {{ $user->id == old('warehouse_keeper') ? 'selected' : '' }}>
-                                            {{ $user->name }} ({{ $user->roles[0]->display_name }})</option>
+                                        @if ($user->roles[0]->name === 'warehouse_keeper')
+                                            <option value="{{ $user->id }}"
+                                                {{ $user->id == old('warehouse_keeper') ? 'selected' : '' }}>
+                                                {{ $user->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -97,7 +104,8 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="estimate_delivery_time">Thời gian dự kiến giao hàng<span class="text-danger">*</span></label>
+                                <label for="estimate_delivery_time">Thời gian dự kiến giao hàng<span
+                                        class="text-danger">*</span></label>
                                 <input value="{{ old('estimate_delivery_time') }}" type="text"
                                     name="estimate_delivery_time" class="form-control" id="order_contract_no"
                                     placeholder="Nhập thời gian dự kiến giao hàng...">
@@ -117,7 +125,8 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="order_date_manufacture">Ngày đặt hàng<span class="text-danger">*</span></label>
+                                <label for="order_date_manufacture">Ngày đặt hàng<span
+                                        class="text-danger">*</span></label>
                                 <input value="{{ old('receipt_date', now()->format('d-m-Y')) }}" type="text"
                                     class="form-control datepicker" name="receipt_date" id="receipt_date"
                                     data-provide="datepicker" placeholder="dd-mm-yyyy">
@@ -139,8 +148,9 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="buyer_tax_code">Mã số thuế<span class="text-danger">*</span></label>
-                                    <input value="{{ $companyInfo['tax_code'] }}" type="text" name="buyer_tax_code"
-                                        class="form-control" id="buyer_tax_code" placeholder="Nhập mã số thuế...">
+                                    <input value="{{ $companyInfo['tax_code'] }}" type="text"
+                                        name="buyer_tax_code" class="form-control" id="buyer_tax_code"
+                                        placeholder="Nhập mã số thuế...">
                                 </div>
                             </div>
                         </div>
@@ -231,7 +241,7 @@
 
     <script>
         $(function() {
-            $("#add_product").click(function(){
+            $("#add_product").click(function() {
                 alert(1);
             })
             if ($("#quickForm").length > 0) {

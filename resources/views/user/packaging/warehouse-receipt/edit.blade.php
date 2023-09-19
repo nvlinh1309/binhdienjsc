@@ -9,7 +9,8 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('warehouse-receipt.index') }}">Danh sách phiếu nhập kho</a></li>
-                            <li class="breadcrumb-item active">Nhập kho</li>
+                            <li class="breadcrumb-item"><a href="{{ route('warehouse-receipt.show', $info->lot) }}">{{ $info->lot }}</a></li>
+                            <li class="breadcrumb-item active">Cập nhật</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -34,11 +35,12 @@
         <!-- jquery validation -->
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Nhập kho</h3>
+                <h3 class="card-title">{{ $info->lot }}</h3>
             </div>
 
-            <form id="quickForm" action="{{ route('warehouse-receipt.store') }}" method="POST">
+            <form id="quickForm" action="{{ route('warehouse-receipt.update', $info->lot) }}" method="POST">
                 @csrf
+                @method('PATCH')
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-12">
@@ -47,7 +49,7 @@
                                 <select class="form-control select2" name="storage_id" style="width: 100%;">
                                     @foreach ($wareHouses as $wareHouse)
                                         <option value="{{ $wareHouse->id }}"
-                                            {{ $wareHouse->id == old('storage_id') ? 'selected' : '' }}>
+                                            {{ $wareHouse->id == $info->storage->id ? 'selected' : '' }}>
                                             {{ $wareHouse->name }}</option>
                                     @endforeach
                                 </select>
@@ -111,20 +113,27 @@
                                     </tr>
                                 </thead>
                                 <tbody id="packagings">
-                                    <tr>
-                                        <td colspan="5"><i class="text-danger">Vui lòng thêm ít nhất 1 bản ghi</i></td>
-                                    </tr>
+
+                                    @foreach ($data as $key=>$value)
+                                        <tr class="delete_{{$key}}">
+                                            <td>{{ $value['packaging_name'] }}</td>
+                                            <td>{{ $value['contract_quantity'] }}</td>
+                                            <td>{{ $value['quantity'] }}</td>
+                                            <td>{{ $value['note'] }}</td>
+                                            <td><label class="btn btn-sm btn-danger delete" data-id="{{ $key }}">Xoá</label></td></td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
 
                         </div>
-                        <input type="hidden" name="packaging" class="form-control" id="packaging">
+                        <input type="hidden" name="packaging" class="form-control" id="packaging" value="{{ json_encode($data)}}">
                     </div>
 
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary btn-submit" disabled>Xác nhận</button>
+                    <button type="submit" class="btn btn-primary btn-submit">Lưu lại</button>
                 </div>
             </form>
         </div>

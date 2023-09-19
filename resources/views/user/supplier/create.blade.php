@@ -57,7 +57,7 @@
                             <div class="form-group">
                                 <label for="contract_signing_date">Ngày ký hợp đồng<span
                                         class="text-danger">*</span></label>
-                                <input value="{{ old('contract_signing_date', now()->format('d/m/Y')) }}" type="text"
+                                <input value="{{ old('contract_signing_date') }}" type="text"
                                     data-provide="datepicker"
                                     class="form-control datepicker {{ $errors->has('contract_signing_date') ? 'is-invalid' : '' }}"
                                     name="contract_signing_date" id="contract_signing_date" placeholder="">

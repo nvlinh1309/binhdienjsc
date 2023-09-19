@@ -107,7 +107,7 @@ class UsersController extends Controller
         } catch (\Exception $e) {
             \DB::rollback();
             // return back()->withErrors(['msg' => $message])->withInput();
-            return redirect()->back()->with(['error' => $message])->withInput();
+            return redirect()->route('users.index')->with(['error' => $e->getMessage()])->withInput();
         }
     }
 

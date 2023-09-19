@@ -40,7 +40,7 @@
             <h5><i class="fas fa-info"></i> Thông tin</h5>
             <div><b>Mã nhập:</b> {{ $info->lot }}</div>
             <div><b>Kho:</b> {{ $info->storage->name }}</div>
-            <div><b>trang thái:</b>
+            <div><b>Trạng thái:</b>
                 @if ($info->status == true)
                     <span class="badge badge-success">Đã nhập kho</span>
                 @else
@@ -63,13 +63,24 @@
                 </h3>
 
                 <div class="card-tools">
-                    @if ($info->status == false)
-                    <a href="{{ route('warehouse-receipt.edit', $info->lot) }}" class="btn btn-sm btn-primary">Cập
-                        nhật</a>
-                    @endif
-                    <a href="{{ route('warehouse-receipt.export', $info->lot) }}"
-                        onclick="return confirm('Việc xác nhận xuất phiếu nhập kho, đồng nghĩa số lượng sẽ được cộng vào kho và không được chỉnh sửa. Bạn có chắc chắn tiếp tục xuất phiếu?')"
-                        class="btn btn-sm btn-success">Xuất phiếu @if ($info->status == false)và nhập kho @endif</a>
+                    <form method="POST" action="{{ route('warehouse-receipt.destroy', $info->lot) }}">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        @if ($info->status == false)
+                            <a href="{{ route('warehouse-receipt.edit', $info->lot) }}"
+                                class="btn btn-sm btn-primary">Cập
+                                nhật</a>
+
+                            <a href="#" class="btn btn-sm btn-danger delete" data-id="{{ $info->lot }}">Huỷ</a>
+                        @endif
+                        <a href="{{ route('warehouse-receipt.export', $info->lot) }}"
+                            onclick="return confirm('Việc xác nhận xuất phiếu nhập kho, đồng nghĩa số lượng sẽ được cộng vào kho và không được chỉnh sửa. Bạn có chắc chắn tiếp tục xuất phiếu?')"
+                            class="btn btn-sm btn-success">Xuất phiếu
+                            @if ($info->status == false)
+                                và nhập kho
+                            @endif
+                        </a>
+                    </form>
                 </div>
             </div>
             <!-- /.card-header -->
@@ -103,5 +114,15 @@
             <!-- /.card-body -->
         </div>
     </div>
-    <script></script>
+    <script>
+        $(document).ready(function() {
+            $('.delete').on('click', function(e) {
+                var name = $(this).attr('data-id');
+                e.preventDefault()
+                if (confirm('Bạn có chắc chắn muốn huỷ ' + name + '?')) {
+                    $(e.target).closest('form').submit()
+                }
+            });
+        });
+    </script>
 </x-layouts.main>

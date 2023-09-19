@@ -72,7 +72,7 @@
                             <th>Mã Nhập kho</th>
                             <th>Nhà cung cấp</th>
                             <th>Kho hàng</th>
-                            <th>Ngày tạo đơn</th>
+                            <th>Ngày đặt hàng</th>
                             <th>Trạng thái</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
@@ -89,7 +89,7 @@
                                 <td>{{ $value->supplier->name }}</td>
                                 <td>{{ $value->storage->name }}</td>
                                 <td>{{ $order_info->receipt_date }}</td>
-                                <td><i>{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
+                                <td><i class="badge {{ $statusColor[$value->status] }}">{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
                                     <a href="{{ route('order-buyer.show', $value->id) }}"
                                         class="btn btn-xs btn-success">Chi tiết</a>

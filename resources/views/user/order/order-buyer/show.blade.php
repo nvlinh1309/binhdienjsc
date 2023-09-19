@@ -64,31 +64,53 @@
             <div class="row">
                 <div class="col-md-12">
                     <hr>
-                    <h5><i class="fas fa-info"></i> Thông tin</h5>
+                    <h5><i class="fas fa-info"></i> Thông tin </h5>
                 </div>
-                <div class="col-md-6">
-                    <b>Mã đơn hàng:</b> {{ $data->code }}
+                <div class="col-md-4">
+                    <b>Mã đặt hàng:</b> {{ $data->code }}
                 </div>
-                <div class="col-md-6">
-                    <b>Người tạo đơn:</b> {{ $data->createdBy->name }}
+                <div class="col-md-4">
+                    <b>Ngày đặt hàng:</b> {{ $order_info->receipt_date }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <b>Trạng thái:</b> <i class="badge {{ $statusColor[$data->status] }}">{{ $data->status ? $statusList[$data->status] : '' }}</i>
+                </div>
+                <div class="col-md-4">
+                    <b>Người đặt hàng:</b> {{ $data->createdBy->name }}
+                </div>
+                <div class="col-md-4">
+                    <b>Người duyệt đơn đặt hàng: </b> {{ $data->user_order_approver->name }}
+                </div>
+                <div class="col-md-4">
+                    <b>Thủ kho: </b> {{ $data->warehouseKeeper->name }}
+                </div>
+                <div class="col-md-4">
                     <b>Nhà cung cấp:</b> <a target="_blank"
                         href="{{ route('supplier.show', $data->supplier->id) }}">{{ $data->supplier->name }}</a>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <b>Kho:</b> <a target="_blank"
                         href="{{ route('store.show', $data->storage->id) }}">{{ $data->storage->name }}</a>
                 </div>
-                <div class="col-md-6">
-                    <b>Ngày tạo đơn:</b> {{ $order_info->receipt_date }}
+                <div class="col-md-4">
+                    <b>Thời gian dự kiến giao hàng:</b> {{ $order_info->estimate_delivery_time }}
                 </div>
-                <div class="col-md-6">
-                    <b>Người duyệt đơn đặt hàng: </b> {{ $data->user_order_approver->name }}
+                <div class="col-md-12">
+                    <hr>
+                    <h5><i class="fas fa-info"></i> Thông tin đơn vị mua hàng</h5>
                 </div>
-                <div class="col-md-6">
-                    <b>Trạng thái: </b> <i>{{ $data->status ? $statusList[$data->status] : '' }}</i>
+
+                <div class="col-md-12">
+                    <b>Tên công ty:</b> {{ $order_info->buyer_name }}
                 </div>
+                <div class="col-md-12">
+                    <b>Địa chỉ:</b> {{ $order_info->buyer_address }}
+                </div>
+                <div class="col-md-12">
+                    <b>Mã số thuế:</b> {{ $order_info->buyer_tax_code }}
+                </div>
+
+
                 <div class="col-md-12 text-right">
                     @if ($data->status < 3 && $data->assignee === auth()->user()->id)
                         <form method="POST" action="{{ route('order-buyer.destroy', $data->id) }}">
@@ -99,12 +121,13 @@
                     @endif
 
                 </div>
-                @if ($data->status < 3 && $data->assignee === auth()->user()->id)
+
+                {{-- San Pham --}}
                 <div class="col-md-12">
                     <hr>
                     <h5><i class="fas fa-cube"></i> Sản phẩm</h5>
                     {{-- Thêm sản phẩm --}}
-                    @if ($data->status < 3)
+                    @if ($data->status < 3 && $data->assignee === auth()->user()->id)
                         <form id="addProduct" method="POST"
                             action="{{ route('order-buyer.add-product', $data->id) }}">
                             @csrf
@@ -122,7 +145,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="quantity">Số lượng<span class="text-danger">*</span></label>
+                                        <label for="quantity">Số lượng (Kg)<span class="text-danger">*</span></label>
                                         <input value="" type="text" name="quantity" class="form-control"
                                             id="quantity" placeholder="Nhập số lượng...">
                                     </div>
@@ -163,7 +186,7 @@
                         <thead>
                             <tr>
                                 <th>Tên SP</th>
-                                <th>Số lượng</th>
+                                <th>Số lượng (Kg)</th>
                                 <th>NSX-HSD</th>
                                 <th>Giá đặt hàng</th>
                                 <th>Ghi chú</th>
@@ -196,7 +219,6 @@
                         </tbody>
                     </table>
                 </div>
-                @endif
 
                 @if ($data->status == 4 && $data->assignee === auth()->user()->id)
                     <div class="col-md-12">
@@ -205,13 +227,13 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <hr>
-                                    <h5><i class="fas fa-info"></i> Thông tin nhập kho</h5>
+                                    <h5><i class="nav-icon fas fa-warehouse"></i> Thông tin nhập kho</h5>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="code">Số nhập kho<span class="text-danger">*</span></label>
+                                        <label for="code">Mã phiếu nhập kho<span class="text-danger">*</span></label>
                                         <input value="{{ $warehouse_recript->code ?? '' }}" type="text" name="code" class="form-control"
-                                            id="quacodentity" placeholder="Nhập Số nhập kho...">
+                                            id="quacodentity" placeholder="Mã phiếu nhập kho...">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -249,7 +271,7 @@
                 @endif
 
 
-                @if ($data->status > 4)
+                @if ($data->status > 4 && $data->assignee === auth()->user()->id)
                     <div class="col-md-12">
                         <hr>
                         <h5><i class="fas fa-info"></i> Thông tin nhập kho</h5>

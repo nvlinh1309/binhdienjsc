@@ -23,13 +23,14 @@ class OrderBuyerController extends Controller
     {
         //Get status
         $statusList = config('constants.status_receipt_list');
+        $statusColor = config('constants.status_receipt_color');
         $data = OrderBuyer::with('supplier', 'storage')
             ->where('status','<>',0)
             ->where('assignee',auth()->user()->id)
             ->where('status','<>',7)
             ->orderBy('id', 'DESC');
         $data = $data->paginate(5);
-        return view('user.order.order-buyer.index', compact('data', 'statusList'));
+        return view('user.order.order-buyer.index', compact('data', 'statusList', 'statusColor'));
     }
 
     public function orderCancel(Request $request)
@@ -93,6 +94,7 @@ class OrderBuyerController extends Controller
             }
 
             $statusList = config('constants.status_receipt_list');
+            $statusColor = config('constants.status_receipt_color');
             $order_info = json_decode($data->order_info);
             $warehouse_recript = json_decode($data->warehouse_recript);
             $product_info = ($data->products===null)?[]:$data->products;
@@ -101,7 +103,7 @@ class OrderBuyerController extends Controller
             $products = Product::whereNotIn('id', $product_ids)->get();
 
             DB::commit();
-            return view('user.order.order-buyer.show', compact('data', 'statusList', 'order_info', 'products', 'product_info', 'warehouse_recript'));
+            return view('user.order.order-buyer.show', compact('data', 'statusList', 'order_info', 'products', 'product_info', 'warehouse_recript','statusColor'));
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with(['error' => $e->getMessage()])->withInput();
