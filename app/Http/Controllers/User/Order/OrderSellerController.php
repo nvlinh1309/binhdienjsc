@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User\Order;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\user\OrderSeller\OrderSellerStoreRequest;
+use App\Http\Requests\User\OrderSeller\OrderSellerStoreRequest;
 use App\Models\User;
 use App\Models\User\Customer;
 use App\Models\User\OrderSeller;
