@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Order\BuyerController;
 use App\Http\Controllers\User\Auth\LoginController;
 use App\Http\Controllers\User\Auth\UserController;
 use App\Http\Controllers\User\DashboardController;
@@ -55,10 +57,32 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('order', OrderController::class);
 
-    Route::resource('order-buyer', OrderBuyerController::class);
+    Route::resource('order-buyer', BuyerController::class);
+    Route::name('order-buyer.')->prefix('order-buyer')->group(function () {
+        Route::get('step1/{id}', [BuyerController::class, 'create_step1'])->name('step1');
+        Route::post('step1/{id}', [BuyerController::class, 'store_step1'])->name('update.step1');
+        Route::get('step2/{id}', [BuyerController::class, 'create_step2'])->name('step2');
+        Route::get('confirm-step2/{id}', [BuyerController::class, 'store_step2'])->name('update.step2');
+        Route::get('step3/{id}', [BuyerController::class, 'create_step3'])->name('step3');
+        Route::get('step4/{id}', [BuyerController::class, 'create_step4'])->name('step4');
+
+        Route::get('step6/{id}', [BuyerController::class, 'create_step6'])->name('step6');
+        Route::post('step6/{id}', [BuyerController::class, 'store_step6'])->name('update.step6');
+
+        Route::get('approve/{id}', [BuyerController::class, 'approve'])->name('approve');
+        Route::get('reject/{id}', [BuyerController::class, 'reject'])->name('reject');
+
+        Route::post('add-product/{id}', [BuyerController::class, 'add_product'])->name('add-product');
+        Route::post('order-upload/{id}', [BuyerController::class, 'order_upload'])->name('order-upload');
+        Route::get('purchaseOrderExport/{id}', [BuyerController::class, 'purchaseOrderExport'])->name('export-order');
+
+    });
+
+
+
     Route::get('order-buyer/export/{id}', [OrderBuyerController::class, 'purchaseOrderExport'])->name('order-buyer.purchase-order-export');
     Route::get('order-buyer/warehouse_recript/export/{id}', [OrderBuyerController::class, 'wareHouseRecript'])->name('order-buyer.warehouse-recript-export');
-    Route::post('order-buyer/add-product/{id}', [OrderBuyerController::class, 'addProduct'])->name('order-buyer.add-product');
+    // Route::post('order-buyer/add-product/{id}', [OrderBuyerController::class, 'addProduct'])->name('order-buyer.add-product');
     Route::get('order-buyer/delete-product/{product_id}/{order_id}', [OrderBuyerController::class, 'deleteProduct'])->name('order-buyer.delete-product');
     Route::get('order-buyer/update-status/{order_id}/{status_id}', [OrderBuyerController::class, 'updateStatus'])->name('order-buyer.update-status');
     Route::post('order-buyer/add-warehouse_recript/{id}', [OrderBuyerController::class, 'addWareHouseRecript'])->name('order-buyer.add-warehouse_recript');

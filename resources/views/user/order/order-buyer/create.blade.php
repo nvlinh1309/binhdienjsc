@@ -9,7 +9,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('stock-in.index') }}">Đơn mua (Nhập kho)</a></li>
-                            <li class="breadcrumb-item active">Tạo đơn hàng</li>
+                            <li class="breadcrumb-item active">Khởi tạo đơn hàng</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -42,6 +42,7 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="code">Mã đặt hàng<span class="text-danger">*</span></label>
@@ -58,13 +59,13 @@
 
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label>Người duyệt đơn đặt hàng<span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="order_approver" id="order_approver"
+                                <label for="assignee_id">Người duyệt đơn đặt hàng<span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="assignee_id" id="assignee_id"
                                     style="width: 100%;">
                                     @foreach ($users as $user)
                                         @if ($user->roles[0]->name === 'manager')
                                             <option value="{{ $user->id }}"
-                                                {{ $user->id == old('order_approver') ? 'selected' : '' }}>
+                                                {{ $user->id == old('assignee_id') ? 'selected' : '' }}>
                                                 {{ $user->name }}</option>
                                         @endif
                                     @endforeach

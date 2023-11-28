@@ -59,6 +59,7 @@
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
+                            <th>Mã</th>
                             <th>Tên</th>
                             <th>Số lượng</th>
                             <th>Tồn kho</th>
@@ -70,6 +71,7 @@
                         @foreach ($data as $key => $value)
                         <tr>
                             <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
+                            <td>BB{{ sprintf("%03d",$value->id) }}</td>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->getDetail->sum('quantity') }}</td>
                             <td>{{ $value->getDetail->sum('in_stock') }}</td>

@@ -37,6 +37,7 @@
     <div class="col-md-12">
         <div class="callout callout-info">
             <h5><i class="fas fa-info"></i> Thông tin</h5>
+            <div><b>Mã:</b> BB{{ sprintf("%03d",$data->id) }}</div>
             <div><b>Tên bao bì:</b> {{ $data->name }}</div>
             <div><b>Tồn kho:</b> {{ $data->getDetail->sum('in_stock') }}</div>
             <hr>
@@ -65,6 +66,7 @@
                     <thead>
                         <tr>
                             <th>Lô nhập</th>
+                            <th>Ngày nhập</th>
                             <th>Số lượng</th>
                             <th>Còn lại</th>
                             <th>Xuất kho</th>
@@ -75,6 +77,7 @@
                             @foreach ($data->getDetail as $key=>$value)
                                 <tr>
                                     <td>{{ $value->lot }}</td>
+                                    <td>{{ $value->created_at }}</td>
                                     <td>{{ $value->quantity }}</td>
                                     <td>{{ $value->in_stock }}</td>
                                     <td><a href="#">Xem</a></td>

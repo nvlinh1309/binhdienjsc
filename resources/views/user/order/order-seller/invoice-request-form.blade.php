@@ -161,6 +161,9 @@
     <div style="padding: 20px;">
         - Căn cứ theo kế hoạch bán hàng của Tổ Kinh doanh Gạo và nhu cầu mua hàng của khách hàng.
     </div>
+    <div style="padding: 20px;">
+        - Căn cứ theo kế hoạch bán hàng của Tổ Kinh doanh Gạo và nhu cầu mua hàng của khách hàng.
+    </div>
 
     <div class="content">
         <div>Tổ Kinh doanh Gạo - Công ty CP Bình Điền đề nghị Phòng Tài chính – Kế toán xuất hóa đơn cho đơn hàng với thông tin như sau:</div>

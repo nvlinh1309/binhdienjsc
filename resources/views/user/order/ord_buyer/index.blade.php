@@ -8,8 +8,7 @@
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            {{-- <li class="breadcrumb-item"><a href="{{ route('brand.index') }}">Thương hiệu</a></li> --}}
-                            <li class="breadcrumb-item active">Danh sách đơn mua (Nhập kho)</li>
+                            <li class="breadcrumb-item active">Danh sách</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -37,42 +36,37 @@
                     <a href="{{ route('order-buyer.create') }}">
                         <button class=" btn btn-sm btn-primary" title="Khởi tạo đơn hàng">Khởi tạo đơn hàng</button>
                     </a>
-                    {{-- <a href="{{ route('order-buyer.cancel') }}">
-                        <button class=" btn btn-sm btn-secondary">Đơn hàng đã huỷ</button>
-                    </a> --}}
-
-
-
-                    {{-- <a href="{{ route('stock-in.list.export') }}">
-                    <button class=" btn btn-sm btn-success" title="Xuất file"><i class="fas fa-download"></i></button>
-                    </a> --}}
+                   <select id="status" style= "min-width: 300px;
+                   padding: 2px;
+                   position: absolute;
+                   margin-left: 10px;
+                   border: solid 1px #0004;
+                   border-radius: 5px;">
+                        <option value="">Tất cả trạng thái</option>
+                       @foreach ($statusList as $index=>$item)
+                        <option value="{{$index}}" {{ app('request')->input('status') ? (app('request')->input('status') == $index ? 'selected' : ''):""}}>{{$item}}</option>
+                       @endforeach
+                   </select>
                 </h3>
 
-                {{-- <div class="card-tools">
-                    <ul class="nav nav-pills ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                        </li>
-                    </ul>
-                </div> --}}
-
                 <div class="card-tools">
-                    {{ $data->links('vendor.pagination.default') }}
+                    <a href="" class="btn btn-sm btn-outline-secondary">Đơn hàng đã huỷ</a>
                 </div>
+
+
             </div>
             <!-- /.card-header -->
             <div class="card-body p-0">
+                <div class="card-tools">
+                    {{ $data->links('vendor.pagination.default') }}
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
-                            <th>Mã Nhập kho</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Kho hàng</th>
-                            <th>Ngày đặt hàng</th>
+                            <th>Mã ĐH</th>
+                            <th>NCC</th>
+                            <th>Ngày tạo đơn</th>
                             <th>Trạng thái</th>
                             <th style="width: 100px">Thao tác</th>
                         </tr>
@@ -80,15 +74,11 @@
                     <tbody>
                         <?php $num = 1; ?>
                         @foreach ($data as $key => $value)
-                            @php
-                                $order_info = json_decode($value->order_info);
-                            @endphp
                             <tr>
                                 <td>{{ ($data->currentpage() - 1) * $data->perpage() + $key + 1 }}</td>
                                 <td>{{ $value->code }}</td>
                                 <td>{{ $value->supplier->name }}</td>
-                                <td>{{ $value->storage->name }}</td>
-                                <td>{{ $order_info->receipt_date }}</td>
+                                <td>{{ $value->created_at }}</td>
                                 <td><i class="badge {{ $statusColor[$value->status] }}">{{ $value->status ? $statusList[$value->status] : '' }}</i></td>
                                 <td>
                                     <a href="{{ route('order-buyer.show', $value->id) }}"
@@ -104,16 +94,9 @@
             <!-- /.card-body -->
         </div>
     </div>
-
     <script>
-        $(document).ready(function() {
-            $('.delete').on('click', function(e) {
-                var order_code = $(this).attr('data-id');
-                e.preventDefault()
-                if (confirm('Bạn có chắc chắn muốn xoá đơn hàng ' + order_code + '?')) {
-                    $(e.target).closest('form').submit()
-                }
-            });
-        });
+        $("#status").on('change', function(){
+            window.location.href = "{{ route('order-buyer.index')}}?status="+$(this).val();
+        })
     </script>
 </x-layouts.main>
