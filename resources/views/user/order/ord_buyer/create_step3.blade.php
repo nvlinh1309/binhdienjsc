@@ -69,8 +69,20 @@
                     </div>
                     <div class="col-md-6">
                         <hr>
-                        <div><b>File ĐĐH:</b> <i><a target="_blank" href="{{ $order->order_file?asset('uploads/'.$order->order_file):'Chưa có dữ liệu' }}">Xem</a></i></div>
-                        <div><b>File PNK:</b> <i>{{ $order->order_file ?? 'Chưa có dữ liệu' }}</i></div>
+                        <div><b>File ĐĐH:</b> <i>
+                            @if ($order->order_file)
+                            <a target="_blank" href="{{ asset('uploads/'.$order->order_file) }}">{{$order->order_file}}</a>
+                            @else
+                                Chưa có dữ liệu...
+                            @endif
+                            </i></div>
+                        <div><b>File PNK:</b> <i>
+                            @if ($order->order_file)
+                            <a target="_blank" href="{{ asset('uploads/'.$order->order_file) }}">{{$order->order_file}}</a>
+                            @else
+                                Chưa có dữ liệu...
+                            @endif
+                        </i></div>
                     </div>
                     <div class="col-md-12">
                         <hr>
@@ -135,7 +147,7 @@
                         onclick="return confirm_approved()">Duyệt</a>
                 @endif
 
-                @if ($order->created_by == auth()->user()->id && $order->status == 5)
+                @if ($order->created_by == auth()->user()->id && $order->status == 5 && $order->order_file == null)
                     <form id="quickForm" action="{{ route('order-buyer.order-upload', $order->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -153,7 +165,7 @@
                     </form>
                 @endif
 
-                @if ($order->created_by == auth()->user()->id && $order->status == 6)
+                @if ($order->created_by == auth()->user()->id && $order->order_file != null)
                     <a href="{{ route('order-buyer.step6', $order->id) }}" class="btn btn-primary">Tạo phiếu nhập kho</a>
                 @endif
 

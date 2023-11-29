@@ -38,43 +38,39 @@
                 <h3 class="card-title">ĐĐH: {{ $order->code }}</h3>
             </div>
 
-            <form id="quickForm" action="{{ route('order-buyer.store') }}" method="POST">
+            <form id="quickForm" action="{{ route('order-buyer.update.step6', $order->id) }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <div class="row">
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                <label for="spn_number">SPN<span class="text-danger">*</span></label>
-                                <input value="{{ old('spn_number') }}" type="text" name="spn_number"
-                                    class="form-control {{ $errors->has('spn_number') ? 'is-invalid' : '' }}" id="spn_number"
-                                    placeholder="Nhập SPN..."
-                                    {{ $errors->has('spn_number') ? 'aria-describedby="order_code-error" aria-invalid="true"' : '' }}>
-                                @if ($errors->has('spn_number'))
-                                    <span id="code-error"
-                                        class="error invalid-feedback">{{ $errors->first('spn_number') }}</span>
-                                @endif
+                                <label for="spn_number">SPN: <span class="text-danger">*</span></label>
+                                <input value="" type="text" name="spn_number" class="form-control"
+                                    id="spn_number" placeholder="Nhập SPN...">
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                <label for="spn_number">Số phiếu<span class="text-danger">*</span></label>
-                                <input value="{{ old('code') }}" type="text" name="code"
-                                    class="form-control {{ $errors->has('code') ? 'is-invalid' : '' }}" id="code"
-                                    placeholder="Nhập số phiếu nhập kho..."
-                                    {{ $errors->has('code') ? 'aria-describedby="order_code-error" aria-invalid="true"' : '' }}>
-                                @if ($errors->has('code'))
-                                    <span id="code-error"
-                                        class="error invalid-feedback">{{ $errors->first('code') }}</span>
-                                @endif
+                                <label for="code">Mã nhập kho: <span class="text-danger">*</span></label>
+                                <input value="" type="text" name="code" class="form-control" id="code"
+                                    placeholder="Mã nhập kho...">
                             </div>
                         </div>
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                <label for="warehouse_staff_id">Thủ kho<span
-                                        class="text-danger">*</span></label>
+                                <label for="input_date">Ngày nhập kho: <span class="text-danger">*</span></label>
+                                <input value="" type="date" name="input_date" class="form-control"
+                                    id="input_date" placeholder="Ngày nhập kho...">
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label for="warehouse_staff_id">Chọn thủ kho: <span class="text-danger">*</span></label>
                                 <select class="form-control select2" name="warehouse_staff_id" id="warehouse_staff_id"
                                     style="width: 100%;">
                                     @foreach ($warehouse_keeper as $user)
@@ -85,21 +81,71 @@
                                 </select>
                             </div>
                         </div>
-                        {{-- <div class="col-sm-6">
+
+                        <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="estimated_delivery_time">Thời gian dự kiến giao hàng<span
-                                        class="text-danger">*</span></label>
-                                <input value="{{ old('estimated_delivery_time') }}" type="text"
-                                    name="estimated_delivery_time" class="form-control" id="estimated_delivery_time"
-                                    placeholder="Nhập thời gian dự kiến giao hàng...">
+                                <label for="content">Thông tin giao nhận:</label>
+                                <input value="" type="text" name="content" class="form-control" id="content"
+                                    placeholder="Thông tin giao nhận...">
                             </div>
-                        </div> --}}
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="cont">Xe/Cont:</label>
+                                <input value="" type="text" name="cont" class="form-control" id="cont"
+                                    placeholder="Ngày Xe/Cont...">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                            <h5><i class="nav-icon fas fa-archive"></i>Sản phẩm</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Tên sản phẩm hàng hoá</th>
+                                        <th>Quy cách đóng gói/kg</th>
+                                        <th>Đơn vị tính</th>
+                                        <th>Khối lượng (kg)</th>
+                                        <th>Ngày sản xuất <span class="text-danger">*</span></th>
+                                        <th>Hạn sử dụng <span class="text-danger">*</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($order->products as $item)
+                                        <tr>
+                                            <td scope="row"> {{ $item->product->name }}</td>
+                                            <td>{{ $item->product->specification }}</td>
+                                            <td>{{ $item->product->unit }}</td>
+                                            <td>{{ $item->product_quantity }}</td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input value="" type="date"
+                                                        name="product_exp_{{ $item->id }}" class="form-control"
+                                                        id="product_exp_{{ $item->id }}">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input value="" type="date"
+                                                        name="product_mfg_{{ $item->id }}" class="form-control"
+                                                        id="product_mfg_{{ $item->id }}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+                            </table>
+
+                        </div>
 
                     </div>
 
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
+                    <a href="{{ route('order-buyer.step3', $order->id) }}" class="btn btn-secondary">Quay lại</a>
                     <button type="submit" class="btn btn-primary">Lưu và tiếp tục</button>
                 </div>
 
@@ -111,67 +157,68 @@
 
     <script>
         $(function() {
-            if ($("#quickForm").length > 0) {
-                $('#quickForm').validate({
-                    rules: {
-                        code: {
-                            required: true,
-                        },
-                        approved_by: {
-                            required: true
-                        },
-                        supplier_id: {
-                            required: true
-                        },
-                        estimated_delivery_time: {
-                            required: true
-                        },
-                        company_name: {
-                            required: true
-                        },
-                        company_address: {
-                            required: true
-                        },
-                        company_tax: {
-                            required: true
+                    if ($("#quickForm").length > 0) {
+                        $('#quickForm').validate({
+                                rules: {
+                                    code: {
+                                        required: true,
+                                    },
+                                    spn_number: {
+                                        required: true
+                                    },
+                                    input_date: {
+                                        required: true
+                                    },
+                                    warehouse_staff_id: {
+                                        required: true
+                                    },
+                                    product_exp: {
+                                        required: true
+                                    },
+                                    @foreach ($order->products as $item)
+                                        "product_mfg_{{ $item->id }}": {
+                                            required: true,
+                                        },
+                                        "product_exp_{{ $item->id }}": {
+                                            required: true,
+                                        },
+                                    @endforeach
+                                },
+                                messages: {
+                                    code: {
+                                        required: "Vui lòng nhập mã nhập kho",
+                                    },
+                                    spn_number: {
+                                        required: "Vui lòng nhập SPN"
+                                    },
+                                    input_date: {
+                                        required: "Vui lòng chọn ngày nhập kho hợp lệ"
+                                    },
+                                    warehouse_staff_id: {
+                                        required: "Vui lòng chọn thủ kho"
+                                    },
+                                    @foreach ($order->products as $item)
+                                            "product_mfg_{{ $item->id }}": {
+                                                required: "Vui lòng chọn ngày sản xuất hợp lệ",
+                                            },
+                                            "product_exp_{{ $item->id }}": {
+                                                required: "Vui lòng chọn hạn sử dụng hợp lệ",
+                                            },
+                                    @endforeach
+                                },
+                                    errorElement: 'span',
+                                    errorPlacement: function(error, element) {
+                                        error.addClass('invalid-feedback');
+                                        element.closest('.form-group').append(error);
+                                    },
+                                    highlight: function(element, errorClass, validClass) {
+                                        $(element).addClass('is-invalid');
+                                    },
+                                    unhighlight: function(element, errorClass, validClass) {
+                                        $(element).removeClass('is-invalid');
+                                    }
+                                });
                         }
-                    },
-                    messages: {
-                        code: {
-                            required: "Vui lòng nhập mã đơn đặt hàng"
-                        },
-                        estimated_delivery_time: {
-                            required: "Vui lòng nhập thời gian dự kiến giao hàng",
-                        },
-                        approved_by: {
-                            required: "Người duyệt đơn chưa được chọn",
-                        },
-                        supplier_id: {
-                            required: "Nhà cung cấp chưa được chọn",
-                        },
-                        company_name: {
-                            required: "Vui lòng nhập tên công ty",
-                        },
-                        company_address: {
-                            required: "Vui lòng nhập địa chỉ",
-                        },
-                        company_tax: {
-                            required: "Vui lòng nhập mã số thuế",
-                        }
-                    },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-group').append(error);
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid');
-                    }
-                });
-            }
-        });
+                    });
     </script>
 </x-layouts.main>

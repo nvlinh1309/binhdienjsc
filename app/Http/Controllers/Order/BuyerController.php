@@ -137,8 +137,19 @@ class BuyerController extends Controller
     public function create_step6($id)
     {
         $order = $this->getOrder($id);
+        $order->status = '6';
+        $order->save();
         $warehouse_keeper = User::role('warehouse_keeper')->get();
-        return redirect()->route('order-buyer.step3', $id);
+        return view('user.order.ord_buyer.create_step6', compact('order', 'warehouse_keeper'));
+    }
+
+    public function store_step6(Request $request, $id)
+    {
+        dd($request->all());
+        $order = $this->getOrder($id);
+        $order->status = '6';
+        $order->save();
+        return redirect()->route('order-buyer.update.step6', $id);
         // return view('user.order.ord_buyer.create_step6', compact('order', 'warehouse_keeper'));
     }
 
@@ -223,10 +234,9 @@ class BuyerController extends Controller
         $file->move(public_path('uploads'), $fileName);
         $order = $this->getOrder($id);
         $order->order_file = $fileName;
-        $order->status = '6';
         $order->save();
 
-        return redirect()->route('order-buyer.step6', $id);
+        return redirect()->route('order-buyer.step3', $id)->with(['success' => "Tải phiếu nhập kho thành công"])->withInput();
     }
 
 
