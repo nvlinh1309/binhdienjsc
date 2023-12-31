@@ -77,8 +77,8 @@
                             @endif
                             </i></div>
                         <div><b>File PNK:</b> <i>
-                            @if ($order->order_file)
-                            <a target="_blank" href="{{ asset('uploads/'.$order->order_file) }}">{{$order->order_file}}</a>
+                            @if ($order->warehouse_receipt_file)
+                            <a target="_blank" href="{{ asset('uploads/'.$order->order_file) }}">{{$order->warehouse_receipt_file}}</a>
                             @else
                                 Chưa có dữ liệu...
                             @endif
@@ -176,7 +176,7 @@
 
     <script>
         function confirm_send() {
-            return confirm('Vui lòng kiểm tra kỹ thông tin trước khi gửi xác nhận đơn hàng.');
+            return confirm('Vui lòng kiểm tra kỹ thông tin trước khi gửi yêu cầu duyệt đơn hàng.');
         }
 
         function confirm_approved() {

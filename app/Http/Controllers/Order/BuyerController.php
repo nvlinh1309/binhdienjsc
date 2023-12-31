@@ -29,7 +29,7 @@ class BuyerController extends Controller
         // dd($conditions);
         $statusColor = config('constants.status_order_buyer_color');
         $statusList = config('constants.status_order_buyer');
-        $data = OrderBuyer::where($conditions)->where('status', '<>', '0');
+        $data = OrderBuyer::where($conditions)->where('status', '<>', '0')->orderBy('id', 'DESC');
         $data = $data->paginate(10);
         return view('user.order.ord_buyer.index', compact('data', 'statusColor', 'statusList'));
     }
@@ -41,6 +41,7 @@ class BuyerController extends Controller
      */
     public function create()
     {
+        //Khởi tạo đơn hàng
         $suppliers = Supplier::get();
         $companyInfo = config('companyInfo');
         $managers = User::role('manager')->get();
@@ -56,6 +57,7 @@ class BuyerController extends Controller
      */
     public function store(Request $request)
     {
+        //Lưu đơn hàng với status =1
         $data = $request->all();
         $data['created_by'] = auth()->user()->id;
         // dd($data);
@@ -65,17 +67,23 @@ class BuyerController extends Controller
 
     public function create_step1($id)
     {
+        //Khởi tạo đơn hàng với status = 1
+        //status >= 4 không được cập nhật
+        $order = $this->getOrder($id);
+        // if ($order->status < 5) {
+        //     return redirect()->route('order-buyer.show', $id);
+        // }
         $suppliers = Supplier::get();
         $companyInfo = config('companyInfo');
         $managers = User::role('manager')->get();
-        $order = $this->getOrder($id);
         $storages = Storage::get();
         return view('user.order.ord_buyer.create_step1', compact('suppliers', 'companyInfo', 'managers', 'order', 'storages'));
     }
 
     public function store_step1(Request $request, $id)
     {
-
+        //Cập nhật đơn hàng với status = 1
+        //status >= 4 không được cập nhật
         $data = $request->all();
         $order = $this->getOrder($id);
         $order = $order->update($data);
@@ -136,7 +144,12 @@ class BuyerController extends Controller
 
     public function create_step6($id)
     {
+        //Tạo phiếu nhập kho. Trường hợp ĐH hàng ở trạng thái < 5 (Đã duyệt Đơn đặt hàng hàng) => chuyển về trang show().
+        //Nếu trạng thái > 6 thì không được chỉnh sửa (Ẩn button các button đi)
         $order = $this->getOrder($id);
+        if ($order->status < 5) {
+            return redirect()->route('order-buyer.show', $id);
+        }
         $order->status = '6';
         $order->save();
         $warehouse_keeper = User::role('warehouse_keeper')->get();
@@ -147,6 +160,7 @@ class BuyerController extends Controller
     {
         dd($request->all());
         $order = $this->getOrder($id);
+
         $order->status = '6';
         $order->save();
         return redirect()->route('order-buyer.update.step6', $id);
@@ -236,7 +250,7 @@ class BuyerController extends Controller
         $order->order_file = $fileName;
         $order->save();
 
-        return redirect()->route('order-buyer.step3', $id)->with(['success' => "Tải phiếu nhập kho thành công"])->withInput();
+        return redirect()->route('order-buyer.step3', $id)->with(['success' => "Tải đơn đặt thành công!"])->withInput();
     }
 
 
